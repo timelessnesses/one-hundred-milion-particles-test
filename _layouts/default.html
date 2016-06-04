@@ -5,14 +5,9 @@
 
     {% include meta.html %}
 
-    <!--[if lt IE 9]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
     <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
 
-    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
   </head>
 
   <body>
@@ -27,8 +22,9 @@
           </div>
 
           <nav>
-            <a href="{{ site.baseurl }}/">Страницы</a>
-            <a href="{{ site.baseurl }}/about">О сайте</a>
+            <a href="{{ site.baseurl }}/">Главная</a>
+            <a href="{{ site.baseurl }}/posts.html">Блог</a>
+            <a href="{{ site.baseurl }}/_posts/OldGames.html">Мои старые игры</a>
           </nav>
         </header>
       </div>
