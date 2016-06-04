@@ -7,7 +7,7 @@ title: Мои старые игры
 
 ___
 
-![_config.yml]({{ site.baseurl }}/images/arkanoid-screenshot.jpg)
+![_config.yml]({{ site.baseurl }}/images/ArkanoidScreenshot.jpg)
 
  Мой арканоид, созданный где-то 7-8 лет назад
 
