@@ -5,7 +5,7 @@ title: Мои старые игры
 
  Здесь выложены мои игры, которые я делал на Game Maker в 2004-2009 годах.
  
-___
+
 
 [Arkanoid](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
 
