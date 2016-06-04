@@ -3,6 +3,10 @@ layout: post
 title: Мои старые игры
 ---
 
+ Здесь выложены мои игры, которые я делал на Game Maker в 2004-2009 годах.
+ 
+___
+
 [Arkanoid](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
 
 ___
@@ -22,6 +26,7 @@ ESC - выход
 ___
 
 [Планета призраков](https://drive.google.com/open?id=0B0wvbicW8OQIR2ZadzhLd3NNSUE)
+
 [Планета призраков 3D](https://drive.google.com/open?id=0B0wvbicW8OQIWWpUbnlQaTN0NlE)
 
 ___
