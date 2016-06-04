@@ -4,7 +4,9 @@ title: Мои старые игры
 ---
 
 [Arkanoid](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
+
 ___
+
 ![_config.yml]({{ site.baseurl }}/images/arkanoid-screenshot.jpg)
 
  Мой арканоид, созданный где-то 7-8 лет назад
@@ -16,11 +18,14 @@ ___
 F2\F3 - сохранение\загрузка.
 P - пауза, ESC - отмена паузы
 ESC - выход
+
 ___
 
 [Планета призраков](https://drive.google.com/open?id=0B0wvbicW8OQIR2ZadzhLd3NNSUE)
 [Планета призраков 3D](https://drive.google.com/open?id=0B0wvbicW8OQIWWpUbnlQaTN0NlE)
+
 ___
+
 ![_config.yml]({{ site.baseurl }}/images/GhostPlanetScreenshot.jpg)
 ![_config.yml]({{ site.baseurl }}/images/GhostPlanet3DScreenshot.jpg)
 
@@ -37,10 +42,15 @@ WASD - перемещение вверх, влево, вниз, вправо
 Пробел или левая кнопка мыши - выстрел
 Колёсико мыши и 1, 2, 3, 4, 5... - выбор оружия
 G - бросок плазмгранаты
+
 ___
 
 [Платформер](https://drive.google.com/open?id=0B0wvbicW8OQIM296X3l1cUdtREE)
+
 ___
+
 ![_config.yml]({{ site.baseurl }}/images/PlatformerScreenshot.jpg)
 Моя платформенная игра типа Соника. Графика конечно примитивная, так как я не художник. Да и игра не совсем доработана, но играть можно.
+
 ___
+
