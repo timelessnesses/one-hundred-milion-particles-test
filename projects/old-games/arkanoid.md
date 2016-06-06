@@ -3,7 +3,7 @@ layout: post
 title: Арканоид
 ---
 
-##[Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
+## [Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
 
 ___
 
