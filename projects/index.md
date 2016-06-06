@@ -3,6 +3,9 @@ layout: post
 title: Проекты
 ---
 
+## [Encoding Converter](encoding-converter/)
+ Маленький, простой и компактный преобразователь кодировок текстовых файлов в папке.
+
 ## [Flying Particles](flying-particles/)
  Красивая демка с системой частиц размером менее 4 КБ.
  
