@@ -3,6 +3,11 @@ layout: post
 title: Flying Particles - демка с системой частиц
 ---
 
+![_config.yml]({{ site.baseurl }}/images/flying-particles.jpg)
+
+- [Скачать демку](https://github.com/gammaker/flying-particles/blob/master/exe/FlyingParticles.exe?raw=true)
+- [Проект на github](https://github.com/gammaker/flying-particles/)
+
  Это проект 4k intro с системой частиц, не имеющей состояния.
  
  Траектории, размеры, цвета и другие параметры частиц определяются функциями от времени.
@@ -20,9 +25,5 @@ title: Flying Particles - демка с системой частиц
 - P - приостановить\продолжить.
 - I - перезапустить анимацию.
 
-![_config.yml]({{ site.baseurl }}/images/flying-particles.jpg)
 
-
-- [Скачать демку](https://github.com/gammaker/flying-particles/blob/master/exe/FlyingParticles.exe?raw=true)
-- [Проект на github](https://github.com/gammaker/flying-particles/)
 
