@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: Flying Particles - демка с системой частиц
 ---
