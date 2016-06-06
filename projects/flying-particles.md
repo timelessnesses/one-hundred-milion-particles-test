@@ -3,10 +3,10 @@ layout: post
 title: Flying Particles - демка с системой частиц
 ---
 
-![_config.yml]({{ site.baseurl }}/images/flying-particles.jpg)
-
 - [Скачать демку](https://github.com/gammaker/flying-particles/blob/master/exe/FlyingParticles.exe?raw=true)
 - [Проект на github](https://github.com/gammaker/flying-particles/)
+
+![_config.yml]({{ site.baseurl }}/images/flying-particles.jpg)
 
 	Это проект 4k intro с системой частиц, не имеющей состояния.
 Так как система частиц не имеет состояния, то и памяти она не занимает, если не считать вершинного шейдера и его немногочисленных параметров, используемых для просчёта параметров частиц.
