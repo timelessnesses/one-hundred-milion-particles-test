@@ -4,9 +4,8 @@ title: Планета призраков
 ---
 
 
-## [Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIR2ZadzhLd3NNSUE)
-
-## [Скачать 3D версию](https://drive.google.com/open?id=0B0wvbicW8OQIWWpUbnlQaTN0NlE)
+- [Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIR2ZadzhLd3NNSUE)
+- [Скачать 3D версию](https://drive.google.com/open?id=0B0wvbicW8OQIWWpUbnlQaTN0NlE)
 
 ___
 
