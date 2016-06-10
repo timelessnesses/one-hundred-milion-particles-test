@@ -9,8 +9,8 @@ title: Планета призраков
 
 ___
 
-![_config.yml]({{ site.baseurl }}/images/GhostPlanetScreenshot.jpg)
-![_config.yml]({{ site.baseurl }}/images/GhostPlanet3DScreenshot.jpg)
+![Скриншот Планеты призраков 2D]({{ site.baseurl }}/images/GhostPlanetScreenshot.jpg)
+![Скриншот Планеты призраков 3D]({{ site.baseurl }}/images/GhostPlanet3DScreenshot.jpg)
 
 Есть разные типы уровней: убить всех призраков в уровне, открыть специальную дверь,
 убить босса, собрать как можно больше денег за минуту, выдержать несколько волн атак.

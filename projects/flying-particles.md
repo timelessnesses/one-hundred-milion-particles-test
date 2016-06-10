@@ -6,7 +6,7 @@ title: Flying Particles - демка с системой частиц
 - [Скачать демку](https://github.com/gammaker/flying-particles/blob/master/exe/FlyingParticles.exe?raw=true)
 - [Проект на github](https://github.com/gammaker/flying-particles/)
 
-![_config.yml]({{ site.baseurl }}/images/flying-particles.jpg)
+![Скриншот демки]({{ site.baseurl }}/images/flying-particles.jpg)
 
 ## Описание
 

@@ -7,7 +7,7 @@ title: Платформер типа соника
 
 ___
 
-![_config.yml]({{ site.baseurl }}/images/PlatformerScreenshot.jpg)
+![Скриншот игры]({{ site.baseurl }}/images/PlatformerScreenshot.jpg)
 Моя платформенная игра типа Соника.
 Так как я рисовать не умею, графика получилась довольно примитивной.
 

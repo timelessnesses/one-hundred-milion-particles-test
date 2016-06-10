@@ -7,7 +7,7 @@ title: Арканоид
 
 ___
 
-![_config.yml]({{ site.baseurl }}/images/ArkanoidScreenshot.jpg)
+![Скриншот игры]({{ site.baseurl }}/images/ArkanoidScreenshot.jpg)
 
 Мой арканоид, созданный где-то в 2007 или 2008 году.
 Как и в классическом арканоиде, из разломанных блоков выпадают различные бонусы.
