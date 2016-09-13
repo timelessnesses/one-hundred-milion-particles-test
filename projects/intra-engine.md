@@ -3,7 +3,7 @@ layout: post
 title: IntraEngine - игровой 3D движок
 ---
 
-- [Скачать демо](https://drive.google.com/open?id=0B0wvbicW8OQIWklzRWphRlZPT1k)
+- [Скачать демо](https://1drv.ms/u/s!Am0pg1pnApO2h26q22JGvTJ-dp7L)
 
 ![Скриншот демки]({{ site.baseurl }}/images/intra-engine-screenshot.jpg)
 ![Скриншот демки]({{ site.baseurl }}/images/intra-engine-screenshot2.jpg)
