@@ -97,7 +97,7 @@ if(location.search)
 	if(use_streaming) url = url.substr(1);
 	document.getElementById('midi_url').value = url;
 	document.getElementById('use_streaming').checked = use_streaming;
-	if(play) setTimeout(PlayMidi, 1);
+	if(play) setTimeout(PlayMidi, 10);
 }
 </script>
 
