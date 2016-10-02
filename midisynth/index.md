@@ -3,4 +3,4 @@ layout: post
 title: Синтезатор MIDI
 ---
 
-{% include MusicSythesizer.html %}
+{% include MusicSynthesizer.html %}
