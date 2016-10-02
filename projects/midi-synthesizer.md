@@ -41,9 +41,9 @@ title: Синтезатор MIDI
 
 Слушать онлайн:
 
- <table>
- <tr> 
- <td>
+<table>
+<tr> 
+<td>
 
 - [Losing Religion](../../midisynth/?~./Losing%20religion.mid)
 - [Pink Panther](../../midisynth/?~./PinkPanther.mid)
@@ -59,9 +59,9 @@ title: Синтезатор MIDI
 - [Mamma Mia](../../midisynth/?~./ABBA-Mamma_Mia.mid)
 - [Happy New Year](../../midisynth/?~./ABBA-Happy_New_Year.mid)
 
-  </td>
+</td>
   
-  <td>
+<td>
   
 - [Dancing Queen](../../midisynth/?~./ABBA-Dancing_Queen1.mid)
 - [Turkish March](../../midisynth/?~./TurkishMarch.mid)
