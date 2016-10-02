@@ -85,8 +85,6 @@
 <div id="output"></div>
 <hr>
 
-</body>
-
 <script type="text/javascript">
 if(location.search)
 {
@@ -95,7 +93,7 @@ if(location.search)
 	if(play) url = url.substr(1);
 	var use_streaming = url.indexOf('~')==0;
 	if(use_streaming) url = url.substr(1);
-	document.getElementById('midi_url').value = url.replace('%20', ' ');
+	document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
 	document.getElementById('use_streaming').checked = use_streaming;
 	if(play) setTimeout(PlayMidi, 100);
 }
@@ -105,5 +103,7 @@ if(!(window.AudioContext || window.webkitAudioContext))
 	output.innerHTML = "<font color=red>Этот браузер не поддерживает Web Audio API!</font>";
 }
 </script>
+
+</body>
 
 </html>
