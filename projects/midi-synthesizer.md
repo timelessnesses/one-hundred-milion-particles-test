@@ -5,6 +5,7 @@ title: Синтезатор MIDI
 
  Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме самого MIDI-файла.
  Является частью библиотеки [IntraLib](intra-lib).
+ 
 - [Репозиторий](https://github.com/gammaker/Intra/)
 - [Бинарный файл Windows](https://github.com/gammaker/Intra/tree/master/Build/Release/MusicSynthesizer.exe?raw=true))
 - [Онлайн-версия](../midisynth)
