@@ -4,7 +4,7 @@
 	<script type="text/javascript">
 
 	    var disqus_shortname = '{{ site.disqus }}';
-		var disqus_url = '[(site_url)][~[*id*]~]';
+		var disqus_url = location.host + location.pathname;
 
 	    (function() {
 	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
