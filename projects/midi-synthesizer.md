@@ -41,6 +41,7 @@ title: Синтезатор MIDI
 
 Слушать онлайн:
 
+<span>
 <table>
 <tr> 
 <td>
@@ -80,3 +81,4 @@ title: Синтезатор MIDI
 
 </tr>
 </table>
+</span>
