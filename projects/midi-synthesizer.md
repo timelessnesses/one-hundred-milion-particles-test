@@ -35,34 +35,34 @@ title: Синтезатор MIDI
 - Windows;
 - Linux;
 - FreeBSD;
-- [Web через Emscripten](../../midisynth);
+- [Web через Emscripten](/midisynth);
 - Планируется Android.
 
 
-Слушать онлайн:
+### Слушать онлайн:
 
 - [Losing Religion](/midisynth/?~./Losing%20religion.mid)
-- [Pink Panther](../../midisynth/?~./PinkPanther.mid)
-- [Merry Christmas](../../midisynth/?~./Merry%20Christmas.mid)
-- [Mortal Kombat](../../midisynth/?~./Mortal%20Kombat.mid)
-- [Sonic 3](../../midisynth/?~./sonic3.mid)
-- [Wavin Flag](../../midisynth/?~./knaan-wavin_flag.mid)
-- [Its My Life](../../midisynth/?~./ItsMyLife1.mid)
-- [Hallelujah](../../midisynth/?~./Hallelujah1.mid)
-- [Hesa Pirate](../../midisynth/?~./HesaPirate.mid)
-- [Final Countdown](../../midisynth/?~./FinalCountdown.mid)
-- [Da Be Dee](../../midisynth/?~./Eifel 65 - Da Be Dee.mid)
-- [Mamma Mia](../../midisynth/?~./ABBA-Mamma_Mia.mid)
-- [Happy New Year](../../midisynth/?~./ABBA-Happy_New_Year.mid)
-- [Dancing Queen](../../midisynth/?~./ABBA-Dancing_Queen1.mid)
-- [Turkish March](../../midisynth/?~./TurkishMarch.mid)
-- [X-files](../../midisynth/?~./X-files.mid)
-- [Bad Romance](../../midisynth/?~./lady-gaga-BadRomance.mid)
-- [Just Dance](../../midisynth/?~./lady_gaga_JustDance.mid)
-- [Paparazzi](../../midisynth/?~./lady_gaga-paparazzi.mid)
-- [Wrecking Ball](../../midisynth/?~./miley_cyrus-wrecking_ball.mid)
-- [Pink Perfect](../../midisynth/?~./pink-perfect.mid)
-- [Piano Test](../../midisynth/?~./test_piano.mid)
-- [Пусть бегут неуклюже пешеходы по лужам](../../midisynth/?~./Крокодил Гена - Пусть Бегут Неуклюже Пешеходы По Лужам (День Рождения).mid)
-- [My Way](../../midisynth/?~./MyWay1.mid)
-- [Smackthat](../../midisynth/?~./Smackthat.mid)
+- [Pink Panther](/midisynth/?~./PinkPanther.mid)
+- [Merry Christmas](/midisynth/?~./Merry%20Christmas.mid)
+- [Mortal Kombat](/midisynth/?~./Mortal%20Kombat.mid)
+- [Sonic 3](/midisynth/?~./sonic3.mid)
+- [Wavin Flag](/midisynth/?~./knaan-wavin_flag.mid)
+- [Its My Life](/midisynth/?~./ItsMyLife1.mid)
+- [Hallelujah](/midisynth/?~./Hallelujah1.mid)
+- [Hesa Pirate](/midisynth/?~./HesaPirate.mid)
+- [Final Countdown](/midisynth/?~./FinalCountdown.mid)
+- [Da Be Dee](/midisynth/?~./Eifel 65 - Da Be Dee.mid)
+- [Mamma Mia](/midisynth/?~./ABBA-Mamma_Mia.mid)
+- [Happy New Year](/midisynth/?~./ABBA-Happy_New_Year.mid)
+- [Dancing Queen](/midisynth/?~./ABBA-Dancing_Queen1.mid)
+- [Turkish March](/midisynth/?~./TurkishMarch.mid)
+- [X-files](/midisynth/?~./X-files.mid)
+- [Bad Romance](/midisynth/?~./lady-gaga-BadRomance.mid)
+- [Just Dance](/midisynth/?~./lady_gaga_JustDance.mid)
+- [Paparazzi](/midisynth/?~./lady_gaga-paparazzi.mid)
+- [Wrecking Ball](/midisynth/?~./miley_cyrus-wrecking_ball.mid)
+- [Pink Perfect](/midisynth/?~./pink-perfect.mid)
+- [Piano Test](/midisynth/?~./test_piano.mid)
+- [Пусть бегут неуклюже пешеходы по лужам](/midisynth/?~./Крокодил Гена - Пусть Бегут Неуклюже Пешеходы По Лужам (День Рождения).mid)
+- [My Way](/midisynth/?~./MyWay1.mid)
+- [Smackthat](/midisynth/?~./Smackthat.mid)
