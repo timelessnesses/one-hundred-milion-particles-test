@@ -41,12 +41,7 @@ title: Синтезатор MIDI
 
 Слушать онлайн:
 
-<span>
-<table>
-<tr> 
-<td>
-
-- [Losing Religion](../../midisynth/?~./Losing%20religion.mid)
+- [Losing Religion](/midisynth/?~./Losing%20religion.mid)
 - [Pink Panther](../../midisynth/?~./PinkPanther.mid)
 - [Merry Christmas](../../midisynth/?~./Merry%20Christmas.mid)
 - [Mortal Kombat](../../midisynth/?~./Mortal%20Kombat.mid)
@@ -59,11 +54,6 @@ title: Синтезатор MIDI
 - [Da Be Dee](../../midisynth/?~./Eifel 65 - Da Be Dee.mid)
 - [Mamma Mia](../../midisynth/?~./ABBA-Mamma_Mia.mid)
 - [Happy New Year](../../midisynth/?~./ABBA-Happy_New_Year.mid)
-
-</td>
-  
-<td>
-  
 - [Dancing Queen](../../midisynth/?~./ABBA-Dancing_Queen1.mid)
 - [Turkish March](../../midisynth/?~./TurkishMarch.mid)
 - [X-files](../../midisynth/?~./X-files.mid)
@@ -76,9 +66,3 @@ title: Синтезатор MIDI
 - [Пусть бегут неуклюже пешеходы по лужам](../../midisynth/?~./Крокодил Гена - Пусть Бегут Неуклюже Пешеходы По Лужам (День Рождения).mid)
 - [My Way](../../midisynth/?~./MyWay1.mid)
 - [Smackthat](../../midisynth/?~./Smackthat.mid)
-
-</td>
-
-</tr>
-</table>
-</span>
