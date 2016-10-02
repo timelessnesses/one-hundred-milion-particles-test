@@ -1,6 +1,4 @@
-﻿<head>
-<meta charset="utf-8">
-<title>Синтезатор MIDI</title>
+﻿<meta charset="utf-8">
 
 <script type="text/javascript" src="MusicSynthesizer.js"></script>
 
@@ -66,9 +64,6 @@
 	}
 </script>
 
-</head>
-
-<body>
 
 <p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" style="width:100%" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
 <label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
@@ -100,5 +95,3 @@ if(!(window.AudioContext || window.webkitAudioContext))
 	output.innerHTML = "<font color=red>Этот браузер не поддерживает Web Audio API!</font>";
 }
 </script>
-
-</body>
