@@ -7,10 +7,10 @@
 <script type="text/javascript" src="MusicSynthesizer.js"></script>
 
 <script type="text/javascript">
-	var em_module = Module;//require('MusicSynthesizer.js');
-	em_module['print'] = function(text)
+	Module['print'] = function(text)
 	{
 		if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
+		if(text.replace===undefined) return;
 		text = text.replace(/&/g, "&amp;");
 		text = text.replace(/</g, "&lt;");
 		text = text.replace(/>/g, "&gt;");
@@ -22,14 +22,47 @@
 			output.scrollTop = output.scrollHeight;
 		}
 	};
+	
+	function StopAllNonStreamedSounds()
+	{
+		if(Module.gWebAudioInstanceArray===undefined) return;
+		var i;
+		for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
+			if(Module.gWebAudioInstanceArray[i]!=null) Module.gWebAudioInstanceArray[i].stop();
+	}
+	
+	function StopAllStreamedSounds()
+	{
+		if(Module.gWebAudioStreamArray===undefined) return;
+		var i;
+		for(i=0; i<Module.gWebAudioStreamArray.length; i++)
+		{
+			var snd = Module.gWebAudioStreamArray[i];
+			if(snd==null || !snd.__is_playing) continue;
+			snd.disconnect(Module.gWebAudioContext.destination);
+			snd.__is_playing = false;
+		}
+	}
+	
+	function StopAllSounds()
+	{
+		StopAllNonStreamedSounds();
+		StopAllStreamedSounds();
+	}
+	
 	function PlayMidi()
 	{
+		StopAllSounds();
+	
 		var output = document.getElementById('output');
 		if(output) output.value = '';
 		var url = document.getElementById('midi_url').value;
+		if(url.startsWith('./')) url = '/midi'+url.substr(1);
+		if(url.startsWith('/')) url = document.domain+url;
+		if(!url.startsWith('http://') && !url.startsWith('https://')) url = 'http://'+url;
 		var use_streaming = document.getElementById('use_streaming').checked;
 		output.innerHTML = '';
-		var outPtr = em_module._malloc(url.length*2);
+		var outPtr = Module._malloc(url.length*2);
 		stringToUTF8(url, outPtr, url.length*2);
 		Module._PlayUrl(outPtr, use_streaming);
 	}
@@ -41,13 +74,31 @@
 
 <h2>Синтезатор MIDI</h2>
 <p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" size="100" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
-<label><input type="checkbox" id="use_streaming">Включить стриминг</label>
-<button id="play" onclick="PlayMidi()">Воспроизвести</button>
+<label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
+
+<p>
+	<button id="play" style="height:32px;width:96px" onclick="PlayMidi()">Проиграть</button>
+	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
+</p>
 
 <hr>
 <div id="output"></div>
 <hr>
 
 </body>
+
+<script type="text/javascript">
+if(location.search)
+{
+	var url = location.search.substr(1);
+	var play = url.startsWith('!');
+	if(play) url = url.substr(1);
+	var use_streaming = url.startsWith('~');
+	if(use_streaming) url = url.substr(1);
+	document.getElementById('midi_url').value = url;
+	document.getElementById('use_streaming').checked = use_streaming;
+	if(play) setTimeout(PlayMidi, 1);
+}
+</script>
 
 </html>
