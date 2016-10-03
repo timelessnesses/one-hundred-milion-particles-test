@@ -1,12 +1,12 @@
-<<<<<<< HEAD
-﻿<script type="text/javascript">
+<script type="text/javascript" src="MusicSynthesizer.js"></script>
+
+<script type="text/javascript">
 	var gScript = document.createElement('script');
 	gScript.src = "MusicSynthesizer.js"
 	document.body.appendChild(gScript);
 	gScript.loaded = false;
 	
 	var gAutoPlay = false;
-
 	gScript.onload = function()
 	{
 		Module['print'] = function(text)
@@ -27,38 +27,6 @@
 		
 		function StopAllNonStreamedSounds()
 		{
-=======
-﻿<script type="text/javascript" src="MusicSynthesizer.js"></script>
-
-<script type="text/javascript">
-	var gScript = document.createElement('script');
-	gScript.src = "MusicSynthesizer.js"
-	document.body.appendChild(script);
-	gScript.loaded = false;
-	
-	var gAutoPlay = false;
-
-	gScript.onload = function()
-	{
-		Module['print'] = function(text)
-		{
-			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
-			text = text.replace(/&/g, "&amp;");
-			text = text.replace(/</g, "&lt;");
-			text = text.replace(/>/g, "&gt;");
-			text = text.replace('\n', '<br/>', 'g');
-			console.log(text);
-			var output = document.getElementById('output');
-			if(output)
-			{
-				output.innerHTML += text + "<br/>";
-				output.scrollTop = output.scrollHeight;
-			}
-		};
-		
-		function StopAllNonStreamedSounds()
-		{
->>>>>>> origin/master
 			if(Module.gWebAudioInstanceArray===undefined) return;
 			var i;
 			for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
