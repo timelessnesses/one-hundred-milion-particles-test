@@ -7,7 +7,7 @@ title: Синтезатор MIDI
  Является частью библиотеки [IntraLib](../intra-lib).
  
 - [Репозиторий](https://github.com/gammaker/Intra/)
-- [Бинарный файл Windows](https://github.com/gammaker/Intra/tree/master/Build/Release/MusicSynthesizer.exe?raw=true))
+- [Бинарный файл Windows](https://github.com/gammaker/Intra/tree/master/Build/Release/MusicSynthesizer.exe?raw=true)
 - [Онлайн-версия](../midisynth)
 
 Сам [проект](https://github.com/gammaker/Intra/tree/master/MusicSynthesizer) состоит только из управляющего кода, а основной код синтезатора находится в IntraLib/Sound.
@@ -19,8 +19,7 @@ title: Синтезатор MIDI
 - Midi файлы формата 0 не поддерживаются. Я конвертирую 0 в 1 пересохранением в Anvil Studio. В архивы здесь я кладу только работающие midi формата 1. В интернете оба формата примерно одинаково распространены.
 - Нет многих инструментов и вместо них звучат другие. Особенно мало ударников.
 - Баланс громкостей различных инструментов ещё не до конца проработан, но со временем улучшается.
-- Нет звука на Raspberry Pi
-- Щелчки в начале при потоковом воспроизведении в браузере через Web Audio
+- Нет звука на Raspberry Pi.
  
 
 ### Поддерживаемые компиляторы:
