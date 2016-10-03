@@ -1,8 +1,7 @@
 ---
 layout: post
-title: Синтезатор MIDI
+title: Онлайн синтезатор MIDI
 ---
 
-Подробное описание и ссылки смотрите [здесь](../projects/midi-synthesizer).
-
+Подробное описание и ссылки смотрите [здесь](/projects/midi-synthesizer).
 {% include MusicSynthesizer.html %}
