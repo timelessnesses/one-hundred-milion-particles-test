@@ -38,7 +38,7 @@
 		};
 		
 		gScript.loaded = true;
-		if(gAutoPlay) PlayMidi();
+		if(gAutoPlay) setTimeout(PlayMidi, 1);
 	}
 	
 	if(location.search)

@@ -34,7 +34,7 @@ title: Синтезатор MIDI
 - Windows;
 - Linux;
 - FreeBSD;
-- [Web через Emscripten](/midisynth);
+- [Web через Emscripten](../midisynth);
 - Планируется Android.
 
 
