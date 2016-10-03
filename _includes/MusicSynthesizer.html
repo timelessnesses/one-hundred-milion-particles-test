@@ -22,7 +22,7 @@
 	{
 		Module['print'] = function(text)
 		{
-			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
+			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ').toString();
 			text = text.replace(/&/g, "&amp;");
 			text = text.replace(/</g, "&lt;");
 			text = text.replace(/>/g, "&gt;");
