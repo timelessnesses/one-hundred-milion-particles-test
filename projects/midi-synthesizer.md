@@ -8,7 +8,7 @@ title: Синтезатор MIDI
  
 - [Репозиторий](https://github.com/gammaker/Intra/)
 - [Бинарный файл Windows](https://github.com/gammaker/Intra/tree/master/Build/Release/MusicSynthesizer.exe?raw=true)
-- [Онлайн-версия](../midisynth)
+- [Онлайн-версия](/midisynth/)
 
 Сам [проект](https://github.com/gammaker/Intra/tree/master/MusicSynthesizer) состоит только из управляющего кода, а основной код синтезатора находится в IntraLib/Sound.
 Программа консольная, выбор воспроизводимого MIDI-файла производится передачей пути через командную строку (в проводнике Windows - перенести мышью MIDI-файл на бинарник).
@@ -34,7 +34,7 @@ title: Синтезатор MIDI
 - Windows;
 - Linux;
 - FreeBSD;
-- [Web через Emscripten](../midisynth);
+- [Web через Emscripten](/midisynth/);
 - Планируется Android.
 
 
