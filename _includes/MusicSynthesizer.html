@@ -1,97 +1,103 @@
-﻿<meta charset="utf-8">
+﻿<script type="text/javascript">
+	var gScript = document.createElement('script');
+	gScript.src = "MusicSynthesizer.js"
+	document.body.appendChild(script);
+	gScript.loaded = false;
+	
+	var gAutoPlay = false;
 
-<script type="text/javascript" src="MusicSynthesizer.js"></script>
-
-<script type="text/javascript">
-	Module['print'] = function(text)
+	gScript.onload = function()
 	{
-		if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
-		text = text.replace(/&/g, "&amp;");
-		text = text.replace(/</g, "&lt;");
-		text = text.replace(/>/g, "&gt;");
-		text = text.replace('\n', '<br/>', 'g');
-		console.log(text);
-		var output = document.getElementById('output');
-		if(output)
+		Module['print'] = function(text)
 		{
-			output.innerHTML += text + "<br/>";
-			output.scrollTop = output.scrollHeight;
-		}
-	};
-	
-	function StopAllNonStreamedSounds()
-	{
-		if(Module.gWebAudioInstanceArray===undefined) return;
-		var i;
-		for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
-			if(Module.gWebAudioInstanceArray[i]!=null) Module.gWebAudioInstanceArray[i].stop();
-	}
-	
-	function StopAllStreamedSounds()
-	{
-		if(Module.gWebAudioStreamArray===undefined) return;
-		var i;
-		for(i=0; i<Module.gWebAudioStreamArray.length; i++)
+			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
+			text = text.replace(/&/g, "&amp;");
+			text = text.replace(/</g, "&lt;");
+			text = text.replace(/>/g, "&gt;");
+			text = text.replace('\n', '<br/>', 'g');
+			console.log(text);
+			var output = document.getElementById('output');
+			if(output)
+			{
+				output.innerHTML += text + "<br/>";
+				output.scrollTop = output.scrollHeight;
+			}
+		};
+		
+		function StopAllNonStreamedSounds()
 		{
-			var snd = Module.gWebAudioStreamArray[i];
-			if(snd==null || !snd.__is_playing) continue;
-			snd.disconnect(Module.gWebAudioContext.destination);
-			snd.__is_playing = false;
+			if(Module.gWebAudioInstanceArray===undefined) return;
+			var i;
+			for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
+				if(Module.gWebAudioInstanceArray[i]!=null) Module.gWebAudioInstanceArray[i].stop();
 		}
+		
+		function StopAllStreamedSounds()
+		{
+			if(Module.gWebAudioStreamArray===undefined) return;
+			var i;
+			for(i=0; i<Module.gWebAudioStreamArray.length; i++)
+			{
+				var snd = Module.gWebAudioStreamArray[i];
+				if(snd==null || !snd.__is_playing) continue;
+				snd.disconnect(Module.gWebAudioContext.destination);
+				snd.__is_playing = false;
+			}
+		}
+		
+		function StopAllSounds()
+		{
+			StopAllNonStreamedSounds();
+			StopAllStreamedSounds();
+		}
+		
+		function PlayMidi()
+		{
+			StopAllSounds();
+		
+			var output = document.getElementById('output');
+			if(output) output.value = '';
+			var url = document.getElementById('midi_url').value;
+			if(url.indexOf('./')==0) url = '/midi'+url.substr(1);
+			if(url.indexOf('/')==0) url = document.domain+url;
+			if(!url.indexOf('http://')==0 && !url.indexOf('https://')==0) url = 'http://'+url;
+			var use_streaming = document.getElementById('use_streaming').checked;
+			output.innerHTML = '';
+			var outPtr = Module._malloc(url.length*2);
+			stringToUTF8(url, outPtr, url.length*2);
+			Module._PlayUrl(outPtr, use_streaming);
+		}
+		
+		gScript.loaded = true;
+		if(gAutoPlay) PlayMidi();
 	}
 	
-	function StopAllSounds()
+	if(location.search)
 	{
-		StopAllNonStreamedSounds();
-		StopAllStreamedSounds();
+		var url = location.search.substr(1);
+		gAutoPlay = url.indexOf('!')==0;
+		if(gAutoPlay) url = url.substr(1);
+		var use_streaming = url.indexOf('~')==0;
+		if(use_streaming) url = url.substr(1);
+		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
+		document.getElementById('use_streaming').checked = use_streaming;
 	}
-	
-	function PlayMidi()
+	if(!(window.AudioContext || window.webkitAudioContext))
 	{
-		StopAllSounds();
-	
 		var output = document.getElementById('output');
-		if(output) output.value = '';
-		var url = document.getElementById('midi_url').value;
-		if(url.indexOf('./')==0) url = '/midi'+url.substr(1);
-		if(url.indexOf('/')==0) url = document.domain+url;
-		if(!url.indexOf('http://')==0 && !url.indexOf('https://')==0) url = 'http://'+url;
-		var use_streaming = document.getElementById('use_streaming').checked;
-		output.innerHTML = '';
-		var outPtr = Module._malloc(url.length*2);
-		stringToUTF8(url, outPtr, url.length*2);
-		Module._PlayUrl(outPtr, use_streaming);
+		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
 	}
 </script>
 
-
+<noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
 <p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" style="width:100%" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
 <label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
 
 <p>
-	<button id="play" style="height:32px;width:96px" onclick="PlayMidi()">Проиграть</button>
+	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
 	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
 </p>
 
 <hr>
 <div id="output"></div>
 <hr>
-
-<script type="text/javascript">
-if(location.search)
-{
-	var url = location.search.substr(1);
-	var play = url.indexOf('!')==0;
-	if(play) url = url.substr(1);
-	var use_streaming = url.indexOf('~')==0;
-	if(use_streaming) url = url.substr(1);
-	document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
-	document.getElementById('use_streaming').checked = use_streaming;
-	if(play) setTimeout(PlayMidi, 100);
-}
-if(!(window.AudioContext || window.webkitAudioContext))
-{
-	var output = document.getElementById('output');
-	output.innerHTML = "<font color=red>Этот браузер не поддерживает Web Audio API!</font>";
-}
-</script>
