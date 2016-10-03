@@ -1,4 +1,15 @@
-<script type="text/javascript" src="MusicSynthesizer.js"></script>
+<noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
+<p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" style="width:100%" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
+<label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
+
+<p>
+	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
+	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
+</p>
+
+<hr>
+<div id="output"></div>
+<hr>
 
 <script type="text/javascript">
 	var gScript = document.createElement('script');
@@ -90,15 +101,3 @@
 	}
 </script>
 
-<noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
-<p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" style="width:100%" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
-<label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
-
-<p>
-	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
-	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
-</p>
-
-<hr>
-<div id="output"></div>
-<hr>
