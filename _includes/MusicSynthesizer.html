@@ -36,7 +36,28 @@
 			}
 		};
 		
-		function StopAllNonStreamedSounds()
+		gScript.loaded = true;
+		if(gAutoPlay) PlayMidi();
+	}
+	
+	if(location.search)
+	{
+		var url = location.search.substr(1);
+		gAutoPlay = url.indexOf('!')==0;
+		if(gAutoPlay) url = url.substr(1);
+		var use_streaming = url.indexOf('~')==0;
+		if(use_streaming) url = url.substr(1);
+		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
+		document.getElementById('use_streaming').checked = use_streaming;
+	}
+	if(!(window.AudioContext || window.webkitAudioContext))
+	{
+		var output = document.getElementById('output');
+		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
+	}
+	
+	
+	function StopAllNonStreamedSounds()
 		{
 			if(Module.gWebAudioInstanceArray===undefined) return;
 			var i;
@@ -79,25 +100,5 @@
 			stringToUTF8(url, outPtr, url.length*2);
 			Module._PlayUrl(outPtr, use_streaming);
 		}
-		
-		gScript.loaded = true;
-		if(gAutoPlay) PlayMidi();
-	}
-	
-	if(location.search)
-	{
-		var url = location.search.substr(1);
-		gAutoPlay = url.indexOf('!')==0;
-		if(gAutoPlay) url = url.substr(1);
-		var use_streaming = url.indexOf('~')==0;
-		if(use_streaming) url = url.substr(1);
-		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
-		document.getElementById('use_streaming').checked = use_streaming;
-	}
-	if(!(window.AudioContext || window.webkitAudioContext))
-	{
-		var output = document.getElementById('output');
-		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
-	}
 </script>
 
