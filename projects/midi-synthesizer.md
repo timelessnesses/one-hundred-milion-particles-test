@@ -7,7 +7,7 @@ title: Синтезатор MIDI
  Является частью библиотеки [IntraLib](../intra-lib).
  
 - [Репозиторий](https://github.com/gammaker/Intra/)
-- [Бинарный файл Windows](https://github.com/gammaker/Intra/tree/master/Build/Release/MusicSynthesizer.exe?raw=true)
+- [Бинарный файл Windows](https://github.com/gammaker/Intra/blob/master/Build/Release/MusicSynthesizer.exe?raw=true)
 - [Онлайн-версия](/midisynth/)
 
 Сам [проект](https://github.com/gammaker/Intra/tree/master/MusicSynthesizer) состоит только из управляющего кода, а основной код синтезатора находится в IntraLib/Sound.
