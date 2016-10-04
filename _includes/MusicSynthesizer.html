@@ -1,6 +1,15 @@
 <meta charset="utf-8"/>
 <noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
-<p><b>URL MIDI-файла:</b><br><input type="text" id="midi_url" style="width:100%" value="http://gammaker.github.io/midi/HesaPirate.mid"></p>
+<p>
+	<label><input type="radio" name="midi_source" id="url" value="url" checked>URL MIDI-файла:</label> 
+	<input type="text" id="midi_url" style="width:70%" value="http://gammaker.github.io/midi/HesaPirate.mid">
+</p>
+
+<p>
+	<label><input type="radio" name="midi_source" id="file" value="file">Локальный файл:</label> 
+	<input type="file" id="midi_file" style="width:70%" onChange="getElementById('file').checked=true">
+</p>
+
 <label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
 
 <p>
@@ -105,11 +114,31 @@
 		var use_streaming = document.getElementById('use_streaming').checked;
 		output.innerHTML = '';
 		
-		var url = GetUrl();
-		var outPtr = Module._malloc(url.length*2);
-		stringToUTF8(url, outPtr, url.length*2);
-		Module._PlayUrl(outPtr, use_streaming);
-		Module._free(outPtr);
+		var urlChecked = document.getElementById('url').checked;
+		
+		if(urlChecked)
+		{
+			var url = GetUrl();
+			var outPtr = Module._malloc(url.length*2);
+			stringToUTF8(url, outPtr, url.length*2);
+			Module._PlayUrl(outPtr, use_streaming);
+			Module._free(outPtr);
+		}
+		else
+		{
+			var midiFiles = document.getElementById('midi_file').files;
+			if(midiFiles.length==0) return;
+			var reader = new FileReader();
+			reader.onload = function(e)
+			{
+				var inArr = new Uint8Array(e.target.result);
+				var outPtr = Module._malloc(inArr.length);
+				Module.HEAPU8.subarray(outPtr, outPtr+inArr.length).set(inArr);
+				Module._PlayMidiFileInMemory(outPtr, inArr.length, use_streaming);
+				Module._free(outPtr);
+			};
+			reader.readAsArrayBuffer(midiFiles[0]);
+		}
 	}
 	
 	function Download(url)
