@@ -1,0 +1,110 @@
+﻿<html>
+
+<script id="VertexTemplateCode" type="x-shader/x-vertex">
+
+#version 100
+attribute float ParticleID;
+uniform float StartIndex;
+uniform mat4 WorldViewMatrix;
+uniform mat4 ProjMatrix;
+
+uniform float MinSizeOrder,MaxSizeOrder;
+
+uniform float Time,Rate,LifeTime;
+uniform vec2 ViewportSize;
+
+varying vec4 vColor;
+
+float frand(vec2 seed){return fract(sin(dot(seed,vec2(12.9898,78.233)))*43758.5453);}
+vec3 f3rand(vec2 seed){return vec3(frand(seed),frand(seed+vec2(1.2345,0.)),frand(seed+vec2(0.,1.2345)));}
+
+mat3 RotationEulerMatrix(vec3 rotRads)
+{
+	vec3 cos_r=cos(rotRads),sin_r=-sin(rotRads);
+	return mat3(cos_r.y*cos_r.z,-sin_r.z*cos_r.x+cos_r.z*sin_r.y*sin_r.x,sin_r.x*sin_r.z+cos_r.z*sin_r.y*cos_r.x,
+		cos_r.y*sin_r.z,cos_r.z*cos_r.x+sin_r.y*sin_r.z*sin_r.x,-sin_r.x*cos_r.z+sin_r.x*sin_r.z*cos_r.x,
+		-sin_r.y, cos_r.y*sin_r.x, cos_r.y*cos_r.x);
+}
+
+vec4 GetColor(float factor,float t,float birthTime){${GetColor_Body}}
+float GetSize(float factor,float t,float birthTime){${GetSize_Body}}
+vec3 GetPosition(float t,vec3 origin,vec3 startVelocity,float birthTime){${GetPosition_Body}}
+vec3 GetEmitterPosition(float t){${GetEmitterPosition_Body}}
+vec3 GetEmitterRotationAngles(float t){${GetEmitterRotationAngles_Body}}
+void GetStartParameters(float t,out vec3 origin,out vec3 velocity){${GetStartParameters_Body}}
+
+
+void main()
+{
+	//Идентификация частицы и вычисление основных параметров
+	float minTLT=min(Time,LifeTime); //Сколько времени назад ни одной из обрабатываемых в кадре частиц ещё не существовало
+	float birthTime=(floor((Time-minTLT)*Rate)+StartIndex+ParticleID)/Rate;
+	float t=Time-birthTime;
+	float leftLT=LifeTime+birthTime-Time;
+	float factor=1.0-leftLT/LifeTime;
+
+	//Состояние эмиттера в момент рождения рассматриваемой частицы
+	vec3 emitterPosition=GetEmitterPosition(birthTime);
+	vec3 emitterRotation=GetEmitterRotationAngles(birthTime);
+
+	//Начальная координата и скорость рассматриваемой частицы относительно эмиттера
+	vec3 origin,startVelocity;
+	GetStartParameters(birthTime,origin,startVelocity);
+
+	//Вычисляем текущие параметры рассматриваемой частицы
+	vec3 pos=emitterPosition+RotationEulerMatrix(emitterRotation)*GetPosition(t,origin,startVelocity,birthTime);
+	vec4 color=GetColor(factor,t,birthTime);
+	float size=GetSize(factor,t,birthTime);
+
+
+	//Отображение частицы на экран
+	vec4 eyePos=WorldViewMatrix*vec4(pos,1.);
+	vec4 projVoxel=ProjMatrix*vec4(vec2(size),eyePos.zw);
+	gl_PointSize=0.25/projVoxel.w*dot(ViewportSize,projVoxel.xy);
+	gl_Position=ProjMatrix*eyePos;
+	vColor=color;
+}
+
+</script>
+
+<script id="FragmentShaderCode" type="x-shader/x-fragment">
+
+#version 100
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+varying vec4 vColor;
+void main()
+{
+	vec2 coord=gl_PointCoord.xy-vec2(0.5);
+	float factor=1.0-dot(coord, coord)*4.0;
+	gl_FragColor=vColor*factor;
+}
+
+</script>
+
+<head>
+<meta charset="utf-8">
+<title>Flying Particles</title>
+
+<script type="text/javascript" src="sylvester.js"></script>
+<script type="text/javascript" src="glUtils.js"></script>
+
+<script type="text/javascript" src="util.js"></script>
+<script type="text/javascript" src="shader.js"></script>
+<script type="text/javascript" src="music.js"></script>
+
+</head>
+
+
+
+<body onresize="Demo.OnWindowResize()">
+
+<canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+<script type="text/javascript" src="demo.js" onload="Demo.Init()"></script>
+
+</body>
+
+</html>
