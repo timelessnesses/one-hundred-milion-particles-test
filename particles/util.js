@@ -47,3 +47,15 @@ function SetMatrixUniform(gl, programId, name, mat)
     var loc = gl.getUniformLocation(programId, name);
     gl.uniformMatrix4fv(loc, false, new Float32Array(mat.flatten())); 
 }
+
+
+
+window.requestAnimFrame = window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 33.3);
+              };
+ 

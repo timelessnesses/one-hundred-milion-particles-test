@@ -168,7 +168,6 @@ Demo =
 		};
 		
 		this.OnWindowResize();
-		setInterval(RenderFrame, 33);
 	},
 	
 	Step : function()
@@ -205,4 +204,10 @@ var RenderFrame = function()
 		particleCount -= 16384;
 	}
 	Demo.gl.disableVertexAttribArray(0);
+};
+
+function DemoMainLoop()
+{
+	RenderFrame();
+	window.requestAnimFrame(DemoMainLoop);
 };
