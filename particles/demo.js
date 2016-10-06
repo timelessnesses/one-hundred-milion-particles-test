@@ -168,12 +168,12 @@ Demo =
 		};
 		
 		this.OnWindowResize();
-		setInterval(RenderFrame, 15);
+		setInterval(RenderFrame, 33);
 	},
 	
 	Step : function()
 	{
-		var delta = 0.015;
+		var delta = 0.033;
 		this.absTime += delta;
 
 		if(this.upPressed) delta *= 5;
