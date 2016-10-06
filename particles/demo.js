@@ -159,6 +159,7 @@ Demo =
 			if(e.keyCode==38) Demo.upPressed = true;
 			if(e.keyCode==40) Demo.downPressed = true;
 			if(e.keyCode==80) Demo.paused = !Demo.paused;
+			if(e.keyCode==115) Demo.canvas.requestFullScreen();
 		};
 		
 		window.onkeyup = function(e)
@@ -166,6 +167,8 @@ Demo =
 			if(e.keyCode==38) Demo.upPressed = false;
 			if(e.keyCode==40) Demo.downPressed = false;
 		};
+		
+		
 		
 		this.OnWindowResize();
 	},
