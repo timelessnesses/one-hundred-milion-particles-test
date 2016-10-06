@@ -159,7 +159,12 @@ Demo =
 			if(e.keyCode==38) Demo.upPressed = true;
 			if(e.keyCode==40) Demo.downPressed = true;
 			if(e.keyCode==80) Demo.paused = !Demo.paused;
-			if(e.keyCode==115) Demo.canvas.requestFullScreen();
+			if(e.keyCode==115)
+			{
+				if(Demo.canvas.requestFullScreen) Demo.canvas.requestFullScreen();
+				else if(Demo.canvas.webkitRequestFullScreen) Demo.canvas.webkitRequestFullScreen();
+				else Demo.canvas.mozRequestFullScreen();
+			}
 		};
 		
 		window.onkeyup = function(e)
