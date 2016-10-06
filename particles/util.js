@@ -1,7 +1,7 @@
 
 function IsEmptyString(str)
 {
-	return /^\s+$/.test(str);
+	return str=="" || /^\s+$/.test(str);
 }
 
 function CompileShader(gl, code, type)
