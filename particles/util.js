@@ -1,10 +1,16 @@
 
+function IsEmptyString(str)
+{
+	return /^\s+$/.test(str);
+}
+
 function CompileShader(gl, code, type)
 {
 	var sh = gl.createShader(type);
 	gl.shaderSource(sh, code);
 	gl.compileShader(sh);
-	console.log(gl.getShaderInfoLog(sh));
+	var log = gl.getShaderInfoLog(sh);
+	if(!IsEmptyString(log)) console.log(log);
 	return sh;
 }
 
@@ -15,7 +21,8 @@ function LinkShaderProgram(gl, vertexShaderId, fragmentShaderId)
 	gl.attachShader(prog, fragmentShaderId);
 	gl.linkProgram(prog);
 	gl.useProgram(prog);
-	console.log(gl.getProgramInfoLog(prog));
+	var log = gl.getProgramInfoLog(prog);
+	if(!IsEmptyString(log)) console.log(log);
 	return prog;
 }
 

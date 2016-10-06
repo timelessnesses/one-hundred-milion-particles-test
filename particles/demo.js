@@ -158,7 +158,7 @@ Demo =
 			if(Demo.speed>0 && e.keyCode==37 || Demo.speed<0 && e.keyCode==39) Demo.speed = -Demo.speed; //left or right
 			if(e.keyCode==38) Demo.upPressed = true;
 			if(e.keyCode==40) Demo.downPressed = true;
-			if(e.keyCode==80) Demo.paused = !paused;
+			if(e.keyCode==80) Demo.paused = !Demo.paused;
 		};
 		
 		window.onkeyup = function(e)
