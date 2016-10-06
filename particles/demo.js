@@ -219,7 +219,7 @@ function DemoMainLoop()
     var dt = now - (gPrevTime || now);
 	gPrevTime = now;
 	
-	Demo.Step(dt);
+	Demo.Step(dt/1000);
 	RenderFrame();
 	window.requestAnimFrame(DemoMainLoop);
     time = now;
