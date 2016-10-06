@@ -130,7 +130,6 @@ Demo =
 		this.gl.uniform1f(this.maxSizeOrderLoc, 2.5);
 
 		this.time = 0;
-		this.absTime = 0;
 		this.speed = 0.5;
 		this.paused = false;
 		
@@ -213,10 +212,13 @@ var RenderFrame = function()
 	Demo.gl.disableVertexAttribArray(0);
 };
 
+var gPrevTime;
 function DemoMainLoop()
 {
 	var now = new Date().getTime();
-    var dt = now - (Demo.absTime || now);
+    var dt = now - (gPrevTime || now);
+	gPrevTime = now;
+	
 	Demo.Step(dt);
 	RenderFrame();
 	window.requestAnimFrame(DemoMainLoop);
