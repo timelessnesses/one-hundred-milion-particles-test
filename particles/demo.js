@@ -178,10 +178,10 @@ Demo =
 		this.OnWindowResize();
 	},
 	
-	Step : function()
+	Step : function(dt)
 	{
-		var delta = 0.033;
-		this.absTime += delta;
+		var delta = dt;
+		this.absTime += dt;
 
 		if(this.upPressed) delta *= 5;
 		else if(this.downPressed) delta *= -5;
@@ -195,7 +195,6 @@ Demo =
 
 var RenderFrame = function()
 {
-	Demo.Step();
 	Demo.gl.clear(Demo.gl.COLOR_BUFFER_BIT);
 
 	Demo.worldViewMatrix = TranslationMatrix([0, 0, -7]).x(RotationMatrixDeg(Demo.time*20, [0.1, 0.9, 0]));
@@ -216,6 +215,10 @@ var RenderFrame = function()
 
 function DemoMainLoop()
 {
+	var now = new Date().getTime();
+    var dt = now - (Demo.absTime || now);
+	Demo.Step(dt);
 	RenderFrame();
 	window.requestAnimFrame(DemoMainLoop);
+    time = now;
 };
