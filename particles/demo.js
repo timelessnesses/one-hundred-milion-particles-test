@@ -197,7 +197,7 @@ var RenderFrame = function()
 
 	Demo.gl.enableVertexAttribArray(0);
 	var particleCount = Math.floor(Math.min(Demo.time, Demo.lifeTime)*Demo.rate);
-	var numBatches = (particleCount+16383)/16384;
+	var numBatches = Math.ceil(particleCount/16384);
 	for(var i=0; i<numBatches; i++)
 	{
 		Demo.gl.uniform1f(Demo.startIndexLoc, i*16384);
