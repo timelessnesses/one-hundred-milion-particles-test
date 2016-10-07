@@ -63,7 +63,7 @@ Demo =
 		
 		try
 		{
-			this.gl = this.canvas.getContext("webgl", {premultipliedAlpha: false});
+			this.gl = this.canvas.getContext("webgl", {premultipliedAlpha: false, alpha: false});
 			if(!this.gl) this.gl = this.canvas.getContext("experimental-webgl");
 		}
 		catch(e) {}
@@ -71,6 +71,8 @@ Demo =
 		if(!this.gl) alert("Could not initialize WebGL.");
 
 		this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		this.gl.clear(gl.COLOR_BUFFER_BIT);
+		this.gl.colorMask(true, true, true, false);
 
 		this.effect = {
 			VertexTemplateCode : GetShaderCode("VertexTemplateCode"),
