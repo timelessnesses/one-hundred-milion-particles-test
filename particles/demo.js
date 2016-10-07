@@ -53,6 +53,7 @@ Demo =
 		this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 		this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		SetMatrixUniform(this.gl, this.progId, "ProjMatrix", this.projMatrix);
+		this.gl.uniform2f(this.viewportLoc, this.canvas.width, this.canvas.height);
 	},
 
 	Init : function()
@@ -94,7 +95,6 @@ Demo =
 		this.lifeTimeLoc = this.gl.getUniformLocation(this.progId, "LifeTime");
 
 		this.viewportLoc = this.gl.getUniformLocation(this.progId, "ViewportSize");
-		this.gl.uniform2f(this.viewportLoc, this.canvas.width, this.canvas.height);
 
 		this.minSizeOrderLoc = this.gl.getUniformLocation(this.progId, "MinSizeOrder");
 		this.maxSizeOrderLoc = this.gl.getUniformLocation(this.progId, "MaxSizeOrder");
