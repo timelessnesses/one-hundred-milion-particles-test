@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 
 <head>
 <meta charset="utf-8">
@@ -23,8 +23,9 @@
 <p><label>Q: </label><br/><textarea cols="100" rows="5" id="SequenceQ" autocorrect="off" style="width:100%" value=""></textarea></p>
 <p><label>S: </label><br/><textarea cols="100" rows="5" id="SequenceS" autocorrect="off" style="width:100%" value=""></textarea></p>
 <p><label>d = </label><input type="number" step="any" id="GapPenalty" autocorrect="off" cols="5" value="100" min="0" max="1000000"></p>
+<p><label>Матрица замен </label><input type="text" step="any" id="ZName" autocorrect="off" cols="5" value="Z"></p>
 
-<p><button id="align" style="height:32px;width:96px" onclick="Align()">Выровнять</button></p>
+<p><button id="align" style="height:48px;width:256px;font-size: 18px" onclick="Align()">Построить выравнивание</button></p>
 
 <hr>
 <nobr>
@@ -37,7 +38,6 @@
 <input type="checkbox" id="spoilerid_1" checked><label for="spoilerid_1">
 Матрицы динамического программирования
 </label><div class="spoiler_body" id="DynProgMatrices">
-Здесь должны идти три матрицы динамического программирования.
 </div></div>
 
 <br/>
@@ -47,13 +47,12 @@
 Процедура обратного прохода
 </label><div class="spoiler_body">
 <pre id="TracebackOutput">
-Здесь должен идти вывод пути, пройденного процедурой обратного прохода.
 </pre>
 </div></div>
 
 <script type="text/javascript">
 	var gScript = document.createElement('script');
-	gScript.src = "Sequences.js"
+	gScript.src = "SeqLib.js"
 	document.body.appendChild(gScript);
 	gScript.loaded = false;
 	
@@ -74,24 +73,11 @@
 	  }).replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\r/g, "<br/>");
 	}
 	
-	var gAutoPlay = false;
+	var gAutoAlign = false;
 	gScript.onload = function()
 	{
-		Module['print'] = function(text)
-		{
-			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
-			if(text.replace===undefined) return;
-			text = escapeHtml(text);
-			console.log(text);
-			var output = document.getElementById('output');
-			if(output)
-			{
-				output.innerHTML += text + "<br/>";
-				output.scrollTop = output.scrollHeight;
-			}
-		};
-		
 		gScript.loaded = true;
+		if(gAutoAlign) Align();
 	}
 	
 	function getParameterByName(name, url)
@@ -112,21 +98,9 @@
 		var sseq = getParameterByName("sseq");
 		document.getElementById('SequenceS').value = sseq==null? "": sseq;
 		var d = parseFloat(getParameterByName("d"));
+		if(getParameterByName("auto")!=null) gAutoAlign = true;
+
 		if(!isNaN(d)) document.getElementById('GapPenalty').value = d.toString();
-	}
-	
-	function Download(url)
-	{
-		var hiddenIFrameID = 'hiddenDownloader';
-		var iframe = document.getElementById(hiddenIFrameID);
-		if(iframe===null)
-		{
-			iframe = document.createElement('iframe');
-			iframe.id = hiddenIFrameID;
-			iframe.style.display = 'none';
-			document.body.appendChild(iframe);
-		}
-		iframe.src = url;
 	}
 	
 	function RemoveNonSeqChars(str)
@@ -138,12 +112,13 @@
 	{
 		if(!gScript.loaded)
 		{
-			alert("Script is not loaded!");
+			gAutoAlign = true;
 			return;
 		}
 	
 		var srcQ = RemoveNonSeqChars(document.getElementById('SequenceQ').value).toUpperCase();
 		var srcS = RemoveNonSeqChars(document.getElementById('SequenceS').value).toUpperCase();
+		var zName = document.getElementById('ZName').value;
 		var d = parseFloat(document.getElementById('GapPenalty').value);
 		if(isNaN(d)) d = 100;
 		
@@ -151,7 +126,10 @@
 		stringToUTF8(srcQ, srcQPtr, srcQ.length*2);
 		var srcSPtr = Module._malloc(srcS.length*2);
 		stringToUTF8(srcS, srcSPtr, srcS.length*2);
-		var resultsPtr = Module._EmPairAlign(srcQPtr, srcSPtr, d);
+		var zNamePtr = Module._malloc((zName.length+4)*2);
+		stringToUTF8(zName+".bin", zNamePtr, (zName.length+4)*2);
+		var resultsPtr = Module._SeqLibC_PairAlign(srcQPtr, srcSPtr, zNamePtr, d, true, true);
+		Module._free(zNamePtr);
 		Module._free(srcSPtr);
 		Module._free(srcQPtr);
 		
@@ -160,15 +138,11 @@
 		var alignmentS = Pointer_stringify(Module.HEAPU32[resultsPtr/4+2]);
 		var matricesOutput = Pointer_stringify(Module.HEAPU32[resultsPtr/4+3]);
 		var tracebackOutput = Pointer_stringify(Module.HEAPU32[resultsPtr/4+4]);
-		Module._free(Module.HEAPU32[resultsPtr/4+1]);
-		Module._free(Module.HEAPU32[resultsPtr/4+2]);
-		Module._free(Module.HEAPU32[resultsPtr/4+3]);
-		Module._free(Module.HEAPU32[resultsPtr/4+4]);
-		Module._free(resultsPtr);
+		Module._SeqLibC_PairAlignCleanUp(resultsPtr);
 		
 		document.getElementById('Alignment').innerHTML = alignmentQ+'<br/>'+alignmentS+'<br/>'+"Вес = "+(Math.round(score*100)/100).toString();
 		document.getElementById('DynProgMatrices').innerHTML = matricesOutput;
-		document.getElementById('TracebackOutput').innerHTML = escapeHtml(tracebackOutput);
+		document.getElementById('TracebackOutput').innerHTML = tracebackOutput;
 	}
 </script>
 
