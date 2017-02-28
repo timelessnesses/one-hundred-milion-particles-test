@@ -48,8 +48,8 @@ Demo =
 	
 	OnWindowResize : function()
 	{
-		Demo.canvas.width  = window.innerWidth;
-		Demo.canvas.height = window.innerHeight;
+		Demo.canvas.width  = window.innerWidth - 20;
+		Demo.canvas.height = window.innerHeight - 20;
 		this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 		this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		SetMatrixUniform(this.gl, this.progId, "ProjMatrix", this.projMatrix);
@@ -204,19 +204,23 @@ var RenderFrame = function()
 
 	Demo.gl.enableVertexAttribArray(0);
 	var particleCount = Math.floor(Math.min(Demo.time, Demo.lifeTime)*Demo.rate);
-	var numBatches = Math.ceil(particleCount/16384);
+    var batchSize = 16000
+	var numBatches = Math.ceil(particleCount/batchSize);
+    document.getElementById("particles.div").innerHTML = "Particles: " + particleCount;
 	for(var i=0; i<numBatches; i++)
 	{
-		Demo.gl.uniform1f(Demo.startIndexLoc, i*16384);
-		Demo.gl.drawArrays(Demo.gl.POINTS, 0, Math.min(particleCount, 16384));
-		particleCount -= 16384;
+		Demo.gl.uniform1f(Demo.startIndexLoc, i*batchSize);
+		Demo.gl.drawArrays(Demo.gl.POINTS, 0, Math.min(particleCount, batchSize));
+		particleCount -= batchSize;
 	}
 	Demo.gl.disableVertexAttribArray(0);
 };
 
 var gPrevTime;
-function DemoMainLoop()
-{
+var frames = 0
+var fpstime = new Date().getTime()
+
+function DemoMainLoop() {
 	var now = new Date().getTime();
     var dt = now - (gPrevTime || now);
 	gPrevTime = now;
@@ -225,4 +229,13 @@ function DemoMainLoop()
 	RenderFrame();
 	window.requestAnimFrame(DemoMainLoop);
     time = now;
-};
+
+    frames++;
+    // update FPS two times per second
+    if (now - fpstime > 500) {
+        document.getElementById("fps.div").innerHTML = "FPS: " + (frames / (now - fpstime) * 1000).toFixed(2);
+        fpstime = now
+        frames = 0
+    }
+}
+

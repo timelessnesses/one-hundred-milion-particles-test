@@ -96,12 +96,22 @@ void main()
 <script type="text/javascript" src="shader.js"></script>
 <script type="text/javascript" src="music.js"></script>
 
+<style>
+div.info {
+    color: yellow;
+    position:absolute;
+    left: 20;
+    font-size:16pt;
+    font-family: "Courier New";
+}
+</style>
+
 </head>
-
-
 
 <body onresize="Demo.OnWindowResize()">
 
+<div class="info" id="particles.div" style="top:20;"></div>
+<div class="info" id="fps.div" style="top:50;"></div>
 <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
 <script type="text/javascript" src="demo.js" onload="Demo.Init(); DemoMainLoop()"></script>
 
