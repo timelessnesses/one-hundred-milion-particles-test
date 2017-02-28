@@ -204,9 +204,9 @@ var RenderFrame = function()
 
 	Demo.gl.enableVertexAttribArray(0);
 	var particleCount = Math.floor(Math.min(Demo.time, Demo.lifeTime)*Demo.rate);
-    var batchSize = 16000
+	var batchSize = 16384;
 	var numBatches = Math.ceil(particleCount/batchSize);
-    document.getElementById("particles.div").innerHTML = "Particles: " + particleCount;
+	document.getElementById("particles.div").innerHTML = "Particles: " + particleCount;
 	for(var i=0; i<numBatches; i++)
 	{
 		Demo.gl.uniform1f(Demo.startIndexLoc, i*batchSize);
@@ -222,7 +222,7 @@ var fpstime = new Date().getTime()
 
 function DemoMainLoop() {
 	var now = new Date().getTime();
-    var dt = now - (gPrevTime || now);
+	var dt = now - (gPrevTime || now);
 	gPrevTime = now;
 	
 	Demo.Step(dt/1000);
