@@ -65,3 +65,8 @@ title: Синтезатор MIDI
 - [Пусть бегут неуклюже пешеходы по лужам](/midisynth/?~./Крокодил Гена - Пусть Бегут Неуклюже Пешеходы По Лужам (День Рождения).mid)
 - [My Way](/midisynth/?~./MyWay1.mid)
 - [Smackthat](/midisynth/?~./Smackthat.mid)
+- [Harry Potter](/midisynth/?~./HarryPotter.mid)
+- [Green Sleeves](/midisynth/?~./Greensleeves.mid)
+- [Santa Lucia](/midisynth/?~./SantaLucia.mid)
+- [Skater Waltz](/midisynth/?~./skaterwaltz.mid)
+- [ThemeB](/midisynth/?~./ThemeB.mid)
