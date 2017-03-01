@@ -68,5 +68,5 @@ title: Синтезатор MIDI
 - [Harry Potter](/midisynth/?~./HarryPotter.mid)
 - [Green Sleeves](/midisynth/?~./Greensleeves.mid)
 - [Santa Lucia](/midisynth/?~./SantaLucia.mid)
-- [Skater Waltz](/midisynth/?~./skaterwaltz.mid)
+- [Skater Waltz](/midisynth/?~./skaterswaltz.mid)
 - [ThemeB](/midisynth/?~./ThemeB.mid)
