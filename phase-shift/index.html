@@ -1,0 +1,185 @@
+<html>
+
+<head>
+<meta charset="utf-8">
+
+<style>
+.spoiler > input + label:after{content: "+";float: right;font-family: monospace;font-weight: bold; color: FFF}
+.spoiler > input:checked + label:after{content: "-";float: right;font-family: monospace;font-weight: bold; color: FFF}
+.spoiler > input{display:none;}
+.spoiler > input + label , .spoiler > .spoiler_body{background:#2C4;padding:5px 15px;width:100%;box-sizing: border-box;display: block;}
+.spoiler > input + label + .spoiler_body{display:none;}
+.spoiler > input:checked + label + .spoiler_body{display: block;}
+.spoiler > .spoiler_body{background: #FFF;border: 3px solid #CCC;border-top: none;}
+</style>
+
+</head>
+
+<body>
+
+
+<noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+
+<p><label>Нуклеотидная последовательность: </label><br/><textarea cols="100" rows="25" id="Sequence" autocorrect="off" style="width:100%" value=""></textarea></p>
+<div class="spoiler">
+<input type="checkbox" id="spoilerid_3"><label for="spoilerid_3">
+Генерация нуклеотидной последовательности
+</label><div class="spoiler_body" id="Generate">
+<p><label>Период </label><input type="text" id="GeneratePeriod" autocorrect="off" cols="100" value="ATG"></p>
+<p><label>Длина </label><input type="number" step="1" id="GenerateLength" autocorrect="off" cols="5" value="1000" min="0" max="10000"></p>
+<p><label>Процент мутаций </label><input type="number" step="1" id="GenerateRandomness" autocorrect="off" cols="3" value="50" min="0" max="100">%</p>
+<p><label>Зерно </label><input type="number" step="1" id="GenerateSeed" autocorrect="off" cols="10" value="785349" min="-3000000000" max="5000000000"></p>
+<p><button id="Generate" style="height:48px;width:256px;font-size: 18px" onclick="Generate()">Сгенерировать</button></p>
+</div></div>
+
+<br/>
+
+<h2>Параметры алгоритма</h2>
+<p><label>d = </label><input type="number" step="1" id="GapPenalty" autocorrect="off" cols="5" value="35" min="1" max="1000"></p>
+<p><label>Количество матриц </label><input type="number" step="1" id="MatrixCount" autocorrect="off" cols="5" value="1" min="1" max="1000"></p>
+<p><label>Мин. расстояние между матрицами D<sub>0</sub> = </label><input type="number" step="0.1" id="MinDist" autocorrect="off" cols="5" value="0.5" min="0" max="3"></p>
+<p><label>Макс. итераций </label><input type="number" step="1" id="MaxIterations" autocorrect="off" cols="5" value="50" min="1" max="1000"></p>
+
+<p><button id="start" style="height:48px;width:256px;font-size: 18px" onclick="Start()">Старт</button></p>
+
+<div class="spoiler">
+<input type="checkbox" id="spoilerid_1" checked><label for="spoilerid_1">
+Результат
+</label><div class="spoiler_body" id="Result">
+</div></div>
+
+<br/>
+
+<div class="spoiler">
+<input type="checkbox" id="spoilerid_2" checked><label for="spoilerid_2">
+Выравнивание
+</label><div class="spoiler_body">
+<pre id="Alignment">
+</pre>
+</div></div>
+
+<script type="text/javascript">
+	var gScript = document.createElement('script');
+	gScript.src = "phaseshift.js";
+	document.body.appendChild(gScript);
+	gScript.loaded = false;
+	var gAutoRun = false;
+    var Module = {
+	    onRuntimeInitialized: function()
+	    {
+		    gScript.loaded = true;
+		    if(gAutoRun) Start();
+	    }
+    };
+	
+	function getParameterByName(name, url)
+	{
+		if(!url) url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+		var results = regex.exec(url);
+		if(!results) return null;
+		if(!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+	
+	if(location.search)
+	{
+		var s = getParameterByName("s");
+		document.getElementById('Sequence').value = s==null? "": s;
+		var d = parseFloat(getParameterByName("d"));
+		if(getParameterByName("auto") != null) gAutoRun = true;
+		if(!isNaN(d)) document.getElementById('GapPenalty').value = d.toString();
+		
+		var period = getParameterByName("period");
+		if(period != null && period.length != 0)
+		{
+			period = RemoveNonSeqChars(period).toUpperCase();
+			document.getElementById('GeneratePeriod').value = period;
+		}
+		
+		var randomness = parseInt(getParameterByName("randomness"));
+		if(!isNaN(randomness)) document.getElementById('GenerateRandomness').value = randomness.toString();
+		
+		var length = parseInt(getParameterByName("length"));
+		if(!isNaN(length)) document.getElementById('GenerateLength').value = length.toString();
+		
+		var seed = parseInt(getParameterByName("seed"));
+		if(!isNaN(seed)) document.getElementById('GenerateSeed').value = seed.toString();
+
+		var minDist = parseFloat(getParameterByName("mindist"));
+		if(!isNaN(minDist)) document.getElementById('MinDist').value = minDist.toString();
+		
+		var maxIter = parseInt(getParameterByName("maxiter"));
+		if(!isNaN(maxIter)) document.getElementById('MaxIterations').value = maxIter.toString();
+		
+		var matrixCount = parseInt(getParameterByName("matrices"));
+		if(!isNaN(matrixCount)) document.getElementById('MatrixCount').value = matrixCount.toString();
+		
+		if(getParameterByName("gen") != null) Generate();
+	}
+	
+	function RemoveNonSeqChars(str)
+	{
+		return str.replace(/\s/g, '');
+	}
+	
+	function Generate()
+	{
+		var period = RemoveNonSeqChars(document.getElementById('GeneratePeriod').value).toUpperCase();
+		if(period.length == 0) period = "ATG";
+		var randomness = parseInt(document.getElementById('GenerateRandomness').value);
+		var length = parseInt(document.getElementById('GenerateLength').value);
+		var seed = parseInt(document.getElementById('GenerateSeed').value);
+		
+		var result = "";
+		for(var i=0; i<length; i++)
+		{
+			var c = period.charAt(i % period.length);
+			seed = (seed*16807) & 0xFFFFFFFF;
+			if((seed >> 16) % 100 < randomness) c = "ATGC".charAt((seed >> 23) & 3);
+			result += c;
+			if(i % 50 == 49) result += '\n';
+		}
+		document.getElementById('Sequence').value = result;
+	}
+	
+	function Start()
+	{
+		if(!gScript.loaded)
+		{
+			gAutoRun = true;
+			return;
+		}
+	
+		var src = RemoveNonSeqChars(document.getElementById('Sequence').value);
+		var d = parseFloat(document.getElementById('GapPenalty').value);
+		if(isNaN(d)) d = 30;
+		var matrixCount = parseInt(document.getElementById('MatrixCount').value);
+		var minDist = parseFloat(document.getElementById('MinDist').value);
+		if(isNaN(minDist)) minDist = 0.5;
+		var maxIterations = parseInt(document.getElementById('MaxIterations').value);
+		
+		var srcPtr = Module._malloc(src.length*2);
+		var stringPointersArrPtr = Module._malloc(12);
+		stringToUTF8(src, srcPtr, src.length*2);
+		Module._CBinding_FindPhases(srcPtr, d, matrixCount, minDist,
+			maxIterations, stringPointersArrPtr, stringPointersArrPtr+4, stringPointersArrPtr+8);
+		Module._free(srcPtr);
+		
+		var matrixStr = Pointer_stringify(Module.HEAPU32[stringPointersArrPtr/4]);
+		var alignmentStr = Pointer_stringify(Module.HEAPU32[stringPointersArrPtr/4+1]);
+		var coloredPhasesStr = Pointer_stringify(Module.HEAPU32[stringPointersArrPtr/4+2]);
+		Module._free(Module.HEAPU32[stringPointersArrPtr/4]);
+		Module._free(Module.HEAPU32[stringPointersArrPtr/4+1]);
+		Module._free(Module.HEAPU32[stringPointersArrPtr/4+2]);
+		Module._free(stringPointersArrPtr);
+		
+		document.getElementById('Result').innerHTML = "<h2>Матрица</h2>"+matrixStr + "<br/><h2>Веса</h2>" + coloredPhasesStr;
+		document.getElementById('Alignment').innerHTML = alignmentStr;
+	}
+</script>
+
+</body>
+
+</html>
