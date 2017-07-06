@@ -4,7 +4,7 @@ title: Синтезатор MIDI
 ---
 
  Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме самого MIDI-файла.
- Является частью библиотеки [IntraLib](../intra-lib).
+ Является частью библиотеки [Intra](../intra-lib).
  
 - [Репозиторий](https://github.com/gammaker/Intra/)
 - [Бинарный файл Windows](https://github.com/gammaker/Intra/blob/master/Build/Release/MusicSynthesizer.exe?raw=true)
@@ -24,7 +24,7 @@ title: Синтезатор MIDI
 
 ### Поддерживаемые компиляторы:
 
-- MSVC 2013+;
+- MSVC 2015+;
 - GCC 4.8+;
 - Clang 3.3+.
  
@@ -70,3 +70,4 @@ title: Синтезатор MIDI
 - [Santa Lucia](/midisynth/?~./SantaLucia.mid)
 - [Skater Waltz](/midisynth/?~./skaterswaltz.mid)
 - [ThemeB](/midisynth/?~./ThemeB.mid)
+- [Resident Evil](/midisynth/?~./Resident_Evil_Main_Theme-guitar.mid)
