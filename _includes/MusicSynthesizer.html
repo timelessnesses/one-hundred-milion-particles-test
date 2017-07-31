@@ -28,26 +28,49 @@
 	document.body.appendChild(gScript);
 	gScript.loaded = false;
 	
+	function PrintLineRaw(text)
+	{
+		var output = document.getElementById('output');
+		if(output)
+		{
+			output.innerHTML += text + "<br/>";
+			output.scrollTop = output.scrollHeight;
+		}
+	}
+	
+	function EscapeString(text)
+	{
+		if(text.replace === undefined) return text;
+		text = text.replace(/&/g, "&amp;");
+		text = text.replace(/</g, "&lt;");
+		text = text.replace(/>/g, "&gt;");
+		text = text.replace(/\n/g, '<br/>');
+		return text;
+	}
+	
+	function PrintLine(text)
+	{
+		if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+		console.log(text);
+		PrintLineRaw(EscapeString(text));
+	}
+	
+	function PrintLineError(text)
+	{
+		console.log(text);
+		if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+		PrintLineRaw("<font color=red size=4>" + EscapeString(text) + "</font>");
+	}
+	
+	function ClearTextField()
+	{
+		var output = document.getElementById('output');
+		if(output) output.innerHTML = "";
+	}
+	
 	var gAutoPlay = false;
 	gScript.onload = function()
-	{
-		Module['print'] = function(text)
-		{
-			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
-			if(text.replace===undefined) return;
-			text = text.replace(/&/g, "&amp;");
-			text = text.replace(/</g, "&lt;");
-			text = text.replace(/>/g, "&gt;");
-			text = text.replace('\n', '<br/>', 'g');
-			console.log(text);
-			var output = document.getElementById('output');
-			if(output)
-			{
-				output.innerHTML += text + "<br/>";
-				output.scrollTop = output.scrollHeight;
-			}
-		};
-		
+	{	
 		gScript.loaded = true;
 		if(gAutoPlay) setTimeout(PlayMidi, 100);
 	}
@@ -55,9 +78,9 @@
 	if(location.search)
 	{
 		var url = location.search.substr(1);
-		gAutoPlay = url.indexOf('!')==0;
+		gAutoPlay = url.indexOf('!') == 0;
 		if(gAutoPlay) url = url.substr(1);
-		var use_streaming = url.indexOf('~')==0;
+		var use_streaming = url.indexOf('~') == 0;
 		if(use_streaming) url = url.substr(1);
 		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
 		document.getElementById('use_streaming').checked = use_streaming;
@@ -65,43 +88,7 @@
 	if(!(window.AudioContext || window.webkitAudioContext))
 	{
 		var output = document.getElementById('output');
-		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
-	}
-	
-	
-	function StopAllNonStreamedSounds()
-	{
-		if(Module.gWebAudioInstanceArray === undefined) return;
-		if(Module.gWebAudioBufferArray.length >= 3) alert("Bug: Very large sound array length: " + Module.gWebAudioBufferArray.length);
-		if(Module.gWebAudioInstanceArray.length >= 3) alert("Bug: Very large sound instance array length: " + Module.gWebAudioInstanceArray.length);
-		var i;
-		for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
-		{
-			if(Module.gWebAudioInstanceArray[i] == null) continue;
-			Module.gWebAudioInstanceArray[i].stop();
-			Module.gWebAudioInstanceArray[i] = null;
-		}
-	}
-	
-	function StopAllStreamedSounds()
-	{
-		if(Module.gWebAudioStreamArray === undefined) return;
-		if(Module.gWebAudioStreamArray.length >= 3) alert("Bug: Very large streamed sound array length: " + Module.gWebAudioStreamArray.length);
-		var i;
-		for(i=0; i<Module.gWebAudioStreamArray.length; i++)
-		{
-			var snd = Module.gWebAudioStreamArray[i];
-			if(snd==null || !snd.__is_playing) continue;
-			snd.disconnect(Module.gWebAudioContext.destination);
-			snd.__is_playing = false;
-			Module.gWebAudioStreamArray[i] = null;
-		}
-	}
-		
-	function StopAllSounds()
-	{
-		StopAllNonStreamedSounds();
-		StopAllStreamedSounds();
+		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
 	}
 	
 	function GetUrl()
@@ -109,41 +96,232 @@
 		var url = document.getElementById('midi_url').value;
 		if(url.indexOf('./') == 0) url = '/midi' + url.substr(1);
 		if(url.indexOf('/') == 0) url = document.domain + url;
-		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0) url = 'http://'+url;
+		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0) url = 'http://' + url;
 		return url;
 	}
+	
+	var gPreloadedMusic = null;
+	var gStreamedMusic = null;
+	var gTempBufferPtr = 0;
+	var gTempBufferSize = 16384;
+	var gAudioSourcePtr = 0;
+	var gWebAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+	var gNumChannels = 2;
+	
+	function PauseAllSounds()
+	{
+		if(gStreamedMusic != null) gStreamedMusic.disconnect(gWebAudioContext.destination);
+		if(gPreloadedMusic != null && gPreloadedMusic.buffer != null) gPreloadedMusic.stop();
+	}
+	
+	function StopAllSounds()
+	{
+		PauseAllSounds();
+		if(gAudioSourcePtr != 0)
+		{
+			Module._SourceFree(gAudioSourcePtr);
+			gAudioSourcePtr = 0;
+		}
+		gStreamedMusic = null;
+		if(gPreloadedMusic)
+		{
+			gPreloadedMusic.disconnect(gWebAudioContext.destination);
+			if(gPreloadedMusic.interval !== undefined && gPreloadedMusic.interval != null)
+				clearInterval(gPreloadedMusic.interval);
+			gPreloadedMusic = null;
+		}
+	}
+	
+	function ArrayBufferToHeap(arrayBuffer)
+	{
+		var bytes = new Uint8Array(arrayBuffer);
+		var ptr = Module._malloc(bytes.length);
+		Module.HEAPU8.subarray(ptr, ptr + bytes.length).set(bytes);
+		return ptr;
+	}
+	
+	function FillZeros(float32Array)
+	{
+		if(float32Array.fill === undefined)
+		{
+			for(var i = 0; i < float32Array.length; i++)
+				float32Array[i] = 0;
+		}
+		else float32Array.fill(0);
+	}
+	
+	function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
+	{
+		var bufferSize = gTempBufferSize;
+		StopAllSounds();
+		if(gStreamedMusic == null) gStreamedMusic = gWebAudioContext.createScriptProcessor(bufferSize, 0, gNumChannels);
+		if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(bufferSize*4*gNumChannels);
+		gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
+		if(gAudioSourcePtr == 0)
+		{
+			ClearTextField();
+			PrintLineError("Неверный формат MIDI файла.");
+			return;
+		}
 		
-	function PlayMidi()
+		gStreamedMusic.onaudioprocess = function(audioProcessingEvent)
+		{
+			if(gStreamedMusic.stopSoon)
+			{
+				gStreamedMusic.disconnect(gWebAudioContext.destination);
+				return;
+			}
+			var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, bufferSize, bufferSize);
+			var outputBuffer = audioProcessingEvent.outputBuffer;
+			var startIndex = gTempBufferPtr/4;
+			FillZeros(Module.HEAPF32.subarray(startIndex + samplesRead, startIndex + bufferSize));
+			FillZeros(Module.HEAPF32.subarray(startIndex + bufferSize + samplesRead, startIndex + 2*bufferSize));
+			for(var ch = 0; ch < gNumChannels; ch++)
+			{
+				if(outputBuffer.copyToChannel === undefined)
+				{
+					var outputData = outputBuffer.getChannelData(ch);
+					outputData.set(Module.HEAPF32.subarray(startIndex, startIndex + bufferSize));
+				}
+				else outputBuffer.copyToChannel(Module.HEAPF32.subarray(startIndex, startIndex+bufferSize), ch);
+				startIndex += bufferSize;
+			}
+			if(samplesRead < bufferSize) gStreamedMusic.stopSoon = true;
+		}
+		gStreamedMusic.connect(gWebAudioContext.destination);
+	}
+	
+	function PreloadBuffer(totalSamplesLeft, bufferOffset)
+	{
+		var buffersLeftToProcessInThisCall = 32;
+		var startIndex = gTempBufferPtr/4;
+		var outputBuffer = gPreloadedMusic.buffer;
+		while(totalSamplesLeft > 0 && buffersLeftToProcessInThisCall-- > 0)
+		{
+			var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, gTempBufferSize, gTempBufferSize);
+			if(samplesRead == 0) return;
+			for(var ch = 0; ch < gNumChannels; ch++)
+			{
+				var channelStartIndex = startIndex + ch * gTempBufferSize;
+				if(outputBuffer.copyToChannel === undefined)
+				{
+					var outputData = outputBuffer.getChannelData(ch);
+					outputData.set(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), bufferOffset);
+				}
+				else outputBuffer.copyToChannel(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), ch, bufferOffset);
+			}
+			bufferOffset += samplesRead;
+			totalSamplesLeft -= samplesRead;
+		}
+		var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
+		var synthPercent = document.getElementById('synthPercent');
+		if(synthPercent) synthPercent.innerHTML = percent.toFixed() + "%";
+		if(totalSamplesLeft > 0) gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
+		else
+		{
+			if(gPreloadedMusic.startTime !== undefined)
+			{
+				var synthTimeMs = performance.now() - gPreloadedMusic.startTime;
+				PrintLine("Время синтеза: " + synthTimeMs.toFixed(2));
+			}
+			PrintLine("Воспроизведение...");
+			gPreloadedMusic.connect(gWebAudioContext.destination);
+			gPreloadedMusic.start();
+			gPreloadedMusic.interval = null;
+		}
+	}
+	
+	function PlayMidiDataPtr(midiDataPtr, midiDataLength)
 	{
 		StopAllSounds();
+		
+		if(gPreloadedMusic == null) gPreloadedMusic = gWebAudioContext.createBufferSource();
+		if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(gTempBufferSize*4*gNumChannels);
+		
+		gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
+		var totalSamples = Module._SourceSamplesLeft(gAudioSourcePtr);
+		gPreloadedMusic.buffer = gWebAudioContext.createBuffer(gNumChannels, totalSamples, gWebAudioContext.sampleRate);
+		if(gAudioSourcePtr == 0)
+		{
+			ClearTextField();
+			PrintLineError("Неверный формат MIDI файла.");
+			return;
+		}
+		PrintLineRaw("Синтез... <span id='synthPercent'>0%</span>");
+		gPreloadedMusic.startTime = performance.now();
+		gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamples, 0);
+	}
 	
+	function GetMidiPtrInfoString(midiDataPtr, midiDataLength)
+	{
+		var cstrPtr = Module._GetMidiInfoString(midiDataPtr, midiDataLength);
+		var result = Module.UTF8ToString(cstrPtr);
+		Module._free(cstrPtr);
+		return result;
+	}
+	
+	function PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer)
+	{
+		var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
+		PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
+		PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+		PlayMidiDataPtrStreamed(midiDataPtr, midiDataArrayBuffer.byteLength);
+		Module._free(midiDataPtr);
+	}
+	
+	function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
+	{
+		var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
+		PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
+		PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+		PlayMidiDataPtr(midiDataPtr, midiDataArrayBuffer.byteLength);
+		Module._free(midiDataPtr);
+	}
+	
+	function DownloadBinaryFileAsArrayBuffer(url, successCallback)
+	{
+		ClearTextField();
+		PrintLine("Загрузка MIDI файла по адресу " + url + "...");
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function()
+		{
+			if(xhr.readyState == xhr.DONE)
+			{
+				if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
+				else PrintLine("<font color=red size=4>Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText + "</font>");
+			}
+		}
+		xhr.open("GET", url, true);
+		xhr.responseType = "arraybuffer";
+		xhr.send();
+	}
+	
+	function PlayMidi()
+	{
 		var output = document.getElementById('output');
 		if(output) output.value = '';
-		var use_streaming = document.getElementById('use_streaming').checked;
+		var useStreaming = document.getElementById('use_streaming').checked;
 		output.innerHTML = '';
 		
 		var urlChecked = document.getElementById('url').checked;
 		
-		if(urlChecked)
-		{
-			var url = GetUrl();
-			var outPtr = Module._malloc(url.length*2);
-			stringToUTF8(url, outPtr, url.length*2);
-			Module._PlayUrl(outPtr, use_streaming);
-			Module._free(outPtr);
-		}
+		var midiData = null;
+		if(urlChecked) DownloadBinaryFileAsArrayBuffer(GetUrl(), useStreaming? PlayStreamedMidiDataAndPrintInfo: PlayMidiDataAndPrintInfo);
 		else
 		{
 			var midiFiles = document.getElementById('midi_file').files;
-			if(midiFiles.length==0) return;
+			if(midiFiles.length == 0)
+			{
+				ClearTextField();
+				PrintLineError("Выберите локальный файл для воспроизведения.");
+				return;
+			}
 			var reader = new FileReader();
 			reader.onload = function(e)
 			{
-				var inArr = new Uint8Array(e.target.result);
-				var outPtr = Module._malloc(inArr.length);
-				Module.HEAPU8.subarray(outPtr, outPtr+inArr.length).set(inArr);
-				Module._PlayMidiFileInMemory(outPtr, inArr.length, use_streaming);
-				Module._free(outPtr);
+				var midiDataArrayBuffer = e.target.result;
+				if(useStreaming) PlayMidiDataStreamedAndPrintInfo(midiDataArrayBuffer);
+				else PlayMidiDataAndPrintInfo(midiDataArrayBuffer);
 			};
 			reader.readAsArrayBuffer(midiFiles[0]);
 		}
@@ -153,7 +331,7 @@
 	{
 		var hiddenIFrameID = 'hiddenDownloader';
 		var iframe = document.getElementById(hiddenIFrameID);
-		if(iframe===null)
+		if(iframe === null)
 		{
 			iframe = document.createElement('iframe');
 			iframe.id = hiddenIFrameID;

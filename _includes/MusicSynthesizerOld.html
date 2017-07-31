@@ -1,0 +1,166 @@
+<meta charset="utf-8"/>
+<noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
+<p>
+	<label><input type="radio" name="midi_source" id="url" value="url" checked>URL MIDI-файла:</label> 
+	<input type="text" id="midi_url" autocorrect="off" style="width:70%" value="http://gammaker.github.io/midi/Merry Christmas.mid">
+</p>
+
+<p>
+	<label><input type="radio" name="midi_source" id="file" value="file">Локальный файл:</label> 
+	<input type="file" id="midi_file" style="width:70%" onChange="getElementById('file').checked=true">
+</p>
+
+<label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
+
+<p>
+	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
+	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
+	<button id="download" style="height:32px;width:128px" onclick="Download(GetUrl())">Скачать MIDI</button>
+</p>
+
+<hr>
+<div id="output"></div>
+<hr>
+
+<script type="text/javascript">
+	var gScript = document.createElement('script');
+	gScript.src = "MusicSynthesizer.js"
+	document.body.appendChild(gScript);
+	gScript.loaded = false;
+	
+	var gAutoPlay = false;
+	gScript.onload = function()
+	{
+		Module['print'] = function(text)
+		{
+			if(arguments.length>1) text = Array.prototype.slice.call(arguments).join(' ');
+			if(text.replace===undefined) return;
+			text = text.replace(/&/g, "&amp;");
+			text = text.replace(/</g, "&lt;");
+			text = text.replace(/>/g, "&gt;");
+			text = text.replace('\n', '<br/>', 'g');
+			console.log(text);
+			var output = document.getElementById('output');
+			if(output)
+			{
+				output.innerHTML += text + "<br/>";
+				output.scrollTop = output.scrollHeight;
+			}
+		};
+		
+		gScript.loaded = true;
+		if(gAutoPlay) setTimeout(PlayMidi, 100);
+	}
+	
+	if(location.search)
+	{
+		var url = location.search.substr(1);
+		gAutoPlay = url.indexOf('!')==0;
+		if(gAutoPlay) url = url.substr(1);
+		var use_streaming = url.indexOf('~')==0;
+		if(use_streaming) url = url.substr(1);
+		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
+		document.getElementById('use_streaming').checked = use_streaming;
+	}
+	if(!(window.AudioContext || window.webkitAudioContext))
+	{
+		var output = document.getElementById('output');
+		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
+	}
+	
+	
+	function StopAllNonStreamedSounds()
+	{
+		if(Module.gWebAudioInstanceArray === undefined) return;
+		if(Module.gWebAudioBufferArray.length >= 3) alert("Bug: Very large sound array length: " + Module.gWebAudioBufferArray.length);
+		if(Module.gWebAudioInstanceArray.length >= 3) alert("Bug: Very large sound instance array length: " + Module.gWebAudioInstanceArray.length);
+		var i;
+		for(i=0; i<Module.gWebAudioInstanceArray.length; i++)
+		{
+			if(Module.gWebAudioInstanceArray[i] == null) continue;
+			Module.gWebAudioInstanceArray[i].stop();
+			Module.gWebAudioInstanceArray[i] = null;
+		}
+	}
+	
+	function StopAllStreamedSounds()
+	{
+		if(Module.gWebAudioStreamArray === undefined) return;
+		if(Module.gWebAudioStreamArray.length >= 3) alert("Bug: Very large streamed sound array length: " + Module.gWebAudioStreamArray.length);
+		var i;
+		for(i=0; i<Module.gWebAudioStreamArray.length; i++)
+		{
+			var snd = Module.gWebAudioStreamArray[i];
+			if(snd==null || !snd.__is_playing) continue;
+			snd.disconnect(Module.gWebAudioContext.destination);
+			snd.__is_playing = false;
+			Module.gWebAudioStreamArray[i] = null;
+		}
+	}
+		
+	function StopAllSounds()
+	{
+		StopAllNonStreamedSounds();
+		StopAllStreamedSounds();
+	}
+	
+	function GetUrl()
+	{
+		var url = document.getElementById('midi_url').value;
+		if(url.indexOf('./') == 0) url = '/midi' + url.substr(1);
+		if(url.indexOf('/') == 0) url = document.domain + url;
+		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0) url = 'http://'+url;
+		return url;
+	}
+		
+	function PlayMidi()
+	{
+		StopAllSounds();
+	
+		var output = document.getElementById('output');
+		if(output) output.value = '';
+		var use_streaming = document.getElementById('use_streaming').checked;
+		output.innerHTML = '';
+		
+		var urlChecked = document.getElementById('url').checked;
+		
+		if(urlChecked)
+		{
+			var url = GetUrl();
+			var outPtr = Module._malloc(url.length*2);
+			stringToUTF8(url, outPtr, url.length*2);
+			Module._PlayUrl(outPtr, use_streaming);
+			Module._free(outPtr);
+		}
+		else
+		{
+			var midiFiles = document.getElementById('midi_file').files;
+			if(midiFiles.length==0) return;
+			var reader = new FileReader();
+			reader.onload = function(e)
+			{
+				var inArr = new Uint8Array(e.target.result);
+				var outPtr = Module._malloc(inArr.length);
+				Module.HEAPU8.subarray(outPtr, outPtr+inArr.length).set(inArr);
+				Module._PlayMidiFileInMemory(outPtr, inArr.length, use_streaming);
+				Module._free(outPtr);
+			};
+			reader.readAsArrayBuffer(midiFiles[0]);
+		}
+	}
+	
+	function Download(url)
+	{
+		var hiddenIFrameID = 'hiddenDownloader';
+		var iframe = document.getElementById(hiddenIFrameID);
+		if(iframe===null)
+		{
+			iframe = document.createElement('iframe');
+			iframe.id = hiddenIFrameID;
+			iframe.style.display = 'none';
+			document.body.appendChild(iframe);
+		}
+		iframe.src = url;
+	}
+</script>
+
