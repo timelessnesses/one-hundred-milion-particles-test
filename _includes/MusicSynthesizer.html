@@ -25,8 +25,18 @@
 <script type="text/javascript">
 	var gScript = document.createElement('script');
 	gScript.src = "MusicSynthesizer.js"
-	document.body.appendChild(gScript);
+	
 	gScript.loaded = false;
+	var gAutoPlay = false;
+	var Module = {
+		onRuntimeInitialized: function() {
+			gScript.loaded = true;
+			if(gAutoPlay) PlayMidi();
+		}
+	};
+	
+	document.body.appendChild(gScript);
+	
 	
 	function PrintLineRaw(text)
 	{
@@ -68,13 +78,6 @@
 		if(output) output.innerHTML = "";
 	}
 	
-	var gAutoPlay = false;
-	gScript.onload = function()
-	{	
-		gScript.loaded = true;
-		if(gAutoPlay) setTimeout(PlayMidi, 100);
-	}
-	
 	if(location.search)
 	{
 		var url = location.search.substr(1);
@@ -102,6 +105,7 @@
 	
 	var gPreloadedMusic = null;
 	var gStreamedMusic = null;
+	var gStreamedMusicIsPlaying = false;
 	var gTempBufferPtr = 0;
 	var gTempBufferSize = 16384;
 	var gAudioSourcePtr = 0;
@@ -110,8 +114,12 @@
 	
 	function PauseAllSounds()
 	{
-		if(gStreamedMusic != null) gStreamedMusic.disconnect(gWebAudioContext.destination);
-		if(gPreloadedMusic != null && gPreloadedMusic.buffer != null) gPreloadedMusic.stop();
+		if(gStreamedMusic != null && gStreamedMusicIsPlaying)
+		{
+			gStreamedMusic.disconnect(gWebAudioContext.destination);
+			gStreamedMusicIsPlaying = false;
+		}
+		if(gPreloadedMusic != null && gPreloadedMusic.buffer != null && gPreloadedMusic.interval == null) gPreloadedMusic.stop();
 	}
 	
 	function StopAllSounds()
@@ -123,11 +131,15 @@
 			gAudioSourcePtr = 0;
 		}
 		gStreamedMusic = null;
-		if(gPreloadedMusic)
+		if(gPreloadedMusic != null)
 		{
-			gPreloadedMusic.disconnect(gWebAudioContext.destination);
 			if(gPreloadedMusic.interval !== undefined && gPreloadedMusic.interval != null)
+			{
 				clearInterval(gPreloadedMusic.interval);
+				PrintLine("Отменено.");
+				gPreloadedMusic.interval = null;
+			}
+			else gPreloadedMusic.disconnect(gWebAudioContext.destination);
 			gPreloadedMusic = null;
 		}
 	}
@@ -168,6 +180,7 @@
 		{
 			if(gStreamedMusic.stopSoon)
 			{
+				gStreamedMusicIsPlaying = false;
 				gStreamedMusic.disconnect(gWebAudioContext.destination);
 				return;
 			}
@@ -189,11 +202,14 @@
 			if(samplesRead < bufferSize) gStreamedMusic.stopSoon = true;
 		}
 		gStreamedMusic.connect(gWebAudioContext.destination);
+		gStreamedMusicIsPlaying = true;
+		PrintLine("Воспроизведение...");
 	}
 	
 	function PreloadBuffer(totalSamplesLeft, bufferOffset)
 	{
-		var buffersLeftToProcessInThisCall = 32;
+		if(gPreloadedMusic.interval == null) return;
+		var buffersLeftToProcessInThisCall = 8;
 		var startIndex = gTempBufferPtr/4;
 		var outputBuffer = gPreloadedMusic.buffer;
 		while(totalSamplesLeft > 0 && buffersLeftToProcessInThisCall-- > 0)
@@ -214,15 +230,17 @@
 			totalSamplesLeft -= samplesRead;
 		}
 		var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
+		if(percent > 100) percent = 100;
 		var synthPercent = document.getElementById('synthPercent');
 		if(synthPercent) synthPercent.innerHTML = percent.toFixed() + "%";
-		if(totalSamplesLeft > 0) gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
+		if(totalSamplesLeft > 0)
+			gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
 		else
 		{
 			if(gPreloadedMusic.startTime !== undefined)
 			{
 				var synthTimeMs = performance.now() - gPreloadedMusic.startTime;
-				PrintLine("Время синтеза: " + synthTimeMs.toFixed(2));
+				PrintLine("Время синтеза: " + synthTimeMs.toFixed(2) + " мс");
 			}
 			PrintLine("Воспроизведение...");
 			gPreloadedMusic.connect(gWebAudioContext.destination);
@@ -288,7 +306,7 @@
 			if(xhr.readyState == xhr.DONE)
 			{
 				if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
-				else PrintLine("<font color=red size=4>Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText + "</font>");
+				else PrintLineError("Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText);
 			}
 		}
 		xhr.open("GET", url, true);
@@ -320,7 +338,7 @@
 			reader.onload = function(e)
 			{
 				var midiDataArrayBuffer = e.target.result;
-				if(useStreaming) PlayMidiDataStreamedAndPrintInfo(midiDataArrayBuffer);
+				if(useStreaming) PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer);
 				else PlayMidiDataAndPrintInfo(midiDataArrayBuffer);
 			};
 			reader.readAsArrayBuffer(midiFiles[0]);

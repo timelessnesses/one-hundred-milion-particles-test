@@ -69,3 +69,4 @@ title: Синтезатор MIDI
 - [Чайковский - Щелкунчик](/midisynth/?~./Чайковский - Щелкунчик.mid)
 - [Battle Game](/midisynth/?~./battle-game.mid)
 - [Morrowind Theme](/midisynth/?~./Morrowind Theme.mid)
+- [Прекрасное далёко](/midisynth/?~./Guest11.mid)
