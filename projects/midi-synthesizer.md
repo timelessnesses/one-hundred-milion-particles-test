@@ -70,3 +70,4 @@ title: Синтезатор MIDI
 - [Battle Game](/midisynth/?~./battle-game.mid)
 - [Morrowind Theme](/midisynth/?~./Morrowind Theme.mid)
 - [Прекрасное далёко](/midisynth/?~./Guest11.mid)
+- [My heart will go on](/midisynth/?~./celine_dion-my_heart_will_go_on.mid)
