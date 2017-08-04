@@ -71,3 +71,7 @@ title: Синтезатор MIDI
 - [Morrowind Theme](/midisynth/?~./Morrowind Theme.mid)
 - [Прекрасное далёко](/midisynth/?~./Guest11.mid)
 - [My heart will go on](/midisynth/?~./celine_dion-my_heart_will_go_on.mid)
+- [Red Hot Chili Peppers - Californication](/midisynth/?~./red_hot_chili_peppers-californication.mid)
+- [You are beautiful](/midisynth/?~./YoureBeautiful.mid)
+- [Sweet Home Alabama](/midisynth/?~./SweetHomeAlabama.mid)
+- [flo_rida - Whistle](/midisynth/?~./flo_rida-whistle.mid)
