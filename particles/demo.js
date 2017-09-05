@@ -63,8 +63,8 @@ Demo =
 		
 		try
 		{
-			this.gl = this.canvas.getContext("webgl", {premultipliedAlpha: false, alpha: false});
-			if(!this.gl) this.gl = this.canvas.getContext("experimental-webgl");
+			this.gl = this.canvas.getContext("webgl", {premultipliedAlpha: false, alpha: false, antialias: false});
+			if(!this.gl) this.gl = this.canvas.getContext("experimental-webgl", {premultipliedAlpha: false, alpha: false, antialias: false});
 		}
 		catch(e) {}
 
