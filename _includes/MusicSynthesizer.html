@@ -97,9 +97,14 @@
 	function GetUrl()
 	{
 		var url = document.getElementById('midi_url').value;
-		if(url.indexOf('./') == 0) url = '/midi' + url.substr(1);
+		var rel = url.indexOf('./') == 0;
+		if(rel) url = '/midi' + url.substr(1);
 		if(url.indexOf('/') == 0) url = document.domain + url;
-		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0) url = 'http://' + url;
+		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0)
+		{
+			if(rel) url = window.location.protocol + "//" + url;
+			else url = 'http://' + url;
+		}
 		return url;
 	}
 	
