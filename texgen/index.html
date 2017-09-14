@@ -25,6 +25,7 @@ textarea {
 <body>
 
 <noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+<p id="WebGLSupportMsg"></p>
 
 <p><label>Алгоритм генерации</label><br/><textarea cols="100" rows="10" id="Code" autocorrect="off">
 </textarea></p>
@@ -81,15 +82,10 @@ vec2 fade(vec2 t)
 vec3 fade(vec3 t)
 
 //Шум перлина
-float snoise(vec2 v)
-float cnoise(vec2 P, vec2 rep)
-float cnoise(vec2 P)
-float snoise(vec3 v)
-float cnoise(vec3 P, vec3 rep)
-float cnoise(vec3 P)
-vec2 cellular(vec2 P, vec2 rep)
-vec2 cellular(vec2 P)
-vec2 cellular(vec3 P, vec3 rep)
+float snoise(vecN v)
+float cnoise(vecN v[, vecN period=vecN(289.0)])
+vec2 cellular(vec2 P[, vec2 rep=vec2(289.0)])
+vec2 cellular(vec3 P[, vec3 rep=vec3(289.0)])
 vec2 grad2(vec2 p, float rot)
 float srdnoise(vec2 P, float rot, out vec2 grad)
 float FloatHash(float n)
@@ -102,10 +98,7 @@ float ValueNoise3D(vec3 v, sampler2D noiseTex, vec2 noiseTex_PixelSize)
 float GradientNoise(vec2 v)
 vec2 SmoothVoronoi(vec2 v, float smoothness)
 float Voronoise(vec2 x, float gridControl, float metricControl)
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, vec2 offset)
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves)
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, vec3 offset)
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves)
+float PerlinOctaves(vecN coord, vecN repeat, int octaves[, float gain=0.5, float lacunarity=2.0, vecN offset=vecN(0.0)])
 
 //Цветовые пространства
 vec3 RGB2HSV(vec3 c)
@@ -183,13 +176,13 @@ var gShaderCodeEditor = document.getElementById("ShaderCode");
 
 function EditorGetText(editor)
 {
-	if(editor.nodeName == "textarea") return editor.value;
+	if(editor.nodeName == "TEXTAREA") return editor.value;
 	return editor.getSession().getValue();
 }
 
 function EditorSetText(editor, newText)
 {
-	if(editor.nodeName == "textarea") editor.value = newText;
+	if(editor.nodeName == "TEXTAREA") editor.value = newText;
 	else editor.getSession().setValue(newText);
 }
 
@@ -259,6 +252,7 @@ function Load()
 		DBQuery("texgens",
 			{"name": {"$eq": name}},
 			function(results) {
+				if(results[0] === undefined) return;
 				EditorSetText(gCodeEditor, results[0].code);
 				EditorSetText(gShaderCodeEditor, results[0].shader);
 			},
@@ -328,18 +322,20 @@ var gResults = document.getElementById("results");
 
 
 var gOffScreenCanvas = document.createElement("canvas");
-var gl = gOffScreenCanvas.getContext("webgl2", {antialias : false});
-if(!gl)
-{
-	gl = gOffScreenCanvas.getContext("webgl", {antialias : false}) ||
-		gOffScreenCanvas.getContext("experimental-webgl", {antialias : false});
-	if(gl) gl.version = 10;
-}
-else gl.version = 20;
 
-if(!gl) alert("Could not initialize WebGL.");
-else
+function InitGL(canvas)
 {
+	var gl = canvas.getContext("webgl2", {antialias : false});
+	if(!gl)
+	{
+		gl = canvas.getContext("webgl", {antialias : false}) ||
+			canvas.getContext("experimental-webgl", {antialias : false});
+		if(gl) gl.version = 10;
+	}
+	else gl.version = 20;
+
+	if(!gl) return null;
+
 	gl.extTextureFloat = gl.getExtension("OES_texture_float");
 	gl.extTextureFloatLinear = gl.getExtension("OES_texture_float_linear");
 	gl.extTextureHalfFloat = gl.getExtension("OES_texture_half_float");
@@ -349,7 +345,10 @@ else
 	var floatTextureRenderSupported = gl.version >= 20 || gl.extTextureFloat && gl.extTextureFloatLinear;
 	var halfFloatTextureRenderSupported = gl.version >= 20 || gl.extTextureHalfFloat && gl.extTextureHalfFloatLinear;
 	if(gl.version < 20 && halfFloatTextureRenderSupported) gl.HALF_FLOAT = gl.extTextureHalfFloat.HALF_FLOAT_OES;
+
+	return gl;
 }
+var gl = InitGL(gOffScreenCanvas);
 
 function CompileShader(code, type)
 {
@@ -426,25 +425,33 @@ function GetShaderInput()
 	return EditorGetText(gShaderCodeEditor);
 }
 
-var gCommonVertexShaderId = CompileShader(GetShaderCode("VertexShaderCode"), gl.VERTEX_SHADER);
-var gExportFragmentShader = {
-	id: CompileShader(GetShaderCode("FragmentExportShaderCode"), gl.FRAGMENT_SHADER),
-	samplerLocs: [0]
-};
-
-var gQuadBufferId = function()
+if(gl)
 {
-	var buffer = new ArrayBuffer(32);
-	new Float32Array(buffer).set([0,0, 1,0, 0,1, 1,1]);
-	var bufId = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, bufId);
-	gl.bufferData(gl.ARRAY_BUFFER, buffer, gl.STATIC_DRAW);
-	return bufId;
-}();
+	gCommonVertexShaderId = CompileShader(GetShaderCode("VertexShaderCode"), gl.VERTEX_SHADER);
+	gExportFragmentShader = {
+		id: CompileShader(GetShaderCode("FragmentExportShaderCode"), gl.FRAGMENT_SHADER),
+		samplerLocs: [0]
+	};
 
-var gFBO = gl.createFramebuffer();
-gl.bindFramebuffer(gl.FRAMEBUFFER, gFBO);
+	var gQuadBufferId = function()
+	{
+		var buffer = new ArrayBuffer(32);
+		new Float32Array(buffer).set([0,0, 1,0, 0,1, 1,1]);
+		var bufId = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, bufId);
+		gl.bufferData(gl.ARRAY_BUFFER, buffer, gl.STATIC_DRAW);
+		return bufId;
+	}();
 
+
+	var gFBO = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, gFBO);
+}
+else
+{
+	document.getElementById("WebGLSupportMsg").innerHtml = "<color=red>WebGL is not supported!</color>";
+}
+	
 function ParseGLType(str)
 {
 	switch(str)
@@ -555,7 +562,7 @@ function CreateShaderExpression(expr, numComponents)
 	result.numComponents = numComponents;
 	
 	var code = GetShaderCode("FragmentShaderCodeStart");
-	if(gShaderLibraryLoader.code) code += gShaderLibraryLoader.code;
+	if(gShaderLibraryLoader.code) code += "#line 1 0\n" + gShaderLibraryLoader.code;
 	code += "\n#line 1 1\n";
 	code += GetShaderInput();
 	code += "\n#line 1 2\n";
@@ -603,13 +610,27 @@ function TextureFromShader(exprOrShader, width, height, format, inputTextures, p
 	var result = CreateTexture(width, height, format, params.mipmapped);
 	if(!result) return null;
 	
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, result.id, 0);
+	var fbStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+	if(fbStatus !== gl.FRAMEBUFFER_COMPLETE)
+	{
+		gResults.log += "<font color=red>Error: framebuffer incomplete status 0x" + fbStatus.toString(16) + "</font><br/>";
+		DeleteTexture(result);
+		return null;
+	}
+	
 	var prog = exprOrShader;
 	if(typeof exprOrShader == 'string' || exprOrShader instanceof String)
 		prog = CreateShaderExpression(exprOrShader, result.numComponents);
-	if(!prog) return null;
+	if(!prog)
+	{
+		DeleteTexture(result);
+		return null;
+	}
 	
 	if(prog.textureSizeLoc && prog.textureSizeLoc != -1)
 		gl.uniform2f(prog.textureSizeLoc, width, height);
+	
 	
 	for(var i=0; i<prog.samplerLocs.length && i<inputTextures.length; i++)
 	{
@@ -624,7 +645,6 @@ function TextureFromShader(exprOrShader, width, height, format, inputTextures, p
 		gl.bindTexture(gl.TEXTURE_2D, inputTextures[i].id);
 	}
 	
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, result.id, 0);
 	gl.viewport(0, 0, width, height);
 	DrawFullScreenQuad();
 	
@@ -645,6 +665,7 @@ function TextureFromShader(exprOrShader, width, height, format, inputTextures, p
 function DeleteTexture(tex)
 {
 	gl.deleteTexture(tex.id);
+	tex.id = null;
 	gResults[tex.name] = undefined;
 }
 
@@ -688,10 +709,23 @@ function CleanUpResults()
 	});
 	gResults.textures = [];
 	
+	if(gResults.images)
+	for(var name in gResults.images)
+	{
+		var img = gResults.images[name];
+		if(!img) return;
+		if(img.onunload) img.onunload();
+	}
 	gResults.images = {};
 	
 	while(gResults.hasChildNodes()) gResults.removeChild(gResults.firstChild);
 }
+window.onunload = function(event) {
+	alert("onunload");
+	console.log("onunload");
+	CleanUpResults();
+	return false;
+};
 
 function Generate()
 {
@@ -708,7 +742,51 @@ function Generate()
 		if(gResults.log) gResults.innerHTML += "<p>" + gResults.log + "</p>";
 		for(var name in gResults.images)
 		{
-			gResults.innerHTML += "<h2><b>" + name + "</b></h2>";
+			var imageElements = document.createElement("p");
+			
+			var header = document.createElement("h2");
+			header.innerHTML = "<b>" + name + "</b>";
+			imageElements.appendChild(header);
+			
+			var filename = name.replace(/[\W_]+/g, "_");
+			var image = gResults.images[name];
+			
+			var savePng = document.createElement("input");
+			savePng.type = "button";
+			savePng.value = "Сохранить PNG";
+			savePng.onclick = function(image, filename) {return function() {
+				SaveImagePNG(image, filename + ".png");
+			}}(image, filename);
+			imageElements.appendChild(savePng);
+			
+			var saveJpeg = document.createElement("input");
+			saveJpeg.type = "button";
+			saveJpeg.value = "Сохранить JPEG";
+			saveJpeg.onclick = function(image, filename) {return function() {
+				SaveImageJPEG(image, filename + ".jpg");
+			}}(image, filename);
+			imageElements.appendChild(saveJpeg);
+			
+			var saveBmp = document.createElement("input");
+			saveBmp.type = "button";
+			saveBmp.value = "Сохранить BMP";
+			saveBmp.onclick = function(image, filename) {return function() {
+				SaveImageBMP(image, filename + ".bmp");
+			}}(image, filename);
+			imageElements.appendChild(saveBmp);
+			
+			if(BrowserIsChrome)
+			{
+				var saveWebp = document.createElement("input");
+				saveWebp.type = "button";
+				saveWebp.value = "Сохранить WEBP";
+				saveWebp.onclick = function(image, filename) {return function() {
+					SaveImageWEBP(image, filename + ".webp");
+				}}(image, filename);
+				imageElements.appendChild(saveWebp);
+			}
+			
+			gResults.appendChild(imageElements);
 			gResults.appendChild(gResults.images[name]);
 		}
 	}

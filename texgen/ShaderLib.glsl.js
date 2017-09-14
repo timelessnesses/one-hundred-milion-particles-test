@@ -1,10 +1,27 @@
 document.currentScript.code = `
 ///////////////////////////////////////
-// GLSL <= 1.1 Compatibility Library //
+// GLSL < 1.3 Compatibility Library //
 ///////////////////////////////////////
 
+#if(__VERSION__ < 130)
 vec4 texture(sampler2D s, vec2 texcoord) {return texture2D(s, texcoord);}
 vec4 texture(samplerCube s, vec3 texcoord) {return textureCube(s, texcoord);}
+
+float sinh(float x) {return 0.5*(exp(x) - exp(-x));}
+vec2 sinh(vec2 x) {return 0.5*(exp(x) - exp(-x));}
+vec3 sinh(vec3 x) {return 0.5*(exp(x) - exp(-x));}
+vec4 sinh(vec4 x) {return 0.5*(exp(x) - exp(-x));}
+
+float cosh(float x) {return 0.5*(exp(x) + exp(-x));}
+vec2 cosh(vec2 x) {return 0.5*(exp(x) + exp(-x));}
+vec3 cosh(vec3 x) {return 0.5*(exp(x) + exp(-x));}
+vec4 cosh(vec4 x) {return 0.5*(exp(x) + exp(-x));}
+
+float tanh(float x) {return (exp(x) - exp(-x)) / (exp(x) + exp(-x));}
+vec2 tanh(vec2 x) {return (exp(x) - exp(-x)) / (exp(x) + exp(-x));}
+vec3 tanh(vec3 x) {return (exp(x) - exp(-x)) / (exp(x) + exp(-x));}
+vec4 tanh(vec4 x) {return (exp(x) - exp(-x)) / (exp(x) + exp(-x));}
+#endif
 
 ////////////////////////////////
 // HLSL Compatibility Library //
@@ -13,21 +30,27 @@ vec4 texture(samplerCube s, vec3 texcoord) {return textureCube(s, texcoord);}
 #define float2 vec2
 #define float3 vec3
 #define float4 vec4
+
 float saturate(float x) {return clamp(x, 0.0, 1.0);}
 vec2 saturate(vec2 x) {return clamp(x, 0.0, 1.0);}
 vec3 saturate(vec3 x) {return clamp(x, 0.0, 1.0);}
 vec4 saturate(vec4 x) {return clamp(x, 0.0, 1.0);}
+
 float frac(float x) {return fract(x);}
 vec2 frac(vec2 x) {return fract(x);}
 vec3 frac(vec3 x) {return fract(x);}
 vec4 frac(vec4 x) {return fract(x);}
+
+vec4 tex2D(sampler2D s, vec2 texcoord) {return texture2D(s, texcoord);}
+vec4 texCUBE(samplerCube s, vec3 texcoord) {return textureCube(s, texcoord);}
 
 //////////////////
 // Math Library //
 //////////////////
 
 const float PI = 3.141592653589793;
-vec4 taylorInvSqrt(vec4 r) {return 1.79284291400159 - 0.85373472095314*r;}
+float TaylorInvSqrt(float x) {return 1.79284291400159 - 0.85373472095314*x;}
+vec4 TaylorInvSqrt(vec4 x) {return 1.79284291400159 - 0.85373472095314*x;}
 	
 mat3 RotationEulerMatrix(vec3 rotRads)
 {
@@ -36,7 +59,7 @@ mat3 RotationEulerMatrix(vec3 rotRads)
 		        cos_r.y*sin_r.z, cos_r.z*cos_r.x+sin_r.y*sin_r.z*sin_r.x, -sin_r.x*cos_r.z+sin_r.x*sin_r.z*cos_r.x,
 	           -sin_r.y,                  cos_r.y*sin_r.x,                         cos_r.y*cos_r.x);
 }
-	
+
 	
 float ExpSmoothMin(float a, float b, float k)
 {
@@ -72,6 +95,15 @@ float PowerSmoothMin(float a, float b)
 	return PowerSmoothMin(a, b, 8.0);
 }
 
+float sigma(float x) {return x / (1.0 + abs(x));}
+vec2 sigma(vec2 x) {return x / (1.0 + abs(x));}
+vec3 sigma(vec3 x) {return x / (1.0 + abs(x));}
+vec4 sigma(vec4 x) {return x / (1.0 + abs(x));}
+
+float sqr(float x) {return x*x;}
+vec2 sqr(vec2 x) {return x*x;}
+vec3 sqr(vec3 x) {return x*x;}
+vec4 sqr(vec4 x) {return x*x;}
 
 ///////////////////////////////
 // Geometry Distance Library //
@@ -163,35 +195,12 @@ vec3 f3rand(vec2 seed)
 
 
 //Вспомогательные функции
-float permute(float x) {return mod((x*34.0+1.0)*x, 289.0);}
-vec3 permute(vec3 x) {return mod((x*34.0+1.0)*x, 289.0);}
-vec4 permute(vec4 x) {return mod((x*34.0+1.0)*x, 289.0);}
-vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
-vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
-
-// Perlin simplex noise in range [-1; 1]
-float snoise(vec2 v)
-{
-	vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-
-	vec2 i = floor(v+dot(v, C.yy));
-	vec2 x0 = v-i+dot(i, C.xx);
-	vec2 i1 = (x0.x>x0.y)? vec2(1.0, 0.0): vec2(0.0, 1.0);
-	vec4 x12 = x0.xyxy+C.xxzz; x12.xy-=i1;
-		
-	i = mod(i, 289.0);
-	vec3 p = permute(permute(i.y+vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-	vec3 x = 2.0*fract(p*C.www)-1.0;
-	vec3 a0 = x-floor(x+0.5);
-	vec3 h = abs(x)-0.5;
-	vec3 m = max(0.5-vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
-	m *= m;
-	m *= m*1.79284291400159 - 0.85373472095314*(a0*a0 + h*h);
-	vec3 g = vec3(a0.x*x0.x + h.x*x0.y,   a0.yz*x12.xz + h.yz*x12.yw);
-	return 130.0*dot(m, g);
-}
-
-
+float permute(float x) {return mod((x*34.0 + 1.0)*x, 289.0);}
+vec3 permute(vec3 x) {return mod((x*34.0 + 1.0)*x, 289.0);}
+vec4 permute(vec4 x) {return mod((x*34.0 + 1.0)*x, 289.0);}
+vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
+vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
+vec4 fade(vec4 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
 
 // Classic Perlin noise in range [-1; 1]
 float cnoise(vec2 P, vec2 rep)
@@ -220,52 +229,6 @@ float cnoise(vec2 P, vec2 rep)
 }
 
 float cnoise(vec2 P) {return cnoise(P, vec2(289.0));}
-
-
-float snoise(vec3 v)
-{
-	vec2 C = vec2(1.0/6.0, 1.0/3.0);
-	vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-	vec3 i = floor(v+dot(v, C.yyy));
-	vec3 x0 = v-i+dot(i, C.xxx);
-	vec3 g = step(x0.yzx, x0.xyz);
-	vec3 l = 1.0-g;
-	vec3 i1 = min(g.xyz, l.zxy);
-	vec3 i2 = max(g.xyz, l.zxy);
-
-	vec3 x1 = x0 -  i1 + 1.0*C.xxx;
-	vec3 x2 = x0 -  i2 + 2.0*C.xxx;
-	vec3 x3 = x0 - 1.0 + 3.0*C.xxx;
-		
-	i = mod(i, 289.0); 
-	vec4 p = permute(permute(permute(i.z+vec4(0.0, i1.z, i2.z, 1.0))+i.y+vec4(0.0, i1.y, i2.y, 1.0))+i.x+vec4(0.0, i1.x, i2.x, 1.0));
-
-	vec3 ns = D.wyz/7.0-D.xzx;
-
-	vec4 j = p-49.0*floor(p*ns.z*ns.z);
-
-	vec4 x_ = floor(j*ns.z), y_ = floor(j-7.0*x_);
-		
-	vec4 x = x_*ns.x+ns.y, y = y_*ns.x+ns.y;
-	vec4 h = 1.0-abs(x)-abs(y);
-
-	vec4 b0 = vec4(x.xy, y.xy), b1 = vec4(x.zw, y.zw);
-	vec4 s0 = floor(b0)*2.0+1.0, s1 = floor(b1)*2.0+1.0, sh = -step(h, vec4(0.0));
-	vec4 a0 = b0.xzyw+s0.xzyw*sh.xxyy;
-	vec4 a1 = b1.xzyw+s1.xzyw*sh.zzww;
-	vec3 p0 = vec3(a0.xy, h.x);
-	vec3 p1 = vec3(a0.zw, h.y);
-	vec3 p2 = vec3(a1.xy, h.z);
-	vec3 p3 = vec3(a1.zw, h.w);
-
-	vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-	p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-
-	vec4 m = max(0.6-vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-	m *= m;
-	return 42.0*dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-}
 
 float cnoise(vec3 P, vec3 rep)
 {
@@ -307,9 +270,9 @@ float cnoise(vec3 P, vec3 rep)
 	vec3 g011 = vec3(gx1.z, gy1.z, gz1.z);
 	vec3 g111 = vec3(gx1.w, gy1.w, gz1.w);
 
-	vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+	vec4 norm0 = TaylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
 	g000 *= norm0.x; g010 *= norm0.y; g100 *= norm0.z; g110 *= norm0.w;
-	vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+	vec4 norm1 = TaylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
 	g001 *= norm1.x; g011 *= norm1.y; g101 *= norm1.z; g111 *= norm1.w;
 
 	float n000 = dot(g000, Pf0);
@@ -329,9 +292,285 @@ float cnoise(vec3 P, vec3 rep)
 
 float cnoise(vec3 P) {return cnoise(P, vec3(289.0));}
 
-vec2 cellular(vec2 P, vec2 rep)
+
+float cnoise(vec4 P, vec4 rep)
 {
-	float jitter=1.0; // Less gives more regular pattern
+	vec4 Pi0 = mod(floor(P), rep); // Integer part modulo rep
+	vec4 Pi1 = mod(Pi0 + 1.0, rep); // Integer part + 1 mod rep
+	Pi0 = mod(Pi0, 289.0);
+	Pi1 = mod(Pi1, 289.0);
+	vec4 Pf0 = fract(P); // Fractional part for interpolation
+	vec4 Pf1 = Pf0 - 1.0; // Fractional part - 1.0
+	vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+	vec4 iy = vec4(Pi0.yy, Pi1.yy);
+	vec4 iz0 = vec4(Pi0.zzzz);
+	vec4 iz1 = vec4(Pi1.zzzz);
+	vec4 iw0 = vec4(Pi0.wwww);
+	vec4 iw1 = vec4(Pi1.wwww);
+
+	vec4 ixy = permute(permute(ix) + iy);
+	vec4 ixy0 = permute(ixy + iz0);
+	vec4 ixy1 = permute(ixy + iz1);
+	vec4 ixy00 = permute(ixy0 + iw0);
+	vec4 ixy01 = permute(ixy0 + iw1);
+	vec4 ixy10 = permute(ixy1 + iw0);
+	vec4 ixy11 = permute(ixy1 + iw1);
+
+	vec4 gx00 = ixy00 * (1.0 / 7.0);
+	vec4 gy00 = floor(gx00) * (1.0 / 7.0);
+	vec4 gz00 = floor(gy00) * (1.0 / 6.0);
+	gx00 = fract(gx00) - 0.5;
+	gy00 = fract(gy00) - 0.5;
+	gz00 = fract(gz00) - 0.5;
+	vec4 gw00 = vec4(0.75) - abs(gx00) - abs(gy00) - abs(gz00);
+	vec4 sw00 = step(gw00, vec4(0.0));
+	gx00 -= sw00 * (step(0.0, gx00) - 0.5);
+	gy00 -= sw00 * (step(0.0, gy00) - 0.5);
+
+	vec4 gx01 = ixy01 * (1.0 / 7.0);
+	vec4 gy01 = floor(gx01) * (1.0 / 7.0);
+	vec4 gz01 = floor(gy01) * (1.0 / 6.0);
+	gx01 = fract(gx01) - 0.5;
+	gy01 = fract(gy01) - 0.5;
+	gz01 = fract(gz01) - 0.5;
+	vec4 gw01 = vec4(0.75) - abs(gx01) - abs(gy01) - abs(gz01);
+	vec4 sw01 = step(gw01, vec4(0.0));
+	gx01 -= sw01 * (step(0.0, gx01) - 0.5);
+	gy01 -= sw01 * (step(0.0, gy01) - 0.5);
+
+	vec4 gx10 = ixy10 * (1.0 / 7.0);
+	vec4 gy10 = floor(gx10) * (1.0 / 7.0);
+	vec4 gz10 = floor(gy10) * (1.0 / 6.0);
+	gx10 = fract(gx10) - 0.5;
+	gy10 = fract(gy10) - 0.5;
+	gz10 = fract(gz10) - 0.5;
+	vec4 gw10 = vec4(0.75) - abs(gx10) - abs(gy10) - abs(gz10);
+	vec4 sw10 = step(gw10, vec4(0.0));
+	gx10 -= sw10 * (step(0.0, gx10) - 0.5);
+	gy10 -= sw10 * (step(0.0, gy10) - 0.5);
+
+	vec4 gx11 = ixy11 * (1.0 / 7.0);
+	vec4 gy11 = floor(gx11) * (1.0 / 7.0);
+	vec4 gz11 = floor(gy11) * (1.0 / 6.0);
+	gx11 = fract(gx11) - 0.5;
+	gy11 = fract(gy11) - 0.5;
+	gz11 = fract(gz11) - 0.5;
+	vec4 gw11 = vec4(0.75) - abs(gx11) - abs(gy11) - abs(gz11);
+	vec4 sw11 = step(gw11, vec4(0.0));
+	gx11 -= sw11 * (step(0.0, gx11) - 0.5);
+	gy11 -= sw11 * (step(0.0, gy11) - 0.5);
+
+	vec4 g0000 = vec4(gx00.x,gy00.x,gz00.x,gw00.x);
+	vec4 g1000 = vec4(gx00.y,gy00.y,gz00.y,gw00.y);
+	vec4 g0100 = vec4(gx00.z,gy00.z,gz00.z,gw00.z);
+	vec4 g1100 = vec4(gx00.w,gy00.w,gz00.w,gw00.w);
+	vec4 g0010 = vec4(gx10.x,gy10.x,gz10.x,gw10.x);
+	vec4 g1010 = vec4(gx10.y,gy10.y,gz10.y,gw10.y);
+	vec4 g0110 = vec4(gx10.z,gy10.z,gz10.z,gw10.z);
+	vec4 g1110 = vec4(gx10.w,gy10.w,gz10.w,gw10.w);
+	vec4 g0001 = vec4(gx01.x,gy01.x,gz01.x,gw01.x);
+	vec4 g1001 = vec4(gx01.y,gy01.y,gz01.y,gw01.y);
+	vec4 g0101 = vec4(gx01.z,gy01.z,gz01.z,gw01.z);
+	vec4 g1101 = vec4(gx01.w,gy01.w,gz01.w,gw01.w);
+	vec4 g0011 = vec4(gx11.x,gy11.x,gz11.x,gw11.x);
+	vec4 g1011 = vec4(gx11.y,gy11.y,gz11.y,gw11.y);
+	vec4 g0111 = vec4(gx11.z,gy11.z,gz11.z,gw11.z);
+	vec4 g1111 = vec4(gx11.w,gy11.w,gz11.w,gw11.w);
+
+	vec4 norm00 = TaylorInvSqrt(vec4(dot(g0000, g0000), dot(g0100, g0100), dot(g1000, g1000), dot(g1100, g1100)));
+	g0000 *= norm00.x;
+	g0100 *= norm00.y;
+	g1000 *= norm00.z;
+	g1100 *= norm00.w;
+
+	vec4 norm01 = TaylorInvSqrt(vec4(dot(g0001, g0001), dot(g0101, g0101), dot(g1001, g1001), dot(g1101, g1101)));
+	g0001 *= norm01.x;
+	g0101 *= norm01.y;
+	g1001 *= norm01.z;
+	g1101 *= norm01.w;
+
+	vec4 norm10 = TaylorInvSqrt(vec4(dot(g0010, g0010), dot(g0110, g0110), dot(g1010, g1010), dot(g1110, g1110)));
+	g0010 *= norm10.x;
+	g0110 *= norm10.y;
+	g1010 *= norm10.z;
+	g1110 *= norm10.w;
+
+	vec4 norm11 = TaylorInvSqrt(vec4(dot(g0011, g0011), dot(g0111, g0111), dot(g1011, g1011), dot(g1111, g1111)));
+	g0011 *= norm11.x;
+	g0111 *= norm11.y;
+	g1011 *= norm11.z;
+	g1111 *= norm11.w;
+
+	float n0000 = dot(g0000, Pf0);
+	float n1000 = dot(g1000, vec4(Pf1.x, Pf0.yzw));
+	float n0100 = dot(g0100, vec4(Pf0.x, Pf1.y, Pf0.zw));
+	float n1100 = dot(g1100, vec4(Pf1.xy, Pf0.zw));
+	float n0010 = dot(g0010, vec4(Pf0.xy, Pf1.z, Pf0.w));
+	float n1010 = dot(g1010, vec4(Pf1.x, Pf0.y, Pf1.z, Pf0.w));
+	float n0110 = dot(g0110, vec4(Pf0.x, Pf1.yz, Pf0.w));
+	float n1110 = dot(g1110, vec4(Pf1.xyz, Pf0.w));
+	float n0001 = dot(g0001, vec4(Pf0.xyz, Pf1.w));
+	float n1001 = dot(g1001, vec4(Pf1.x, Pf0.yz, Pf1.w));
+	float n0101 = dot(g0101, vec4(Pf0.x, Pf1.y, Pf0.z, Pf1.w));
+	float n1101 = dot(g1101, vec4(Pf1.xy, Pf0.z, Pf1.w));
+	float n0011 = dot(g0011, vec4(Pf0.xy, Pf1.zw));
+	float n1011 = dot(g1011, vec4(Pf1.x, Pf0.y, Pf1.zw));
+	float n0111 = dot(g0111, vec4(Pf0.x, Pf1.yzw));
+	float n1111 = dot(g1111, Pf1);
+
+	vec4 fade_xyzw = fade(Pf0);
+	vec4 n_0w = mix(vec4(n0000, n1000, n0100, n1100), vec4(n0001, n1001, n0101, n1101), fade_xyzw.w);
+	vec4 n_1w = mix(vec4(n0010, n1010, n0110, n1110), vec4(n0011, n1011, n0111, n1111), fade_xyzw.w);
+	vec4 n_zw = mix(n_0w, n_1w, fade_xyzw.z);
+	vec2 n_yzw = mix(n_zw.xy, n_zw.zw, fade_xyzw.y);
+	float n_xyzw = mix(n_yzw.x, n_yzw.y, fade_xyzw.x);
+	return 2.2 * n_xyzw;
+}
+
+float cnoise(vec4 P) {return cnoise(P, vec4(289.0));}
+
+
+
+// Perlin simplex noise in range [-1; 1]
+float snoise(vec2 v)
+{
+	vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+
+	vec2 i = floor(v+dot(v, C.yy));
+	vec2 x0 = v-i+dot(i, C.xx);
+	vec2 i1 = (x0.x>x0.y)? vec2(1.0, 0.0): vec2(0.0, 1.0);
+	vec4 x12 = x0.xyxy+C.xxzz; x12.xy-=i1;
+		
+	i = mod(i, 289.0);
+	vec3 p = permute(permute(i.y+vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+	vec3 x = 2.0*fract(p*C.www)-1.0;
+	vec3 a0 = x-floor(x+0.5);
+	vec3 h = abs(x)-0.5;
+	vec3 m = max(0.5-vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+	m *= m;
+	m *= m*1.79284291400159 - 0.85373472095314*(a0*a0 + h*h);
+	vec3 g = vec3(a0.x*x0.x + h.x*x0.y,   a0.yz*x12.xz + h.yz*x12.yw);
+	return 130.0*dot(m, g);
+}
+
+float snoise(vec3 v)
+{
+	vec2 C = vec2(1.0/6.0, 1.0/3.0);
+	vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+
+	vec3 i = floor(v+dot(v, C.yyy));
+	vec3 x0 = v-i+dot(i, C.xxx);
+	vec3 g = step(x0.yzx, x0.xyz);
+	vec3 l = 1.0-g;
+	vec3 i1 = min(g.xyz, l.zxy);
+	vec3 i2 = max(g.xyz, l.zxy);
+
+	vec3 x1 = x0 -  i1 + 1.0*C.xxx;
+	vec3 x2 = x0 -  i2 + 2.0*C.xxx;
+	vec3 x3 = x0 - 1.0 + 3.0*C.xxx;
+		
+	i = mod(i, 289.0); 
+	vec4 p = permute(permute(permute(i.z+vec4(0.0, i1.z, i2.z, 1.0))+i.y+vec4(0.0, i1.y, i2.y, 1.0))+i.x+vec4(0.0, i1.x, i2.x, 1.0));
+
+	vec3 ns = D.wyz/7.0-D.xzx;
+
+	vec4 j = p-49.0*floor(p*ns.z*ns.z);
+
+	vec4 x_ = floor(j*ns.z), y_ = floor(j-7.0*x_);
+		
+	vec4 x = x_*ns.x+ns.y, y = y_*ns.x+ns.y;
+	vec4 h = 1.0-abs(x)-abs(y);
+
+	vec4 b0 = vec4(x.xy, y.xy), b1 = vec4(x.zw, y.zw);
+	vec4 s0 = floor(b0)*2.0+1.0, s1 = floor(b1)*2.0+1.0, sh = -step(h, vec4(0.0));
+	vec4 a0 = b0.xzyw+s0.xzyw*sh.xxyy;
+	vec4 a1 = b1.xzyw+s1.xzyw*sh.zzww;
+	vec3 p0 = vec3(a0.xy, h.x);
+	vec3 p1 = vec3(a0.zw, h.y);
+	vec3 p2 = vec3(a1.xy, h.z);
+	vec3 p3 = vec3(a1.zw, h.w);
+
+	vec4 norm = TaylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+	p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+
+	vec4 m = max(0.6-vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+	m *= m;
+	return 42.0*dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+}
+
+
+vec4 grad4(float j, vec4 ip)
+{
+	vec4 p;
+	p.xyz = floor( fract (vec3(j) * ip.xyz) * 7.0) * ip.z - 1.0;
+	p.w = 1.5 - dot(abs(p.xyz), vec3(1.0));
+	vec4 s = vec4(lessThan(p, vec4(0.0)));
+	p.xyz += (s.xyz*2.0 - vec3(1.0)) * s.w; 
+	return p;
+}
+
+float snoise(vec4 v)
+{
+	const vec4  C = vec4(0.138196601125011, 0.276393202250021, 0.414589803375032, -0.447213595499958);  // G4 = (5 - sqrt(5))/20, 2 * G4, 3 * G4, -1 + 4 * G4
+
+	vec4 i  = floor(v + dot(v, vec4(0.309016994374947451)) );
+	vec4 x0 = v -   i + dot(i, C.xxxx);
+
+	vec4 i0;
+	vec3 isX = step( x0.yzw, x0.xxx );
+	vec3 isYZ = step( x0.zww, x0.yyz );
+	
+	i0.x = isX.x + isX.y + isX.z;
+	i0.yzw = 1.0 - isX;
+	
+	i0.y += isYZ.x + isYZ.y;
+	i0.zw += 1.0 - isYZ.xy;
+	i0.z += isYZ.z;
+	i0.w += 1.0 - isYZ.z;
+
+	vec4 i3 = clamp( i0, 0.0, 1.0 );
+	vec4 i2 = clamp( i0-1.0, 0.0, 1.0 );
+	vec4 i1 = clamp( i0-2.0, 0.0, 1.0 );
+
+	vec4 x1 = x0 - i1 + C.xxxx;
+	vec4 x2 = x0 - i2 + C.yyyy;
+	vec4 x3 = x0 - i3 + C.zzzz;
+	vec4 x4 = x0 + C.wwww;
+
+	i = mod(i, 289.0); 
+	float j0 = permute( permute( permute( permute(i.w) + i.z) + i.y) + i.x);
+	vec4 j1 = permute( permute( permute( permute (
+				 i.w + vec4(i1.w, i2.w, i3.w, 1.0 ))
+			 + i.z + vec4(i1.z, i2.z, i3.z, 1.0 ))
+			 + i.y + vec4(i1.y, i2.y, i3.y, 1.0 ))
+			 + i.x + vec4(i1.x, i2.x, i3.x, 1.0 ));
+
+	vec4 ip = vec4(1.0/294.0, 1.0/49.0, 1.0/7.0, 0.0) ;
+
+	vec4 p0 = grad4(j0,   ip);
+	vec4 p1 = grad4(j1.x, ip);
+	vec4 p2 = grad4(j1.y, ip);
+	vec4 p3 = grad4(j1.z, ip);
+	vec4 p4 = grad4(j1.w, ip);
+
+	vec4 norm = TaylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+	p0 *= norm.x;
+	p1 *= norm.y;
+	p2 *= norm.z;
+	p3 *= norm.w;
+	p4 *= TaylorInvSqrt(dot(p4,p4));
+
+	vec3 m0 = max(0.6 - vec3(dot(x0,x0), dot(x1,x1), dot(x2,x2)), 0.0);
+	vec2 m1 = max(0.6 - vec2(dot(x3,x3), dot(x4,x4)), 0.0);
+	m0 = m0*m0;
+	m1 = m1*m1;
+	return 49.0 * (dot(m0*m0, vec3(dot(p0, x0), dot(p1, x1), dot(p2, x2)))
+				 + dot(m1*m1, vec2(dot(p3, x3), dot(p4, x4))));
+}
+
+
+vec2 cellular(vec2 P, vec2 rep, float jitter)
+{
 	vec2 Pi = mod(floor(P), 289.0), Pf = fract(P);
 	vec3 oi = vec3(-1.0, 0.0, 1.0), of = vec3(-0.5, 0.5, 1.5);
 	vec3 px = permute(mod(Pi.x+oi, rep.xxx));
@@ -359,11 +598,12 @@ vec2 cellular(vec2 P, vec2 rep)
 	return sqrt(d[0].xy);
 }
 
+vec2 cellular(vec2 P, vec2 rep) {return cellular(P, rep, 1.0);}
+
 vec2 cellular(vec2 P) {return cellular(P, vec2(289.0));}
 
-vec2 cellular(vec3 P, vec3 rep)
+vec2 cellular(vec3 P, vec3 rep, float jitter)
 {
-	float jitter=1.0; //smaller jitter gives more regular pattern
 	vec3 oi = vec3(-1.0, 0.0, 1.0);
 
 	vec3 Pi = mod(floor(P), 289.0), Pf = fract(P)-0.5;
@@ -418,6 +658,8 @@ vec2 cellular(vec3 P, vec3 rep)
 	return sqrt(ds[0].xy);
 }
 
+vec2 cellular(vec3 P, vec3 rep) {return cellular(P, rep, 1.0);}
+vec2 cellular(vec3 P) {return cellular(P, vec3(289.0));}
 
 vec2 grad2(vec2 p, float rot)
 {
@@ -425,10 +667,10 @@ vec2 grad2(vec2 p, float rot)
 #if 1
 	// Map from a line to a diamond such that a shift maps to a rotation.
 	u = 4.0*u-2.0;
-	return vec2(abs(u)-1.0, abs(abs(u+1.0)-2.0)-1.0);
+	return vec2(abs(u)-1.0, abs(abs(u + 1.0) - 2.0) - 1.0);
 #else
 	// For more isotropic gradients, sin/cos can be used instead.
-	u*=2.0*PI;
+	u* = 2.0*PI;
 	return vec2(cos(u), sin(u));
 #endif
 }
@@ -569,41 +811,77 @@ float Voronoise(vec2 x, float gridControl, float metricControl)
 	
 	
 
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, vec2 offset)
+float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain, float lacunarity, vec2 offset)
 {
-	float sum = 0.0, multiplyer = 1.0;
+	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;
-		vec2 rm = repeat*multiplyer;
-		sum += cnoise(coord*multiplyer+offset, rm)/multiplyer;
-		multiplyer *= 2.0;
+		vec2 rm = repeat*l;
+		sum += cnoise(coord*l + offset, rm)*g;
+		normalizer += g;
+		l *= lacunarity;
+		g *= gain;
 	}
-	return sum;
+	return sum / normalizer;
 }
+
+float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec2(0.0));}
+
+float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain)
+{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
 
 float PerlinOctaves(vec2 coord, vec2 repeat, int octaves)
-{
-	return PerlinOctaves(coord, repeat, octaves, vec2(0));
-}
+{return PerlinOctaves(coord, repeat, octaves, 0.5);}
 
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, vec3 offset)
+float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain, float lacunarity, vec3 offset)
 {
-	float sum = 0.0, multiplyer = 1.0;
+	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;
-		vec3 rm = repeat*multiplyer;
-		sum += cnoise(coord*multiplyer+offset, rm)/multiplyer;
-		multiplyer *= 2.0;
+		vec3 rm = repeat*l;
+		sum += cnoise(coord*l + offset, rm)*g;
+		normalizer += g;
+		l *= lacunarity;
+		g *= gain;
 	}
-	return sum;
+	return sum / normalizer;
 }
 
+float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec3(0.0));}
+
+float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain)
+{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
+
 float PerlinOctaves(vec3 coord, vec3 repeat, int octaves)
+{return PerlinOctaves(coord, repeat, octaves, 0.5);}
+
+float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain, float lacunarity, vec4 offset)
 {
-	return PerlinOctaves(coord, repeat, octaves, vec3(0));
+	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
+	for(int i=0; i<15; i++)
+	{
+		if(i == octaves) break;
+		vec4 rm = repeat*l;
+		sum += cnoise(coord*l + offset, rm)*g;
+		normalizer += g;
+		l *= lacunarity;
+		g *= gain;
+	}
+	return sum / normalizer;
 }
+
+float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec4(0.0));}
+
+float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain)
+{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
+
+float PerlinOctaves(vec4 coord, vec4 repeat, int octaves)
+{return PerlinOctaves(coord, repeat, octaves, 0.5);}
 
 
 ////////////////////////
@@ -665,45 +943,15 @@ vec3 RGBM2RGB(vec4 rgbm)
 	return 6.0*rgbm.rgb*rgbm.a;
 }
 
-float Linear2SRGB(float x)
-{
-    return 1.055*pow(x, 1.0/2.4) - 0.055;
-}
+float Linear2SRGB(float x) {return max(12.92*x, 1.055*pow(x, 1.0/2.4) - 0.055);}
+vec2 Linear2SRGB(vec2 x) {return max(12.92*x, 1.055*pow(x, vec2(1.0/2.4)) - vec2(0.055));}
+vec3 Linear2SRGB(vec3 x) {return max(12.92*x, 1.055*pow(x, vec3(1.0/2.4)) - vec3(0.055));}
+vec4 Linear2SRGB(vec4 x) {return max(12.92*x, 1.055*pow(x, vec4(1.0/2.4)) - vec4(0.055));}
 
-vec2 Linear2SRGB(vec2 x)
-{
-    return 1.055*pow(x, vec2(1.0/2.4)) - vec2(0.055);
-}
-
-vec3 Linear2SRGB(vec3 x)
-{
-    return 1.055*pow(x, vec3(1.0/2.4)) - vec3(0.055);
-}
-
-vec4 Linear2SRGB(vec4 x)
-{
-    return 1.055*pow(x, vec4(1.0/2.4)) - vec4(0.055);
-}
-
-float SRGB2Linear(float x)
-{
-    return pow((x + 0.055)/1.055, 2.4);
-}
-
-vec2 SRGB2Linear(vec2 x)
-{
-    return pow((x + vec2(0.055))/1.055, vec2(2.4));
-}
-
-vec3 SRGB2Linear(vec3 x)
-{
-    return pow((x + vec3(0.055))/1.055, vec3(2.4));
-}
-
-vec4 SRGB2Linear(vec4 x)
-{
-    return pow((x + vec4(0.055))/1.055, vec4(2.4));
-}
+float SRGB2Linear(float x) {return min(x/12.92, pow((x + 0.055)/1.055, 2.4));}
+vec2 SRGB2Linear(vec2 x) {return min(x/12.92, pow((x + vec2(0.055))/1.055, vec2(2.4)));}
+vec3 SRGB2Linear(vec3 x) {return min(x/12.92, pow((x + vec3(0.055))/1.055, vec3(2.4)));}
+vec4 SRGB2Linear(vec4 x) {return min(x/12.92, pow((x + vec4(0.055))/1.055, vec4(2.4)));}
 
 ///////////////////////////
 // Normal Height Library //

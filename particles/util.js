@@ -50,12 +50,12 @@ function SetMatrixUniform(gl, programId, name, mat)
 
 
 
-window.requestAnimFrame = window.requestAnimationFrame       || 
+window.requestAnimFrame = window.requestAnimationFrame || 
               window.webkitRequestAnimationFrame || 
               window.mozRequestAnimationFrame    || 
               window.oRequestAnimationFrame      || 
               window.msRequestAnimationFrame     || 
               function(/* function */ callback, /* DOMElement */ element){
-                window.setTimeout(callback, 33.3);
+                window.setTimeout(callback, 16.67);
               };
  
