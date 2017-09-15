@@ -1,4 +1,8 @@
-var BrowserIsChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+var ChromeVersion = function() {     
+    var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+	if(!raw) return null;
+    return parseInt(raw[2], 10);
+}();
 var BrowserIsIE = navigator.userAgent.match(/Trident/g) && navigator.userAgent.match(/MSIE/g);
 
 if(!String.prototype.startsWith) {
@@ -54,6 +58,7 @@ function ReplaceTextAreaWithAce(textarea, lang, wordList)
 	editDiv.style.height = parseFloat(getComputedStyle(textarea).getPropertyValue("height"));
 	textarea.parentNode.insertBefore(editDiv, textarea);
     var editor = ace.edit(editDiv);
+	editor.commands.bindKeys({"ctrl-l": null});
 	editor.$blockScrolling = Infinity;
 	editor.setShowPrintMargin(false);
     editor.getSession().setValue(textarea.value);
@@ -285,7 +290,7 @@ function CreateImageFromPixels(pixelsRGBA8, width, height)
 	var blobUrl = URL.createObjectURL(blob);
 	img.onload = function()
 	{
-		if(BrowserIsChrome && window.location.protocol == "file:")
+		if(ChromeVersion && ChromeVersion < 61 && window.location.protocol == "file:")
 		{
 			//Chrome cross origin bug workaround: it is necessary for future ImageToCanvas
 			img.reviveCanvas = document.createElement("canvas");

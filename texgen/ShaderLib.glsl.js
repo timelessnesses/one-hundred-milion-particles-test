@@ -105,6 +105,40 @@ vec2 sqr(vec2 x) {return x*x;}
 vec3 sqr(vec3 x) {return x*x;}
 vec4 sqr(vec4 x) {return x*x;}
 
+float sinc(float x) {return x == 0.0? 1.0: sin(x) / x;}
+vec2 sinc(vec2 x) {return mix(sin(x) / x, vec2(1.0), vec2(equal(x, vec2(0.0))));}
+vec3 sinc(vec3 x) {return mix(sin(x) / x, vec3(1.0), vec3(equal(x, vec3(0.0))));}
+vec4 sinc(vec4 x) {return mix(sin(x) / x, vec4(1.0), vec4(equal(x, vec4(0.0))));}
+
+/////////////////////
+// Packing Library //
+/////////////////////
+
+vec4 EncodeFloatAsRGBA8(float v)
+{
+	vec4 enc = vec4(1.0, 255.0, 65025.0, 16581375.0) * v;
+	enc = fract(enc);
+	enc -= enc.yzww * vec4(1.0/255.0, 1.0/255.0, 1.0/255.0, 0.0);
+	return enc;
+}
+
+float DecodeFloatFromRGBA8(vec4 rgba8)
+{
+  return dot(rgba8, vec4(1.0, 1.0/255.0, 1.0/65025.0, 1.0/16581375.0));
+}
+
+vec2 EncodeFloatAsRG8(float v)
+{
+	vec2 enc = vec2(v, fract(v*255.0));
+	enc.x -= enc.y / 255.0;
+	return enc;
+}
+
+float DecodeFloatFromRG8(vec2 rg8)
+{
+  return dot(rg8, vec2(1.0, 1.0/255.0));
+}
+
 ///////////////////////////////
 // Geometry Distance Library //
 ///////////////////////////////
@@ -810,14 +844,14 @@ float Voronoise(vec2 x, float gridControl, float metricControl)
 	
 	
 	
-
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain, float lacunarity, vec2 offset)
+//Несколько октав шума Перлина.
+float PerlinOctaves(vec2 coord, vec2 period, int octaves, float gain, float lacunarity, vec2 offset)
 {
 	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;
-		vec2 rm = repeat*l;
+		vec2 rm = period*l;
 		sum += cnoise(coord*l + offset, rm)*g;
 		normalizer += g;
 		l *= lacunarity;
@@ -826,22 +860,22 @@ float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain, float lacu
 	return sum / normalizer;
 }
 
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain, float lacunarity)
-{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec2(0.0));}
+float PerlinOctaves(vec2 coord, vec2 period, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, period, octaves, gain, lacunarity, vec2(0.0));}
 
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves, float gain)
-{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
+float PerlinOctaves(vec2 coord, vec2 period, int octaves, float gain)
+{return PerlinOctaves(coord, period, octaves, gain, 2.0);}
 
-float PerlinOctaves(vec2 coord, vec2 repeat, int octaves)
-{return PerlinOctaves(coord, repeat, octaves, 0.5);}
+float PerlinOctaves(vec2 coord, vec2 period, int octaves)
+{return PerlinOctaves(coord, period, octaves, 0.5);}
 
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain, float lacunarity, vec3 offset)
+float PerlinOctaves(vec3 coord, vec3 period, int octaves, float gain, float lacunarity, vec3 offset)
 {
 	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;
-		vec3 rm = repeat*l;
+		vec3 rm = period*l;
 		sum += cnoise(coord*l + offset, rm)*g;
 		normalizer += g;
 		l *= lacunarity;
@@ -850,22 +884,22 @@ float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain, float lacu
 	return sum / normalizer;
 }
 
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain, float lacunarity)
-{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec3(0.0));}
+float PerlinOctaves(vec3 coord, vec3 period, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, period, octaves, gain, lacunarity, vec3(0.0));}
 
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves, float gain)
-{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
+float PerlinOctaves(vec3 coord, vec3 period, int octaves, float gain)
+{return PerlinOctaves(coord, period, octaves, gain, 2.0);}
 
-float PerlinOctaves(vec3 coord, vec3 repeat, int octaves)
-{return PerlinOctaves(coord, repeat, octaves, 0.5);}
+float PerlinOctaves(vec3 coord, vec3 period, int octaves)
+{return PerlinOctaves(coord, period, octaves, 0.5);}
 
-float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain, float lacunarity, vec4 offset)
+float PerlinOctaves(vec4 coord, vec4 period, int octaves, float gain, float lacunarity, vec4 offset)
 {
 	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0;
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;
-		vec4 rm = repeat*l;
+		vec4 rm = period*l;
 		sum += cnoise(coord*l + offset, rm)*g;
 		normalizer += g;
 		l *= lacunarity;
@@ -874,15 +908,48 @@ float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain, float lacu
 	return sum / normalizer;
 }
 
-float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain, float lacunarity)
-{return PerlinOctaves(coord, repeat, octaves, gain, lacunarity, vec4(0.0));}
+float PerlinOctaves(vec4 coord, vec4 period, int octaves, float gain, float lacunarity)
+{return PerlinOctaves(coord, period, octaves, gain, lacunarity, vec4(0.0));}
 
-float PerlinOctaves(vec4 coord, vec4 repeat, int octaves, float gain)
-{return PerlinOctaves(coord, repeat, octaves, gain, 2.0);}
+float PerlinOctaves(vec4 coord, vec4 period, int octaves, float gain)
+{return PerlinOctaves(coord, period, octaves, gain, 2.0);}
 
-float PerlinOctaves(vec4 coord, vec4 repeat, int octaves)
-{return PerlinOctaves(coord, repeat, octaves, 0.5);}
+float PerlinOctaves(vec4 coord, vec4 period, int octaves)
+{return PerlinOctaves(coord, period, octaves, 0.5);}
 
+
+//Несколько октав шума Перлина, две выборки:
+//X - для координат coord и периода period,
+//Y - для координат coord*2 и периода period*2.
+vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves, float gain, float lacunarity, vec2 offset)
+{
+	vec2 tc = coord;
+    vec2 per = period;
+    vec2 sum = vec2(cnoise(tc + offset, per), 0.0);
+    float g = 1.0;
+	float normalizer = 1.0;
+    for(int i=1; i<15; i++)
+    {
+		if(i == octaves) break;
+        tc *= lacunarity;
+        per *= lacunarity;
+        float n = cnoise(tc + offset, per);
+        sum.y += n*g;
+        g *= gain;
+        sum.x += n*g;
+		normalizer += g;
+    }
+	return sum/normalizer;
+}
+
+vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves, float gain, float lacunarity)
+{return PerlinOctavesX2(coord, period, octaves, gain, lacunarity, vec2(0.0));}
+
+vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves, float gain)
+{return PerlinOctavesX2(coord, period, octaves, gain, 2.0);}
+
+vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves)
+{return PerlinOctavesX2(coord, period, octaves, 0.5);}
 
 ////////////////////////
 // Colorspace Library //
@@ -1427,6 +1494,43 @@ vec4 DiffFree(sampler2D s, vec2 pos, vec2 pixSize)
 	return sqrt(dUdX*dUdX + dUdY*dUdY)*0.5;
 }
 
+//Модуль градиента текстуры в точке pos.
+//Предполагается, что текстура в формате RGBA8 и в неё упакованы 2 числа в диапазоне [0; 1] с точностью 16 бит.
+vec2 DiffFreePacked2(sampler2D s, vec2 pos, vec2 pixSize)
+{
+#if(__VERSION__ >= 130)
+	vec4 dUdX = (textureOffset(s, pos, ivec2(1,0)) - textureOffset(s, pos, ivec2(-1,0)))/pixSize.x;
+	vec4 dUdY = (textureOffset(s, pos, ivec2(0,1)) - textureOffset(s, pos, ivec2(0,-1)))/pixSize.y;
+#else
+	vec4 dUdX = (texture(s, pos+vec2(pixSize.x, 0.0)) - texture(s, pos-vec2(pixSize.x, 0.0)))/pixSize.x;
+	vec4 dUdY = (texture(s, pos+vec2(0.0, pixSize.y)) - texture(s, pos-vec2(0.0, pixSize.y)))/pixSize.y;
+#endif
+	dUdX.x = DecodeFloatFromRG8(dUdX.xy);
+	dUdX.y = DecodeFloatFromRG8(dUdX.zw);
+	dUdY.x = DecodeFloatFromRG8(dUdY.xy);
+	dUdY.y = DecodeFloatFromRG8(dUdY.zw);
+	return sqrt(dUdX.xy*dUdX.xy + dUdY.xy*dUdY.xy)*0.5;
+}
+
+//Модуль градиента модуля градиента текстуры в точке pos.
+vec4 Diff2Free(sampler2D s, vec2 pos, vec2 pixSize)
+{
+	vec4 diff = DiffFree(TexA, TexCoord, pixSize);
+    vec4 diffX = DiffFree(TexA, TexCoord+vec2(pixSize.x, 0.0), pixSize);
+    vec4 diffY = DiffFree(TexA, TexCoord+vec2(0.0, pixSize.y), pixSize);
+    return sqrt(sqr(diffX - diff) + sqr(diffY - diff));
+}
+
+//Модуль градиента модуля градиента текстуры в точке pos.
+//Предполагается, что текстура в формате RGBA8 и в неё упакованы 2 числа в диапазоне [0; 1] с точностью 16 бит.
+vec2 Diff2FreePacked2(sampler2D s, vec2 pos, vec2 pixSize)
+{
+	vec2 diff = DiffFreePacked2(TexA, TexCoord, pixSize);
+    vec2 diffX = DiffFreePacked2(TexA, TexCoord+vec2(pixSize.x, 0.0), pixSize);
+    vec2 diffY = DiffFreePacked2(TexA, TexCoord+vec2(0.0, pixSize.y), pixSize);
+    return sqrt(sqr(diffX - diff) + sqr(diffY - diff));
+}
+
 ////////////////////////////
 // Texture Sample Library //
 ////////////////////////////
@@ -1494,35 +1598,5 @@ void HexGrid(out vec4 o, vec2 TexCoord)
 		
 	vec4 o1 = vec4(i+ca-cb*ma, 0.0, 0.0);
 	o = 0.5+0.5*sin(o1);
-}
-
-
-/////////////////////
-// Packing Library //
-/////////////////////
-
-vec4 EncodeFloatAsRGBA8(float v)
-{
-	vec4 enc = vec4(1.0, 255.0, 65025.0, 16581375.0) * v;
-	enc = fract(enc);
-	enc -= enc.yzww * vec4(1.0/255.0, 1.0/255.0, 1.0/255.0, 0.0);
-	return enc;
-}
-
-float DecodeFloatFromRGBA8(vec4 rgba8)
-{
-  return dot(rgba8, vec4(1.0, 1.0/255.0, 1.0/65025.0, 1.0/16581375.0));
-}
-
-vec2 EncodeFloatAsRG8(float v)
-{
-	vec2 enc = vec2(v, fract(v*255.0));
-	enc.x -= enc.y / 255.0;
-	return enc;
-}
-
-float DecodeFloatFromRG8(vec2 rg8)
-{
-  return dot(rg8, vec2(1.0, 1.0/255.0));
 }
 `;

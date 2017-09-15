@@ -58,6 +58,12 @@ float SmoothMin(float a, float b, float k)
 float SmoothMin(float a, float b)
 float PowerSmoothMin(float a, float b, float k)
 float PowerSmoothMin(float a, float b)
+genType sqr(genType x)
+genType sinh(genType x)
+genType cosh(genType x)
+genType tanh(genType x)
+genType sigma(genType x) = x / (1.0 + abs(x))
+genType sinc(genType x) = sin(x) / x
 
 //SDF для 3D примитивов с центром в начале координат
 float SphereSignedDistance(vec3 point, float radius)
@@ -159,8 +165,8 @@ float DecodeFloatFromRG8(vec2 rg8)</pre>
 <p><label>Шейдеры</label><br/>
 <textarea cols="100" rows="10" id="ShaderCode" autocorrect="off">
 </textarea></p>
-<input id="GenerateButton" value="Генерировать" onclick="Generate()" type="button"/>
-<input id="SaveButton" value="Сохранить ссылку" onclick="Save()" type="button"/>
+<input id="GenerateButton" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
+<input id="SaveButton" value="Сохранить ссылку" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
 
 <br/>Результат
 <hr>
@@ -173,6 +179,13 @@ float DecodeFloatFromRG8(vec2 rg8)</pre>
 <script>
 var gCodeEditor = document.getElementById("Code");
 var gShaderCodeEditor = document.getElementById("ShaderCode");
+
+window.onbeforeunload = function(e) {
+	if(!gDocumentChanged) return null;
+	var dialogText = 'Вы уверены, что хотите закрыть страницу без сохранения изменений?';
+	e.returnValue = dialogText;
+	return dialogText;
+};
 
 function EditorGetText(editor)
 {
@@ -217,19 +230,26 @@ function ReplaceTextAreasWithAce()
 	gShaderCodeEditor = ReplaceTextAreaWithAce(gShaderCodeEditor, "glsl", [
 		["TexCoord", null]
 	]);
+	gCodeEditor.getSession().on('change', function() {
+		gDocumentChanged = true;
+	});
+	gShaderCodeEditor.getSession().on('change', function() {
+		gDocumentChanged = true;
+	});
 }
 
-function Save()
+function Save(showMsg)
 {
 	DBInsert("texgens", {
 			"code": GetCodeInput(),
 			"shader": GetShaderInput(),
 			"name": " "
 		}, function(result) {
-		var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + result._id;
-		window.history.replaceState({} , document.title, newUrl);
-		alert("Сохранено. Скопируйте ссылку из адресной строки.");
-	});
+			gDocumentChanged = false;
+			var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + result._id;
+			window.history.replaceState({}, document.title, newUrl);
+			if(showMsg) alert("Сохранено. Скопируйте ссылку из адресной строки.");
+		});
 }
 
 function Load()
@@ -243,6 +263,7 @@ function Load()
 			function(result) {
 				EditorSetText(gCodeEditor, result.code);
 				EditorSetText(gShaderCodeEditor, result.shader);
+				gDocumentChanged = false;
 			});
 		return;
 	}
@@ -255,6 +276,7 @@ function Load()
 				if(results[0] === undefined) return;
 				EditorSetText(gCodeEditor, results[0].code);
 				EditorSetText(gShaderCodeEditor, results[0].shader);
+				gDocumentChanged = false;
 			},
 			{fields: ["code", "shader"], limit: 1});
 		return;
@@ -775,7 +797,7 @@ function Generate()
 			}}(image, filename);
 			imageElements.appendChild(saveBmp);
 			
-			if(BrowserIsChrome)
+			if(ChromeVersion)
 			{
 				var saveWebp = document.createElement("input");
 				saveWebp.type = "button";
@@ -793,6 +815,21 @@ function Generate()
 	if(gShaderLibraryLoader.code !== undefined) genfunc();
 	else gShaderLibraryLoader.onload = genfunc;
 }
+
+document.onkeydown = function(e)
+{
+	if(e.shiftKey && e.keyCode == 13)
+	{
+		Generate();
+		return false;
+	}
+	if(e.keyCode == 117 || e.ctrlKey && e.keyCode == 76) //F6, Ctrl+L
+	{
+		Save(false);
+		return true;
+	}
+};
+
 </script>
 
 </html>
