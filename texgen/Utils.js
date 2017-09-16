@@ -3,7 +3,7 @@ var ChromeVersion = function() {
 	if(!raw) return null;
     return parseInt(raw[2], 10);
 }();
-var BrowserIsIE = navigator.userAgent.match(/Trident/g) && navigator.userAgent.match(/MSIE/g);
+var BrowserIsIE = navigator.userAgent.match(/Trident/g) || navigator.userAgent.match(/MSIE/g);
 
 if(!String.prototype.startsWith) {
   Object.defineProperty(String.prototype, 'startsWith', {

@@ -181,7 +181,7 @@ var gCodeEditor = document.getElementById("Code");
 var gShaderCodeEditor = document.getElementById("ShaderCode");
 
 window.onbeforeunload = function(e) {
-	if(!gDocumentChanged) return null;
+	if(!gDocumentChanged) return;
 	var dialogText = 'Вы уверены, что хотите закрыть страницу без сохранения изменений?';
 	e.returnValue = dialogText;
 	return dialogText;
@@ -743,8 +743,6 @@ function CleanUpResults()
 	while(gResults.hasChildNodes()) gResults.removeChild(gResults.firstChild);
 }
 window.onunload = function(event) {
-	alert("onunload");
-	console.log("onunload");
 	CleanUpResults();
 	return false;
 };
