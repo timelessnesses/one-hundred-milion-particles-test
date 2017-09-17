@@ -1515,9 +1515,9 @@ vec2 DiffFreePacked2(sampler2D s, vec2 pos, vec2 pixSize)
 //Модуль градиента модуля градиента текстуры в точке pos.
 vec4 Diff2Free(sampler2D s, vec2 pos, vec2 pixSize)
 {
-	vec4 diff = DiffFree(TexA, TexCoord, pixSize);
-    vec4 diffX = DiffFree(TexA, TexCoord+vec2(pixSize.x, 0.0), pixSize);
-    vec4 diffY = DiffFree(TexA, TexCoord+vec2(0.0, pixSize.y), pixSize);
+	vec4 diff = DiffFree(TexA, pos, pixSize);
+    vec4 diffX = DiffFree(TexA, pos+vec2(pixSize.x, 0.0), pixSize);
+    vec4 diffY = DiffFree(TexA, pos+vec2(0.0, pixSize.y), pixSize);
     return sqrt(sqr(diffX - diff) + sqr(diffY - diff));
 }
 
@@ -1525,9 +1525,9 @@ vec4 Diff2Free(sampler2D s, vec2 pos, vec2 pixSize)
 //Предполагается, что текстура в формате RGBA8 и в неё упакованы 2 числа в диапазоне [0; 1] с точностью 16 бит.
 vec2 Diff2FreePacked2(sampler2D s, vec2 pos, vec2 pixSize)
 {
-	vec2 diff = DiffFreePacked2(TexA, TexCoord, pixSize);
-    vec2 diffX = DiffFreePacked2(TexA, TexCoord+vec2(pixSize.x, 0.0), pixSize);
-    vec2 diffY = DiffFreePacked2(TexA, TexCoord+vec2(0.0, pixSize.y), pixSize);
+	vec2 diff = DiffFreePacked2(TexA, pos, pixSize);
+    vec2 diffX = DiffFreePacked2(TexA, pos+vec2(pixSize.x, 0.0), pixSize);
+    vec2 diffY = DiffFreePacked2(TexA, pos+vec2(0.0, pixSize.y), pixSize);
     return sqrt(sqr(diffX - diff) + sqr(diffY - diff));
 }
 
