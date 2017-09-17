@@ -5,6 +5,9 @@ var ChromeVersion = function() {
 }();
 var BrowserIsIE = navigator.userAgent.match(/Trident/g) || navigator.userAgent.match(/MSIE/g);
 
+var TemplateStringSupport = false;
+try {new Function( "`{2+2}`" ); TemplateStringSupport = true;} catch (err) {} 
+
 if(!String.prototype.startsWith) {
   Object.defineProperty(String.prototype, 'startsWith', {
     enumerable: false,
@@ -194,7 +197,7 @@ function EscapeHTML(str)
 function LoadShaderAsync(path)
 {
 	var loader = {};
-	if(!BrowserIsIE) //IE не поддерживает template string, поэтому придётся скачивать шейдер запросом
+	if(TemplateStringSupport)
 	{
 		var head = document.getElementsByTagName('head')[0];
 		var js = document.createElement("script");

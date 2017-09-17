@@ -229,9 +229,9 @@ vec3 f3rand(vec2 seed)
 
 
 //Вспомогательные функции
-float permute(float x) {return mod((x*34.0 + 1.0)*x, 289.0);}
-vec3 permute(vec3 x) {return mod((x*34.0 + 1.0)*x, 289.0);}
-vec4 permute(vec4 x) {return mod((x*34.0 + 1.0)*x, 289.0);}
+float permute(float x) {return mod((x*(17.0 + 39.0*x) + 1.0)*x, 289.0);}
+vec3 permute(vec3 x) {return mod((x*(17.0 + 39.0*x) + 1.0)*x, 289.0);}
+vec4 permute(vec4 x) {return mod((x*(17.0 + 39.0*x) + 1.0)*x, 289.0);}
 vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
 vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
 vec4 fade(vec4 t) {return t*t*t*(t*(t*6.0 - 15.0) + 10.0);}
@@ -249,7 +249,7 @@ float cnoise(vec2 P, vec2 rep)
 	gx -= floor(gx+0.5);
 		
 	vec2 g00 = vec2(gx.x, gy.x), g10 = vec2(gx.y, gy.y), g01 = vec2(gx.z, gy.z), g11 = vec2(gx.w, gy.w);
-	vec4 norm = 1.79284291400159-0.85373472095314*vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
+	vec4 norm = 1.79284291400159 - 0.85373472095314*vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
 	g00 *= norm.x; g01 *= norm.y; g10 *= norm.z; g11 *= norm.w;
 		
 	float n00 = dot(g00, vec2(fx.x, fy.x));
@@ -939,7 +939,7 @@ vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves, float gain, float lac
         sum.x += n*g;
 		normalizer += g;
     }
-	return sum/normalizer;
+	return sum / normalizer;
 }
 
 vec2 PerlinOctavesX2(vec2 coord, vec2 period, int octaves, float gain, float lacunarity)
