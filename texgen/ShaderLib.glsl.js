@@ -1010,15 +1010,15 @@ vec3 RGBM2RGB(vec4 rgbm)
 	return 6.0*rgbm.rgb*rgbm.a;
 }
 
-float Linear2SRGB(float x) {return max(12.92*x, 1.055*pow(x, 1.0/2.4) - 0.055);}
-vec2 Linear2SRGB(vec2 x) {return max(12.92*x, 1.055*pow(x, vec2(1.0/2.4)) - vec2(0.055));}
-vec3 Linear2SRGB(vec3 x) {return max(12.92*x, 1.055*pow(x, vec3(1.0/2.4)) - vec3(0.055));}
-vec4 Linear2SRGB(vec4 x) {return max(12.92*x, 1.055*pow(x, vec4(1.0/2.4)) - vec4(0.055));}
+float Linear2SRGB(float x) {return min(12.92*x, 1.055*pow(x, 1.0/2.4) - 0.055);}
+vec2 Linear2SRGB(vec2 x) {return min(12.92*x, 1.055*pow(x, vec2(1.0/2.4)) - vec2(0.055));}
+vec3 Linear2SRGB(vec3 x) {return min(12.92*x, 1.055*pow(x, vec3(1.0/2.4)) - vec3(0.055));}
+vec4 Linear2SRGB(vec4 x) {return min(12.92*x, 1.055*pow(x, vec4(1.0/2.4)) - vec4(0.055));}
 
-float SRGB2Linear(float x) {return min(x/12.92, pow((x + 0.055)/1.055, 2.4));}
-vec2 SRGB2Linear(vec2 x) {return min(x/12.92, pow((x + vec2(0.055))/1.055, vec2(2.4)));}
-vec3 SRGB2Linear(vec3 x) {return min(x/12.92, pow((x + vec3(0.055))/1.055, vec3(2.4)));}
-vec4 SRGB2Linear(vec4 x) {return min(x/12.92, pow((x + vec4(0.055))/1.055, vec4(2.4)));}
+float SRGB2Linear(float x) {return max(x/12.92, pow((x + 0.055)/1.055, 2.4));}
+vec2 SRGB2Linear(vec2 x) {return max(x/12.92, pow((x + vec2(0.055))/1.055, vec2(2.4)));}
+vec3 SRGB2Linear(vec3 x) {return max(x/12.92, pow((x + vec3(0.055))/1.055, vec3(2.4)));}
+vec4 SRGB2Linear(vec4 x) {return max(x/12.92, pow((x + vec4(0.055))/1.055, vec4(2.4)));}
 
 ///////////////////////////
 // Normal Height Library //
