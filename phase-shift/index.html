@@ -21,6 +21,7 @@
 <noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
 
 <p><label>Нуклеотидная последовательность: </label><br/><textarea cols="100" rows="25" id="Sequence" autocorrect="off" style="width:100%" value=""></textarea></p>
+<p><button onclick="ShuffleTriplets()">Перемешать триплетами</button></p>
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_3"><label for="spoilerid_3">
 Генерация нуклеотидной последовательности
@@ -142,6 +143,31 @@
 			if(i % 50 == 49) result += '\n';
 		}
 		document.getElementById('Sequence').value = result;
+	}
+	
+	function ShuffleArray(a)
+	{
+		for(var i = a.length; i; i--)
+		{
+			var j = Math.floor(Math.random() * i);
+			var x = a[i - 1];
+			a[i - 1] = a[j];
+			a[j] = x;
+		}
+	}
+	
+	function ShuffleTripletsString(str)
+	{
+		var triplets = str.match(/.{1,3}/g);
+		if(str.length % 3 != 0) triplets.splice(triplets.length-1, 1);
+		ShuffleArray(triplets);
+		return triplets.join('');
+	}
+	
+	function ShuffleTriplets()
+	{
+		var seq = document.getElementById('Sequence');
+		seq.value = ShuffleTripletsString(RemoveNonSeqChars(seq.value)).match(/.{1,50}/g).join('\n');
 	}
 	
 	function Start()
