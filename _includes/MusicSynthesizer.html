@@ -15,7 +15,7 @@
 <p>
 	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
 	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
-	<button id="download" style="height:32px;width:128px" onclick="Download(GetUrl())">Скачать MIDI</button>
+	<button id="download" style="height:32px;width:128px" onclick="GetUrl(function(url) {Download(url)})">Скачать MIDI</button>
 </p>
 
 <hr>
@@ -23,345 +23,413 @@
 <hr>
 
 <script type="text/javascript">
-	var gScript = document.createElement('script');
-	gScript.src = "MusicSynthesizer.js"
+var gScript = document.createElement('script');
+gScript.src = "MusicSynthesizer.js"
+
+gScript.loaded = false;
+var gAutoPlay = false;
+var Module = {
+	onRuntimeInitialized: function() {
+		gScript.loaded = true;
+		if(gAutoPlay) PlayMidi();
+	}
+};
 	
-	gScript.loaded = false;
-	var gAutoPlay = false;
-	var Module = {
-		onRuntimeInitialized: function() {
-			gScript.loaded = true;
-			if(gAutoPlay) PlayMidi();
-		}
+document.body.appendChild(gScript);
+
+function YandexDiskRequestURI(action, params)
+{
+	var url = "https://cloud-api.yandex.net/v1/disk/" + action + "?";
+	var firstIteration = true;
+	for(var key in params)
+	{
+		if(!params.hasOwnProperty(key)) continue;
+		if(!firstIteration) url += '&';
+		firstIteration = false;
+		url += key + "=" + encodeURIComponent(params[key]);
+	}
+	return url;
+}
+
+function YandexDiskRequest(method, action, params, onReady)
+{
+	var url = YandexDiskRequestURI(action, params);
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function()
+	{
+		if(xhr.readyState == xhr.DONE) onReady(xhr);
+	}
+	xhr.open(method, url, true);
+	xhr.send();
+}
+
+function YandexDiskRequestJson(method, action, params, onSuccess)
+{
+	YandexDiskRequest(method, action, params, function(xhr) {
+		if(xhr.status == 200) onSuccess(JSON.parse(xhr.responseText));
+		else PrintLineError("Не удалось выполнить запрос к Яндекс.Диску. Статус: " + xhr.status + ", " + xhr.statusText);
+	});
+}
+
+function YandexDiskDownloadLink(publicLink, path, onSuccess)
+{
+	if(path.charAt(0) != '/') path = "/" + path;
+	var params = {
+		public_key: publicLink,
+		fields: "href"
 	};
-	
-	document.body.appendChild(gScript);
-	
-	
-	function PrintLineRaw(text)
+	if(path) params.path = path;
+	YandexDiskRequestJson("GET", "public/resources/download", params,
+		function(response) {onSuccess(response.href);});
+}
+
+function PrintLineRaw(text)
+{
+	var output = document.getElementById('output');
+	if(output)
 	{
-		var output = document.getElementById('output');
-		if(output)
+		output.innerHTML += text + "<br/>";
+		output.scrollTop = output.scrollHeight;
+	}
+}
+	
+function EscapeString(text)
+{
+	if(text.replace === undefined) return text;
+	text = text.replace(/&/g, "&amp;");
+	text = text.replace(/</g, "&lt;");
+	text = text.replace(/>/g, "&gt;");
+	text = text.replace(/\n/g, '<br/>');
+	return text;
+}
+	
+function PrintLine(text)
+{
+	if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+	console.log(text);
+	PrintLineRaw(EscapeString(text));
+}
+	
+function PrintLineError(text)
+{
+	console.log(text);
+	if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+	PrintLineRaw("<font color=red size=4>" + EscapeString(text) + "</font>");
+}
+	
+function ClearTextField()
+{
+	var output = document.getElementById('output');
+	if(output) output.innerHTML = "";
+}
+
+if(location.search)
+{
+	var url = location.search.substr(1);
+	gAutoPlay = url.indexOf('!') == 0;
+	if(gAutoPlay) url = url.substr(1);
+	var use_streaming = url.indexOf('~') == 0;
+	if(use_streaming) url = url.substr(1);
+	document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
+	document.getElementById('use_streaming').checked = use_streaming;
+}
+if(!(window.AudioContext || window.webkitAudioContext))
+{
+	var output = document.getElementById('output');
+	output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
+}
+
+function GetUrl(onSuccess)
+{
+	var url = document.getElementById('midi_url').value;
+	var rel = url.indexOf('./') == 0;
+	if(rel)
+	{
+		//url = '/midi' + url.substr(1);
+		url = "https://yadi.sk/d/-chbqBzK3NLGpU:" + url.substr(1);
+	}
+	
+	if(url.indexOf("yadi.sk/d/") == 0) url = "https://" + url;
+	if(url.indexOf("https://yadi.sk/d/") == 0)
+	{
+		var path;
+		var lastColonIndex = url.lastIndexOf(":");
+		if(lastColonIndex > 5)
 		{
-			output.innerHTML += text + "<br/>";
-			output.scrollTop = output.scrollHeight;
+			path = url.substr(lastColonIndex+1);
+			url = url.substr(0, lastColonIndex);
 		}
+		YandexDiskDownloadLink(url, path, onSuccess);
+		return;
 	}
 	
-	function EscapeString(text)
+	if(url.charAt(0) == '/') url = document.domain + url;
+	if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0)
 	{
-		if(text.replace === undefined) return text;
-		text = text.replace(/&/g, "&amp;");
-		text = text.replace(/</g, "&lt;");
-		text = text.replace(/>/g, "&gt;");
-		text = text.replace(/\n/g, '<br/>');
-		return text;
+		if(rel) url = window.location.protocol + "//" + url;
+		else url = 'http://' + url;
 	}
+	onSuccess(url);
+}
 	
-	function PrintLine(text)
+var gPreloadedMusic = null;
+var gStreamedMusic = null;
+var gStreamedMusicIsPlaying = false;
+var gTempBufferPtr = 0;
+var gTempBufferSize = 16384;
+var gAudioSourcePtr = 0;
+var gWebAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+var gNumChannels = 2;
+
+function PauseAllSounds()
+{
+	if(gStreamedMusic != null && gStreamedMusicIsPlaying)
 	{
-		if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-		console.log(text);
-		PrintLineRaw(EscapeString(text));
+		gStreamedMusic.disconnect(gWebAudioContext.destination);
+		gStreamedMusicIsPlaying = false;
 	}
-	
-	function PrintLineError(text)
+	if(gPreloadedMusic != null && gPreloadedMusic.buffer != null && gPreloadedMusic.interval == null) gPreloadedMusic.stop();
+}
+
+function StopAllSounds()
+{
+	PauseAllSounds();
+	if(gAudioSourcePtr != 0)
 	{
-		console.log(text);
-		if(arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-		PrintLineRaw("<font color=red size=4>" + EscapeString(text) + "</font>");
+		Module._SourceFree(gAudioSourcePtr);
+		gAudioSourcePtr = 0;
 	}
-	
-	function ClearTextField()
+	gStreamedMusic = null;
+	if(gPreloadedMusic != null)
 	{
-		var output = document.getElementById('output');
-		if(output) output.innerHTML = "";
-	}
-	
-	if(location.search)
-	{
-		var url = location.search.substr(1);
-		gAutoPlay = url.indexOf('!') == 0;
-		if(gAutoPlay) url = url.substr(1);
-		var use_streaming = url.indexOf('~') == 0;
-		if(use_streaming) url = url.substr(1);
-		document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
-		document.getElementById('use_streaming').checked = use_streaming;
-	}
-	if(!(window.AudioContext || window.webkitAudioContext))
-	{
-		var output = document.getElementById('output');
-		output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
-	}
-	
-	function GetUrl()
-	{
-		var url = document.getElementById('midi_url').value;
-		var rel = url.indexOf('./') == 0;
-		if(rel) url = '/midi' + url.substr(1);
-		if(url.indexOf('/') == 0) url = document.domain + url;
-		if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0)
+		if(gPreloadedMusic.interval !== undefined && gPreloadedMusic.interval != null)
 		{
-			if(rel) url = window.location.protocol + "//" + url;
-			else url = 'http://' + url;
-		}
-		return url;
-	}
-	
-	var gPreloadedMusic = null;
-	var gStreamedMusic = null;
-	var gStreamedMusicIsPlaying = false;
-	var gTempBufferPtr = 0;
-	var gTempBufferSize = 16384;
-	var gAudioSourcePtr = 0;
-	var gWebAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-	var gNumChannels = 2;
-	
-	function PauseAllSounds()
-	{
-		if(gStreamedMusic != null && gStreamedMusicIsPlaying)
-		{
-			gStreamedMusic.disconnect(gWebAudioContext.destination);
-			gStreamedMusicIsPlaying = false;
-		}
-		if(gPreloadedMusic != null && gPreloadedMusic.buffer != null && gPreloadedMusic.interval == null) gPreloadedMusic.stop();
-	}
-	
-	function StopAllSounds()
-	{
-		PauseAllSounds();
-		if(gAudioSourcePtr != 0)
-		{
-			Module._SourceFree(gAudioSourcePtr);
-			gAudioSourcePtr = 0;
-		}
-		gStreamedMusic = null;
-		if(gPreloadedMusic != null)
-		{
-			if(gPreloadedMusic.interval !== undefined && gPreloadedMusic.interval != null)
-			{
-				clearInterval(gPreloadedMusic.interval);
-				PrintLine("Отменено.");
-				gPreloadedMusic.interval = null;
-			}
-			else gPreloadedMusic.disconnect(gWebAudioContext.destination);
-			gPreloadedMusic = null;
-		}
-	}
-	
-	function ArrayBufferToHeap(arrayBuffer)
-	{
-		var bytes = new Uint8Array(arrayBuffer);
-		var ptr = Module._malloc(bytes.length);
-		Module.HEAPU8.subarray(ptr, ptr + bytes.length).set(bytes);
-		return ptr;
-	}
-	
-	function FillZeros(float32Array)
-	{
-		if(float32Array.fill === undefined)
-		{
-			for(var i = 0; i < float32Array.length; i++)
-				float32Array[i] = 0;
-		}
-		else float32Array.fill(0);
-	}
-	
-	function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
-	{
-		var bufferSize = gTempBufferSize;
-		StopAllSounds();
-		if(gStreamedMusic == null) gStreamedMusic = gWebAudioContext.createScriptProcessor(bufferSize, 0, gNumChannels);
-		if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(bufferSize*4*gNumChannels);
-		gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
-		if(gAudioSourcePtr == 0)
-		{
-			ClearTextField();
-			PrintLineError("Неверный формат MIDI файла.");
-			return;
-		}
-		
-		gStreamedMusic.onaudioprocess = function(audioProcessingEvent)
-		{
-			if(gStreamedMusic.stopSoon)
-			{
-				gStreamedMusicIsPlaying = false;
-				gStreamedMusic.disconnect(gWebAudioContext.destination);
-				return;
-			}
-			var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, bufferSize, bufferSize);
-			var outputBuffer = audioProcessingEvent.outputBuffer;
-			var startIndex = gTempBufferPtr/4;
-			FillZeros(Module.HEAPF32.subarray(startIndex + samplesRead, startIndex + bufferSize));
-			FillZeros(Module.HEAPF32.subarray(startIndex + bufferSize + samplesRead, startIndex + 2*bufferSize));
-			for(var ch = 0; ch < gNumChannels; ch++)
-			{
-				if(outputBuffer.copyToChannel === undefined)
-				{
-					var outputData = outputBuffer.getChannelData(ch);
-					outputData.set(Module.HEAPF32.subarray(startIndex, startIndex + bufferSize));
-				}
-				else outputBuffer.copyToChannel(Module.HEAPF32.subarray(startIndex, startIndex+bufferSize), ch);
-				startIndex += bufferSize;
-			}
-			if(samplesRead < bufferSize) gStreamedMusic.stopSoon = true;
-		}
-		gStreamedMusic.connect(gWebAudioContext.destination);
-		gStreamedMusicIsPlaying = true;
-		PrintLine("Воспроизведение...");
-	}
-	
-	function PreloadBuffer(totalSamplesLeft, bufferOffset)
-	{
-		if(gPreloadedMusic.interval == null) return;
-		var buffersLeftToProcessInThisCall = 8;
-		var startIndex = gTempBufferPtr/4;
-		var outputBuffer = gPreloadedMusic.buffer;
-		while(totalSamplesLeft > 0 && buffersLeftToProcessInThisCall-- > 0)
-		{
-			var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, gTempBufferSize, gTempBufferSize);
-			if(samplesRead == 0) return;
-			for(var ch = 0; ch < gNumChannels; ch++)
-			{
-				var channelStartIndex = startIndex + ch * gTempBufferSize;
-				if(outputBuffer.copyToChannel === undefined)
-				{
-					var outputData = outputBuffer.getChannelData(ch);
-					outputData.set(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), bufferOffset);
-				}
-				else outputBuffer.copyToChannel(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), ch, bufferOffset);
-			}
-			bufferOffset += samplesRead;
-			totalSamplesLeft -= samplesRead;
-		}
-		var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
-		if(percent > 100) percent = 100;
-		var synthPercent = document.getElementById('synthPercent');
-		if(synthPercent) synthPercent.innerHTML = percent.toFixed() + "%";
-		if(totalSamplesLeft > 0)
-			gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
-		else
-		{
-			if(gPreloadedMusic.startTime !== undefined)
-			{
-				var synthTimeMs = performance.now() - gPreloadedMusic.startTime;
-				PrintLine("Время синтеза: " + synthTimeMs.toFixed(2) + " мс");
-			}
-			PrintLine("Воспроизведение...");
-			gPreloadedMusic.connect(gWebAudioContext.destination);
-			gPreloadedMusic.start();
+			clearInterval(gPreloadedMusic.interval);
+			PrintLine("Отменено.");
 			gPreloadedMusic.interval = null;
 		}
+		else gPreloadedMusic.disconnect(gWebAudioContext.destination);
+		gPreloadedMusic = null;
 	}
+}
 	
-	function PlayMidiDataPtr(midiDataPtr, midiDataLength)
+function ArrayBufferToHeap(arrayBuffer)
+{
+	var bytes = new Uint8Array(arrayBuffer);
+	var ptr = Module._malloc(bytes.length);
+	Module.HEAPU8.subarray(ptr, ptr + bytes.length).set(bytes);
+	return ptr;
+}
+	
+function FillZeros(float32Array)
+{
+	if(float32Array.fill === undefined)
 	{
-		StopAllSounds();
-		
-		if(gPreloadedMusic == null) gPreloadedMusic = gWebAudioContext.createBufferSource();
-		if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(gTempBufferSize*4*gNumChannels);
-		
-		gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
-		var totalSamples = Module._SourceSamplesLeft(gAudioSourcePtr);
-		gPreloadedMusic.buffer = gWebAudioContext.createBuffer(gNumChannels, totalSamples, gWebAudioContext.sampleRate);
-		if(gAudioSourcePtr == 0)
-		{
-			ClearTextField();
-			PrintLineError("Неверный формат MIDI файла.");
-			return;
-		}
-		PrintLineRaw("Синтез... <span id='synthPercent'>0%</span>");
-		gPreloadedMusic.startTime = performance.now();
-		gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamples, 0);
+		for(var i = 0; i < float32Array.length; i++)
+			float32Array[i] = 0;
 	}
+	else float32Array.fill(0);
+}
 	
-	function GetMidiPtrInfoString(midiDataPtr, midiDataLength)
-	{
-		var cstrPtr = Module._GetMidiInfoString(midiDataPtr, midiDataLength);
-		var result = Module.UTF8ToString(cstrPtr);
-		Module._free(cstrPtr);
-		return result;
-	}
-	
-	function PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer)
-	{
-		var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
-		PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
-		PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
-		PlayMidiDataPtrStreamed(midiDataPtr, midiDataArrayBuffer.byteLength);
-		Module._free(midiDataPtr);
-	}
-	
-	function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
-	{
-		var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
-		PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
-		PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
-		PlayMidiDataPtr(midiDataPtr, midiDataArrayBuffer.byteLength);
-		Module._free(midiDataPtr);
-	}
-	
-	function DownloadBinaryFileAsArrayBuffer(url, successCallback)
+function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
+{
+	var bufferSize = gTempBufferSize;
+	StopAllSounds();
+	if(gStreamedMusic == null) gStreamedMusic = gWebAudioContext.createScriptProcessor(bufferSize, 0, gNumChannels);
+	if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(bufferSize*4*gNumChannels);
+	gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
+	if(gAudioSourcePtr == 0)
 	{
 		ClearTextField();
-		PrintLine("Загрузка MIDI файла по адресу " + url + "...");
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function()
-		{
-			if(xhr.readyState == xhr.DONE)
-			{
-				if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
-				else PrintLineError("Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText);
-			}
-		}
-		xhr.open("GET", url, true);
-		xhr.responseType = "arraybuffer";
-		xhr.send();
+		PrintLineError("Неверный формат MIDI файла.");
+		return;
 	}
-	
-	function PlayMidi()
-	{
-		var output = document.getElementById('output');
-		if(output) output.value = '';
-		var useStreaming = document.getElementById('use_streaming').checked;
-		output.innerHTML = '';
 		
-		var urlChecked = document.getElementById('url').checked;
-		
-		var midiData = null;
-		if(urlChecked) DownloadBinaryFileAsArrayBuffer(GetUrl(), useStreaming? PlayStreamedMidiDataAndPrintInfo: PlayMidiDataAndPrintInfo);
-		else
-		{
-			var midiFiles = document.getElementById('midi_file').files;
-			if(midiFiles.length == 0)
-			{
-				ClearTextField();
-				PrintLineError("Выберите локальный файл для воспроизведения.");
-				return;
-			}
-			var reader = new FileReader();
-			reader.onload = function(e)
-			{
-				var midiDataArrayBuffer = e.target.result;
-				if(useStreaming) PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer);
-				else PlayMidiDataAndPrintInfo(midiDataArrayBuffer);
-			};
-			reader.readAsArrayBuffer(midiFiles[0]);
-		}
-	}
-	
-	function Download(url)
+	gStreamedMusic.onaudioprocess = function(audioProcessingEvent)
 	{
-		var hiddenIFrameID = 'hiddenDownloader';
-		var iframe = document.getElementById(hiddenIFrameID);
-		if(iframe === null)
+		if(gStreamedMusic.stopSoon)
 		{
-			iframe = document.createElement('iframe');
-			iframe.id = hiddenIFrameID;
-			iframe.style.display = 'none';
-			document.body.appendChild(iframe);
+			gStreamedMusicIsPlaying = false;
+			gStreamedMusic.disconnect(gWebAudioContext.destination);
+			return;
 		}
-		iframe.src = url;
+		var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, bufferSize, bufferSize);
+		var outputBuffer = audioProcessingEvent.outputBuffer;
+		var startIndex = gTempBufferPtr/4;
+		FillZeros(Module.HEAPF32.subarray(startIndex + samplesRead, startIndex + bufferSize));
+		FillZeros(Module.HEAPF32.subarray(startIndex + bufferSize + samplesRead, startIndex + 2*bufferSize));
+		for(var ch = 0; ch < gNumChannels; ch++)
+		{
+			if(outputBuffer.copyToChannel === undefined)
+			{
+				var outputData = outputBuffer.getChannelData(ch);
+				outputData.set(Module.HEAPF32.subarray(startIndex, startIndex + bufferSize));
+			}
+			else outputBuffer.copyToChannel(Module.HEAPF32.subarray(startIndex, startIndex+bufferSize), ch);
+			startIndex += bufferSize;
+		}
+		if(samplesRead < bufferSize) gStreamedMusic.stopSoon = true;
 	}
+	gStreamedMusic.connect(gWebAudioContext.destination);
+	gStreamedMusicIsPlaying = true;
+	PrintLine("Воспроизведение...");
+}
+	
+function PreloadBuffer(totalSamplesLeft, bufferOffset)
+{
+	if(gPreloadedMusic.interval == null) return;
+	var buffersLeftToProcessInThisCall = 8;
+	var startIndex = gTempBufferPtr/4;
+	var outputBuffer = gPreloadedMusic.buffer;
+	while(totalSamplesLeft > 0 && buffersLeftToProcessInThisCall-- > 0)
+	{
+		var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, gTempBufferSize, gTempBufferSize);
+		if(samplesRead == 0) return;
+		for(var ch = 0; ch < gNumChannels; ch++)
+		{
+			var channelStartIndex = startIndex + ch * gTempBufferSize;
+			if(outputBuffer.copyToChannel === undefined)
+			{
+				var outputData = outputBuffer.getChannelData(ch);
+				outputData.set(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), bufferOffset);
+			}
+			else outputBuffer.copyToChannel(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), ch, bufferOffset);
+		}
+		bufferOffset += samplesRead;
+		totalSamplesLeft -= samplesRead;
+	}
+	var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
+	if(percent > 100) percent = 100;
+	var synthPercent = document.getElementById('synthPercent');
+	if(synthPercent) synthPercent.innerHTML = percent.toFixed() + "%";
+	if(totalSamplesLeft > 0)
+		gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
+	else
+	{
+		if(gPreloadedMusic.startTime !== undefined)
+		{
+			var synthTimeMs = performance.now() - gPreloadedMusic.startTime;
+			PrintLine("Время синтеза: " + synthTimeMs.toFixed(2) + " мс");
+		}
+		PrintLine("Воспроизведение...");
+		gPreloadedMusic.connect(gWebAudioContext.destination);
+		gPreloadedMusic.start();
+		gPreloadedMusic.interval = null;
+	}
+}
+	
+function PlayMidiDataPtr(midiDataPtr, midiDataLength)
+{
+	StopAllSounds();
+		
+	if(gPreloadedMusic == null) gPreloadedMusic = gWebAudioContext.createBufferSource();
+	if(gTempBufferPtr == 0) gTempBufferPtr = Module._malloc(gTempBufferSize*4*gNumChannels);
+	
+	gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
+	var totalSamples = Module._SourceSamplesLeft(gAudioSourcePtr);
+	gPreloadedMusic.buffer = gWebAudioContext.createBuffer(gNumChannels, totalSamples, gWebAudioContext.sampleRate);
+	if(gAudioSourcePtr == 0)
+	{
+		ClearTextField();
+		PrintLineError("Неверный формат MIDI файла.");
+		return;
+	}
+	PrintLineRaw("Синтез... <span id='synthPercent'>0%</span>");
+	gPreloadedMusic.startTime = performance.now();
+	gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamples, 0);
+}
+	
+function GetMidiPtrInfoString(midiDataPtr, midiDataLength)
+{
+	var cstrPtr = Module._GetMidiInfoString(midiDataPtr, midiDataLength);
+	var result = Module.UTF8ToString(cstrPtr);
+	Module._free(cstrPtr);
+	return result;
+}
+	
+function PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer)
+{
+	var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
+	PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
+	PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+	PlayMidiDataPtrStreamed(midiDataPtr, midiDataArrayBuffer.byteLength);
+	Module._free(midiDataPtr);
+}
+	
+function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
+{
+	var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
+	PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
+	PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+	PlayMidiDataPtr(midiDataPtr, midiDataArrayBuffer.byteLength);
+	Module._free(midiDataPtr);
+}
+	
+function DownloadBinaryFileAsArrayBuffer(url, successCallback)
+{
+	ClearTextField();
+	PrintLine("Загрузка MIDI файла по адресу " + url + "...");
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function()
+	{
+		if(xhr.readyState == xhr.DONE)
+		{
+			if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
+			else PrintLineError("Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText);
+		}
+	}
+	xhr.open("GET", url, true);
+	xhr.responseType = "arraybuffer";
+	xhr.send();
+}
+	
+function PlayMidi()
+{
+	var output = document.getElementById('output');
+	if(output) output.value = '';
+	var useStreaming = document.getElementById('use_streaming').checked;
+	output.innerHTML = '';
+	
+	var urlChecked = document.getElementById('url').checked;
+		
+	var midiData = null;
+	if(urlChecked)
+	{
+		GetUrl( function(url) {
+			DownloadBinaryFileAsArrayBuffer(url, useStreaming? PlayStreamedMidiDataAndPrintInfo: PlayMidiDataAndPrintInfo);
+		} );
+		return;
+	}
+
+	var midiFiles = document.getElementById('midi_file').files;
+	if(midiFiles.length == 0)
+	{
+		ClearTextField();
+		PrintLineError("Выберите локальный файл для воспроизведения.");
+		return;
+	}
+	var reader = new FileReader();
+	reader.onload = function(e)
+	{
+		var midiDataArrayBuffer = e.target.result;
+		if(useStreaming) PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer);
+		else PlayMidiDataAndPrintInfo(midiDataArrayBuffer);
+	};
+	reader.readAsArrayBuffer(midiFiles[0]);
+}
+	
+function Download(url)
+{
+	var hiddenIFrameID = 'hiddenDownloader';
+	var iframe = document.getElementById(hiddenIFrameID);
+	if(iframe === null)
+	{
+		iframe = document.createElement('iframe');
+		iframe.id = hiddenIFrameID;
+		iframe.style.display = 'none';
+		document.body.appendChild(iframe);
+	}
+	iframe.src = url;
+}
 </script>
 
