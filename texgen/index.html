@@ -316,11 +316,19 @@ void main()
 #version 100
 
 #ifdef GL_ES
+
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+
 #if GL_FRAGMENT_PRECISION_HIGH == 1
 precision highp float;
 #else
 precision mediump float;
 #endif
+
+#else
+precision mediump float;
+#endif
+
 #endif
 
 varying vec2 TexCoord;

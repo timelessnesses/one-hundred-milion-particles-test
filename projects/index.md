@@ -3,19 +3,19 @@ layout: post
 title: Проекты
 ---
 
-## [IntraEngine](intra-engine/)
+## [IntraEngine](intra-engine)
  Мой 3D движок.
 
-## [Intra](intra-lib/)
+## [Intra](intra-lib)
  Библиотека, содержащая почти все мои наработки. Содержит контейнеры, диапазоны, алгоритмы, потоки IO, многопоточность, часы и многое другое. Может быть использована как альтернатива STL.
 
-## [Синтезатор MIDI](midi-synthesizer/)
+## [Синтезатор MIDI](midi-synthesizer)
  Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме кода и midi-файла. Может работать прямо в браузере.
 
-## [Encoding Converter](encoding-converter/)
+## [Encoding Converter](encoding-converter)
  Маленький, простой и компактный преобразователь кодировок текстовых файлов в папке.
 
-## [Flying Particles](flying-particles/)
+## [Flying Particles](flying-particles)
  Красивая демка с системой частиц размером менее 4 КБ.
 
 ## [TexGen](../texgen/)
@@ -24,6 +24,6 @@ title: Проекты
 ## Мои старые игры
 Здесь выложены мои игры, которые я делал на Game Maker в 2004-2009 годах:
 
-- [Арканоид](old-games/arkanoid/)
-- [Планета призраков](old-games/ghost-planet/)
-- [Платформер типа соника](old-games/platformer/)
+- [Арканоид](old-games/arkanoid)
+- [Планета призраков](old-games/ghost-planet)
+- [Платформер типа соника](old-games/platformer)

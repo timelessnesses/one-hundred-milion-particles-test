@@ -13,9 +13,12 @@
 <label><input type="checkbox" id="use_streaming">Синтез в реальном времени</label>
 
 <p>
-	<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
-	<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>
-	<button id="download" style="height:32px;width:128px" onclick="GetUrl(function(url) {Download(url)})">Скачать MIDI</button>
+	<a id="play" class="button green" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</a>
+	<!--<button id="play" style="height:32px;width:96px" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>-->
+	<a id="stop" class="button grey" onclick="StopAllSounds()">Стоп</a>
+	<!--<button id="stop" style="height:32px;width:96px" onclick="StopAllSounds()">Стоп</button>-->
+	<a id="download" class="button blue_alt" onclick="GetUrl(function(url) {Download(url)})">Скачать MIDI</a>
+	<!--<button id="download" style="height:32px;width:128px" onclick="GetUrl(function(url) {Download(url)})">Скачать MIDI</button>-->
 </p>
 
 <hr>
@@ -24,7 +27,7 @@
 
 <script type="text/javascript">
 var gScript = document.createElement('script');
-gScript.src = "MusicSynthesizer.js"
+gScript.src = "MusicSynthesizer.js";
 
 gScript.loaded = false;
 var gAutoPlay = false;
@@ -58,7 +61,7 @@ function YandexDiskRequest(method, action, params, onReady)
 	xhr.onreadystatechange = function()
 	{
 		if(xhr.readyState == xhr.DONE) onReady(xhr);
-	}
+	};
 	xhr.open(method, url, true);
 	xhr.send();
 }
@@ -145,19 +148,18 @@ function GetUrl(onSuccess)
 	var rel = url.indexOf('./') == 0;
 	if(rel)
 	{
-		//url = '/midi' + url.substr(1);
 		url = "https://yadi.sk/d/-chbqBzK3NLGpU:" + url.substr(1);
 	}
 	
-	if(url.indexOf("yadi.sk/d/") == 0) url = "https://" + url;
-	if(url.indexOf("https://yadi.sk/d/") == 0)
+	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
+	if(url.substr(0, 18) == "https://yadi.sk/d/")
 	{
 		var path;
-		var lastColonIndex = url.lastIndexOf(":");
-		if(lastColonIndex > 5)
+		var nextSlashIndex = url.indexOf("/", 18);
+		if(nextSlashIndex > 17)
 		{
-			path = url.substr(lastColonIndex+1);
-			url = url.substr(0, lastColonIndex);
+			path = url.substr(nextSlashIndex);
+			url = url.substr(0, nextSlashIndex);
 		}
 		YandexDiskDownloadLink(url, path, onSuccess);
 		return;
@@ -269,7 +271,7 @@ function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
 			startIndex += bufferSize;
 		}
 		if(samplesRead < bufferSize) gStreamedMusic.stopSoon = true;
-	}
+	};
 	gStreamedMusic.connect(gWebAudioContext.destination);
 	gStreamedMusicIsPlaying = true;
 	PrintLine("Воспроизведение...");
@@ -364,11 +366,11 @@ function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
 	PlayMidiDataPtr(midiDataPtr, midiDataArrayBuffer.byteLength);
 	Module._free(midiDataPtr);
 }
-	
+
 function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 {
 	ClearTextField();
-	PrintLine("Загрузка MIDI файла по адресу " + url + "...");
+	PrintLineRaw("Загрузка <a href='" + url + "'>MIDI файла</a>...");
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function()
 	{
@@ -377,7 +379,7 @@ function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 			if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
 			else PrintLineError("Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText);
 		}
-	}
+	};
 	xhr.open("GET", url, true);
 	xhr.responseType = "arraybuffer";
 	xhr.send();

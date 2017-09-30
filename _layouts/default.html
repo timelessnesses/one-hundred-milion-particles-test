@@ -1,19 +1,26 @@
+---
+layout: compress
+---
+
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
+    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }}{% if site.description %} – {{ site.description }}{% endif %}</title>
 
     {% include meta.html %}
 
-    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
+	<style>
+	{% capture inline_css %}
+     {% include main.scss %}
+     {% endcapture %}
+   {{ inline_css | scssify }}
+	</style>
     <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
 
   </head>
 
   <body>
-    <div class="wrapper-masthead">
-      <div class="container">
-        <header class="masthead clearfix">
+  <header class="masthead clearfix">
           <!--<a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>-->
 
           <div class="site-info">
@@ -27,8 +34,9 @@
             <a href="{{ site.baseurl }}/projects/">Мои проекты</a>
           </nav>
         </header>
-      </div>
-    </div>
+		<div class="header-img-wrapper">
+		<img src="{{ site.baseurl }}/images/header.jpg"></img>
+		</div>
 
     <div id="main" role="main" class="container">
       {{ content }}
@@ -57,24 +65,24 @@
 						trackLinks:true,
 						accurateTrackBounce:true
 					});
-				} catch(e) { }
+				} catch(e) {}
 			});
 
 			var n = d.getElementsByTagName("script")[0],
 				s = d.createElement("script"),
-				f = function () { n.parentNode.insertBefore(s, n); };
+				f = function () {n.parentNode.insertBefore(s, n);};
 			s.type = "text/javascript";
 			s.async = true;
 			s.src = "https://mc.yandex.ru/metrika/watch.js";
 
-			if (w.opera == "[object Opera]") {
-				d.addEventListener("DOMContentLoaded", f, false);
-			} else { f(); }
+			if(w.opera == "[object Opera]") d.addEventListener("DOMContentLoaded", f, false);
+			else f();
 		})(document, window, "yandex_metrika_callbacks");
 	</script>
 	<noscript><div><img src="https://mc.yandex.ru/watch/37810200" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 	<!-- /Yandex.Metrika counter -->
 
-    {% include analytics.html %}
+    <!--{% include analytics.html %}-->
   </body>
 </html>
+<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style-ex.css" />
