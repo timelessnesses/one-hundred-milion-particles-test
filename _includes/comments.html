@@ -1,0 +1,37 @@
+{% if site.data.comments %}
+{% if site.data.comments.{{ page.slug }} %}
+<div class="js-comments">
+	{% assign comments = site.data.comments.{{ page.slug }} | sort %}
+	
+	{% for comment in comments reversed %}
+		{% assign commentData = comment[1] %}
+		
+<style>
+.comment {
+	width: 100%;
+	margin: 20px auto;
+	min-height: 0;
+}
+
+.comment_message {
+	margin-top: 1em;
+}
+
+.mdl-card_supporting-text {
+	padding-top: 0;
+}
+</style>
+
+		<article class="comment mdl-card mdl-shadow--2dp">
+		  <div class="mdl-card_supporting-text">
+		  	<p><b>Автор: </b>{{ commentData.name }}</p>
+		    <div class="comment_message">
+		    	{{ commentData.message | markdownify }}
+		    </div>
+		  </div>
+		</article>
+		<hr>
+	{% endfor %}
+</div>
+{% endif %}
+{% endif %}

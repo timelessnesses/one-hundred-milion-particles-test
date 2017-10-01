@@ -13,6 +13,30 @@ layout: default
     {{ page.date | date: "%d.%m.%Y" }}
   </div>
 
+<style>
+section + section {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+.constrain {
+	width: 100%;
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 1em;
+	padding-right: 1em;
+	box-sizing: border-box;
+}
+</style>
   
-  {% include disqus.html %}
+<section class="constrain">
+  <h3>Оставить комментарий</h3>
+  {% include comment-form.html %}
+</section>
+  
+<section class="constrain">
+<h3>Комментарии {{ {{ page.url }} | slugify }}</h3>
+  {% include comments.html %}
+</section>
 </article>
