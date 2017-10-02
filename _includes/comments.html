@@ -1,7 +1,9 @@
 {% if site.data.comments %}
-{% if site.data.comments.{{ page.slug }} %}
+{% assign folder = page.url | slugify %}
+
+{% if site.data.comments[folder] %}
 <div class="js-comments">
-	{% assign comments = site.data.comments.{{ page.slug }} | sort %}
+	{% assign comments = site.data.comments[folder] | sort %}
 	
 	{% for comment in comments reversed %}
 		{% assign commentData = comment[1] %}
@@ -25,8 +27,9 @@
 		<article class="comment mdl-card mdl-shadow--2dp">
 		  <div class="mdl-card_supporting-text">
 		  	<p><b>Автор: </b>{{ commentData.name }}</p>
+			<hr>
 		    <div class="comment_message">
-		    	{{ commentData.message | markdownify }}
+		    	{{ commentData.message | xml_escape | markdownify }}
 		    </div>
 		  </div>
 		</article>

@@ -35,8 +35,8 @@
 
 <form method="POST" action="https://api.staticman.net/v2/entry/gammaker/gammaker.github.io/master/comments">
   <input name="options[redirect]" type="hidden" value="https://{{ site.url }}{{ site.baseurl }}{{ page.url }}">
-  <input name="options[slug]" type="hidden" value="{{ {{ page.url }} | slugify }}">
+  <input name="options[slug]" type="hidden" value="{{ page.url | slugify }}">
   <p><input name="fields[name]" type="text" placeholder="Ваше имя"></p>
-  <p><textarea name="fields[message]" placeholder="Текст комментария" cols="100" rows="10" ></textarea></p>
+  <p><textarea name="fields[message]" placeholder="Текст комментария. Для форматирования можно использовать Markdown." cols="100" rows="10" ></textarea></p>
   <button type="submit">Отправить</button>
 </form>
