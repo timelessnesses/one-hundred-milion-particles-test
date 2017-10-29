@@ -31,12 +31,63 @@
 	z-index: 9999;
 }
 
+
+*:focus {outline: none;}
+
+.comment_form h2, .contact_form label {
+font-family:Georgia, Times, "Times New Roman", serif;
+}
+
+.comment_form ul {
+ width:750px;
+ list-style-type:none;
+ list-style-position:outside;
+ margin:0px;
+ padding:0px;
+}
+.comment_form li{
+ padding:12px;
+ border-bottom:1px solid #eee;
+ position:relative;
+}
+
+.comment_form li:first-child, .comment_form li:last-child {
+ border-bottom:1px solid #777;
+}
+
+.comment_form input {
+ height:30px;
+ width:300px;
+ padding:5px 8px;
+}
+.comment_form textarea {padding:8px; width:100%;}
+
+.comment_form input:focus, .comment_form textarea:focus {
+ background: #fff;
+ border:1px solid #26f;
+ box-shadow: 0 0 3px #aaa;
+}
+
+.comment_form input, .comment_form textarea {
+   border: 1px solid #cccccc;
+   border-radius: 5px;
+   background: #ffffff !important;
+   outline: none;
+   font-size: 100%;
+}
+
+.comment_form input {
+height: 30px;
+}
+
 </style>
 
-<form method="POST" action="https://api.staticman.net/v2/entry/gammaker/gammaker.github.io/master/comments">
+<form class="comment_form" method="POST" action="https://api.staticman.net/v2/entry/gammaker/gammaker.github.io/master/comments">
+  <ul>
   <input name="options[redirect]" type="hidden" value="https://{{ site.url }}{{ site.baseurl }}{{ page.url }}">
-  <input name="options[slug]" type="hidden" value="{{ page.url | slugify }}">
-  <p><input name="fields[name]" type="text" placeholder="Ваше имя"></p>
-  <p><textarea name="fields[message]" placeholder="Текст комментария. Для форматирования можно использовать Markdown." cols="100" rows="10" ></textarea></p>
-  <button type="submit">Отправить</button>
+  <li><input name="options[slug]" type="hidden" value="{{ page.url | slugify }}"></li>
+  <li><input name="fields[name]" type="text" placeholder="Ваше имя"></li>
+  <li><textarea name="fields[message]" placeholder="Текст комментария. Для форматирования можно использовать Markdown." cols="100" rows="10"></textarea></li>
+  <li><button class="button orange" type="submit">Отправить</button></li>
+  </ul>
 </form>

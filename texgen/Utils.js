@@ -1,5 +1,5 @@
 var ChromeVersion = function() {     
-    var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+    var raw = navigator.userAgent.match(/Chrom(e|ium)\/(\d+)\./);
 	if(!raw) return null;
     return parseInt(raw[2], 10);
 }();
