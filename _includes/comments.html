@@ -1,39 +1,41 @@
 {% if site.data.comments %}
 {% assign folder = page.url | slugify %}
 
+<style>
+.comment {
+	width: 100%;
+	margin: 15px;
+	padding: 10px;
+	border: 1px solid #282;
+	border-radius: 5px;
+	background-color: #efe;
+}
+
+.comment:nth-child(even) {
+  background-color: #ffe;
+}
+
+.comment_user {float:left; font-weight:bold; color:#009; margin-bottom: 5px; }
+
+.comment_message {
+	margin-left: 30px;
+}
+</style>
+
 {% if site.data.comments[folder] %}
-<div class="js-comments">
+<div class="thread-comments">
 	{% assign comments = site.data.comments[folder] | sort %}
 	
 	{% for comment in comments reversed %}
 		{% assign commentData = comment[1] %}
 		
-<style>
-.comment {
-	width: 100%;
-	margin: 20px auto;
-	min-height: 0;
-}
-
-.comment_message {
-	margin-top: 1em;
-}
-
-.mdl-card_supporting-text {
-	padding-top: 0;
-}
-</style>
-
-		<article class="comment mdl-card mdl-shadow--2dp">
-		  <div class="mdl-card_supporting-text">
-		  	<p><b>Автор: </b>{{ commentData.name }}</p>
-			<hr>
-		    <div class="comment_message">
-		    	{{ commentData.message | xml_escape | markdownify }}
-		    </div>
-		  </div>
-		</article>
-		<hr>
+    <div class="comment">
+	<div class="comment_user">{{ commentData.name }}</div>
+	<div style="clear:both;"></div>
+	<div class="comment_message">
+		{{ commentData.message | xml_escape | markdownify }}
+     </div>
+   </div>
 	{% endfor %}
 </div>
 {% endif %}

@@ -17,8 +17,7 @@ body {
   background: $white;
   font: 18px/1.4 $helvetica;
   color:#446860;
-  font-weight: 100;
-  text-shadow: 3px 2px 2px rgba(0, 0, 0, 0.2);
+  font-weight: 400;
 }
 
 .container {
@@ -34,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
   
   color:#16a085;
-  font-weight: 100;
+  font-weight: 400;
 
   @include mobile {
     line-height: 1.4;

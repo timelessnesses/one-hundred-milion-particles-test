@@ -5,7 +5,7 @@ title: Flying Particles - демка с системой частиц
 
 - [Скачать демку](https://github.com/gammaker/flying-particles/blob/master/exe/FlyingParticles.exe?raw=true)
 - [Проект на github](https://github.com/gammaker/flying-particles/)
-- [Web-версия](http://gammaker.github.io/particles/)
+- [Web-версия](../particles/)
 
 ![Скриншот демки]({{ site.baseurl }}/images/flying-particles.jpg)
 
@@ -44,6 +44,4 @@ title: Flying Particles - демка с системой частиц
 - Во время нажатия стрелок вверх и вниз анимация перематывается со скоростью 5x в текущем и обратном направлении соответственно;
 - P - приостановить\продолжить;
 - I - перезапустить анимацию сначала.
-
-
 
