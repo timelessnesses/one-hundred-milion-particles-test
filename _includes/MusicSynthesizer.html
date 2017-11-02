@@ -133,7 +133,7 @@ if(location.search)
 	if(gAutoPlay) url = url.substr(1);
 	var use_streaming = url.indexOf('~') == 0;
 	if(use_streaming) url = url.substr(1);
-	document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
+	document.getElementById('midi_url').value = decodeURIComponent(url);
 	document.getElementById('use_streaming').checked = use_streaming;
 }
 if(!(window.AudioContext || window.webkitAudioContext))

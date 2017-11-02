@@ -10,7 +10,7 @@
 html {
   font-size: 100%;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  font-weight: 100;
+  font-weight: 400;
 }
 
 body {
@@ -25,6 +25,19 @@ body {
   max-width: 740px;
   padding: 0 10px;
   width: 100%;
+}
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+	cursor: pointer;
+}
+
+a:hover, a:active, a:visited:hover {
+    color: #21A3A4;
+}
+a:visited {
+    color: #6143B4;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -42,9 +55,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 30px;
-  a {
-    color: inherit;
-  }
+  a, a:visited {color: #333;}
 }
 
 h2 {
@@ -62,15 +73,6 @@ h4 {
 
 p {
   margin: 15px 0;
-}
-
-a {
-  color: $blue;
-  text-decoration: none;
-	cursor: pointer;
-  &:hover, &:active {
-    color: $blue;
-  }
 }
 
 ul, ol {
@@ -244,9 +246,9 @@ nav {
     font-size: 16px;
   }
 
-  a {
+  a, a:visited {
     margin-left: 20px;
-    color: $darkGray;
+    color: #333;
     text-align: right;
     font-weight: 300;
     letter-spacing: 1px;

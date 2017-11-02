@@ -25,53 +25,96 @@ title: Синтезатор MIDI
 - FreeBSD;
 - [Web через Emscripten](/midisynth/);
 
+<style>
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 7px;
+}
+table {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	width: 100%;
+}
 
-### Слушать онлайн:
+td, th {
+	border: 1px solid #ddd;
+    padding: 8px;
+}
 
-- [Losing Religion](/midisynth/?~./Losing%20religion.mid)
-- [Pink Panther](/midisynth/?~./PinkPanther.mid)
-- [Merry Christmas](/midisynth/?~./Merry%20Christmas.mid)
-- [Mortal Kombat](/midisynth/?~./Mortal%20Kombat.mid)
-- [Sonic 3](/midisynth/?~./sonic3.mid)
-- [Wavin Flag](/midisynth/?~./knaan-wavin_flag.mid)
-- [Its My Life](/midisynth/?~./ItsMyLife1.mid)
-- [Hallelujah](/midisynth/?~./Hallelujah1.mid)
-- [Hesa Pirate](/midisynth/?~./HesaPirate.mid)
-- [Final Countdown](/midisynth/?~./FinalCountdown.mid)
-- [Da Be Dee](/midisynth/?~./Eifel 65 - Da Be Dee.mid)
-- [Mamma Mia](/midisynth/?~./ABBA-Mamma_Mia.mid)
-- [Happy New Year](/midisynth/?~./ABBA-Happy_New_Year.mid)
-- [Dancing Queen](/midisynth/?~./ABBA-Dancing_Queen1.mid)
-- [Turkish March](/midisynth/?~./TurkishMarch.mid)
-- [X-files](/midisynth/?~./X-files.mid)
-- [Bad Romance](/midisynth/?~./lady-gaga-BadRomance.mid)
-- [Just Dance](/midisynth/?~./lady_gaga_JustDance.mid)
-- [Paparazzi](/midisynth/?~./lady_gaga-paparazzi.mid)
-- [Wrecking Ball](/midisynth/?~./miley_cyrus-wrecking_ball.mid)
-- [Pink Perfect](/midisynth/?~./pink-perfect.mid)
-- [Piano Test](/midisynth/?~./test_piano.mid)
-- [Пусть бегут неуклюже пешеходы по лужам](/midisynth/?~./Крокодил Гена - Пусть Бегут Неуклюже Пешеходы По Лужам (День Рождения).mid)
-- [My Way](/midisynth/?~./MyWay1.mid)
-- [Smackthat](/midisynth/?~./Smackthat.mid)
-- [Harry Potter](/midisynth/?~./HarryPotter.mid)
-- [Green Sleeves](/midisynth/?~./Greensleeves.mid)
-- [Santa Lucia](/midisynth/?~./SantaLucia.mid)
-- [Skater Waltz](/midisynth/?~./skaterswaltz.mid)
-- [ThemeB](/midisynth/?~./ThemeB.mid)
-- [Resident Evil](/midisynth/?~./Resident_Evil_Main_Theme-guitar.mid)
-- [Cheri Lady](/midisynth/?~./cherilady.mid)
-- [Sia - Chandelier](/midisynth/?~./sia-chandelier.mid)
-- [Gangnam Style](/midisynth/?~./GangnamStyle.mid)
-- [Как упоительны России вечера](/midisynth/?~./Godfather.mid)
-- [Потому что нельзя](/midisynth/?~./potomu_chto_nelzya.mid)
-- [Smokie - Living Next Door to Alice](/midisynth/?~./Smokie_-_Living_Next_Door_to_Alice.mid)
-- [RE3 - The beginning of the nightmare](/midisynth/?~./the-beginning-of-the-nightmare.mid)
-- [Чайковский - Щелкунчик](/midisynth/?~./Чайковский - Щелкунчик.mid)
-- [Battle Game](/midisynth/?~./battle-game.mid)
-- [Morrowind Theme](/midisynth/?~./Morrowind Theme.mid)
-- [Прекрасное далёко](/midisynth/?~./Guest11.mid)
-- [My heart will go on](/midisynth/?~./celine_dion-my_heart_will_go_on.mid)
-- [Red Hot Chili Peppers - Californication](/midisynth/?~./red_hot_chili_peppers-californication.mid)
-- [You are beautiful](/midisynth/?~./YoureBeautiful.mid)
-- [Sweet Home Alabama](/midisynth/?~./SweetHomeAlabama.mid)
-- [flo_rida - Whistle](/midisynth/?~./flo_rida-whistle.mid)
+tbody tr {cursor: pointer;}
+
+table tr:nth-child(even){background-color: #f2f2f2;}
+
+tbody tr:hover {background-color: #ddd;}
+
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #6CBF60;
+    color: white;
+}
+</style>
+
+## Слушать онлайн
+<table>
+<thead><tr><th>Название</th><th>Размер, КБ</th><th>Добавлен</th></tr></thead>
+<tbody id="MidiTable">
+<tr><td>Загрузка списка... <noscript><font color=red>Включите JavaScript в браузере!</font></noscript></td></tr>
+</tbody>
+</table>
+
+<script>
+
+function BuildMidiFileTable(files)
+{
+	var table = document.getElementById("MidiTable");
+	var strs = [];
+	for(var i = 0; i < files.length; i++)
+	{
+		var f = files[i];
+		var dot = f.name.lastIndexOf('.');
+		var ext = f.name.substr(dot + 1).toLowerCase();
+		if(ext !== "mid" && ext !== "midi") continue;
+		var d = new Date(f.created);
+		strs.push("<tr><td><a href='", "../midisynth/?~./",
+			encodeURIComponent(f.name), "'>", f.name.substr(0, f.name.length-ext.length-1),
+			"</td><td>", (f.size/1024).toFixed(1), "</td><td>", ('0' + d.getDate()).slice(-2), '.', ('0' + (d.getMonth() + 1)).slice(-2), '.', d.getFullYear(), "</th></tr>");
+	}
+	table.innerHTML = strs.join('');
+}
+
+(function() {
+	var url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=https%3A%2F%2Fyadi.sk%2Fd%2F-chbqBzK3NLGpU&fields=_embedded.items.name,_embedded.items.size,_embedded.items.created&limit=100";
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function()
+	{
+		if(xhr.readyState != xhr.DONE) return;
+		if(xhr.status != 200)
+		{
+			document.getElementById("MidiTable").innerHTML = "<tr><td>Ошибка загрузки списка!</td></tr>";
+			return;
+		}
+		var jsonResponse = JSON.parse(xhr.responseText);
+		if(jsonResponse._embedded !== undefined && jsonResponse._embedded.items !== undefined)
+			BuildMidiFileTable(jsonResponse._embedded.items);
+	};
+	xhr.open("GET", url, true);
+	xhr.send();
+})();
+
+document.body.onclick = function(e) {
+  e = e || window.event;
+  var el = e.target || e.srcElement;
+  if(el.tagName == "A") return true;
+  if(el.tagName == "TD") el = el.parentElement;
+  if(el.tagName != "TR") return true;
+  el = el.firstChild.firstChild;
+  if(el.tagName != "A") return true;
+  if(e.ctrlKey || e.metaKey) window.open(el.href, '_blank');
+  else window.location.href = el.href;
+  return true;
+}
+
+</script>
+
