@@ -1,7 +1,5 @@
-
 @import "reset";
 @import "variables";
-@import "button";
 
 /**************/
 /* BASE RULES */
@@ -305,3 +303,5 @@ footer {
   padding: 20px 0;
   text-align: center;
 }
+
+@import "svg-icons";

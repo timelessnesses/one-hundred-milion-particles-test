@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Синтезатор MIDI
+styles: table
 ---
 
  Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме самого MIDI-файла.
@@ -9,7 +10,7 @@ title: Синтезатор MIDI
 - [Репозиторий](https://github.com/gammaker/Intra/)
 - [Онлайн-версия](/midisynth/)
 
-Сам [проект](https://github.com/gammaker/Intra/tree/master/MusicSynthesizer) состоит только из кода интерфейса и настройки инструментов, а основной код синтезатора находится в Intra/Audio.
+Сам [проект](https://github.com/gammaker/Intra/tree/master/Demos/MusicSynthesizer) состоит только из кода интерфейса и настройки инструментов, а основной код синтезатора находится в Intra/Audio.
 Программа под Windows\Linux\FreeBSD консольная, выбор воспроизводимого MIDI-файла производится передачей пути через командную строку (в проводнике Windows - перенести мышью MIDI-файл на бинарник). Если передать два параметра через командную строку, то результат синтеза будет записан в WAV файл по пути, указанному во втором параметре.
 
 В целом синтезатор звучит уже неплохо, но в данный момент присутствуют следующие недоработки:
@@ -24,37 +25,6 @@ title: Синтезатор MIDI
 - Linux;
 - FreeBSD;
 - [Web через Emscripten](/midisynth/);
-
-<style>
-table, th, td {
-	border: 1px solid black;
-	border-collapse: collapse;
-	padding: 7px;
-}
-table {
-	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	width: 100%;
-}
-
-td, th {
-	border: 1px solid #ddd;
-    padding: 8px;
-}
-
-tbody tr {cursor: pointer;}
-
-table tr:nth-child(even){background-color: #f2f2f2;}
-
-tbody tr:hover {background-color: #ddd;}
-
-table th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: #6CBF60;
-    color: white;
-}
-</style>
 
 ## Слушать онлайн
 <table>

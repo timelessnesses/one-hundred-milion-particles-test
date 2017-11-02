@@ -1,0 +1,21 @@
+.comment_form ul {
+ width:auto;
+ list-style-type:none;
+ list-style-position:outside;
+ margin:0px;
+ padding:0px;
+}
+.comment_form li{
+ padding:12px;
+ border-bottom:1px solid #eee;
+ position:relative;
+}
+
+.comment_form li:first-child, .comment_form li:last-child {
+ border-bottom:1px solid #777;
+}
+
+.comment_form input {
+ width:300px;
+}
+.comment_form textarea {width:100%;}

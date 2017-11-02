@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Intra - библиотека контейнеров, алгоритмов, аудио и др.
+styles: highlights
 ---
 
 - [Репозиторий](https://github.com/gammaker/Intra/)
