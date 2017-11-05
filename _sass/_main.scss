@@ -1,9 +1,5 @@
-@import "reset";
-@import "variables";
 
-/**************/
-/* BASE RULES */
-/**************/
+@import "variables";
 
 html {
   font-size: 100%;
@@ -11,11 +7,17 @@ html {
   font-weight: 400;
 }
 
+*, *:before, *:after {box-sizing: border-box;}
+
 body {
-  background: $white;
-  font: 18px/1.4 $helvetica;
-  color:#446860;
-  font-weight: 400;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+	background: white;
+	font: 18px/1.4 $helvetica;
+	color: #446860;
+	font-weight: 400;
 }
 
 .container {
@@ -26,13 +28,14 @@ body {
 }
 
 a {
-  color: #4183C4;
-  text-decoration: none;
+	color: #4183C4;
+	text-decoration: none;
 	cursor: pointer;
+	transition: color 0.5s;
 }
 
 a:hover, a:active, a:visited:hover {
-    color: #21A3A4;
+    color: #11A344;
 }
 a:visited {
     color: #6143B4;
@@ -73,63 +76,28 @@ p {
   margin: 15px 0;
 }
 
-ul, ol {
-  margin: 15px 0;
-  padding-left: 30px;
-}
-
-ul {
-  list-style-type: disc;
-}
-
-ol {
-  list-style-type: decimal;
-}
-
-ol ul, ul ol, ul ul, ol ol {
-  margin: 0;
-}
-
-ul ul, ol ul {
-  list-style-type: circle;
-}
-
-em, i {
-  font-style: italic;
-}
-
-strong, b {
-  font-weight: bold;
-}
-
 img {
   max-width: 100%;
 }
 
-// Fixes images in popup boxes from Google Translate
-.gmnoprint img {
-  max-width: none;
-}
-
 .date {
   font-style: italic;
-  color: $gray;
+  color: gray;
 }
 
 // Specify the color of the selection
 ::-moz-selection {
-  color: $black;
-  background: $lightGray;
+  color: black;
+  background: #AFA;
 }
 ::selection {
-  color: $black;
-  background: $lightGray;
+  color: black;
+  background: #AFA;
 }
 
 // Nicolas Gallagher's micro clearfix hack
 // http://nicolasgallagher.com/micro-clearfix-hack/
-.clearfix:before,
-.clearfix:after {
+.clearfix:before, .clearfix:after {
     content: " ";
     display: table;
 }
@@ -258,39 +226,6 @@ nav {
   }
 }
 
-//
-// .main
-//
-
-.posts > .post {
-  padding-bottom: 2em;
-  border-bottom: 1px solid $lightGray;
-}
-
-.posts > .post:last-child {
-  padding-bottom: 1em;
-  border-bottom: none;
-}
-
-.post {
-  blockquote {
-    margin: 1.8em .8em;
-    border-left: 2px solid $gray;
-    padding: 0.1em 1em;
-    color: $gray;
-    font-size: 22px;
-    font-style: italic;
-  }
-
-  .comments {
-    margin-top: 10px;
-  }
-
-  .read-more {
-    text-transform: uppercase;
-    font-size: 15px;
-  }
-}
 
 .wrapper-footer {
   margin-top: 50px;

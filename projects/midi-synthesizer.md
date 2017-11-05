@@ -5,7 +5,7 @@ styles: table
 ---
 
  Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме самого MIDI-файла.
- Является частью репозитория библиотеки [Intra](../intra-lib).
+ Является частью репозитория библиотеки [Intra](intra-lib).
  
 - [Репозиторий](https://github.com/gammaker/Intra/)
 - [Онлайн-версия](/midisynth/)
@@ -28,8 +28,8 @@ styles: table
 
 ## Слушать онлайн
 <table>
-<thead><tr><th>Название</th><th>Размер, КБ</th><th>Добавлен</th></tr></thead>
-<tbody id="MidiTable">
+<thead><tr><th>Название</th><th width="100px">Размер</th><th>Добавлен</th></tr></thead>
+<tbody class="clickable" id="MidiTable">
 <tr><td>Загрузка списка... <noscript><font color=red>Включите JavaScript в браузере!</font></noscript></td></tr>
 </tbody>
 </table>
@@ -47,9 +47,10 @@ function BuildMidiFileTable(files)
 		var ext = f.name.substr(dot + 1).toLowerCase();
 		if(ext !== "mid" && ext !== "midi") continue;
 		var d = new Date(f.created);
-		strs.push("<tr><td><a href='", "../midisynth/?~./",
-			encodeURIComponent(f.name), "'>", f.name.substr(0, f.name.length-ext.length-1),
-			"</td><td>", (f.size/1024).toFixed(1), "</td><td>", ('0' + d.getDate()).slice(-2), '.', ('0' + (d.getMonth() + 1)).slice(-2), '.', d.getFullYear(), "</th></tr>");
+		var aref = '<a href="../midisynth/?~./' + encodeURIComponent(f.name) + '">';
+		strs.push('<tr><td>', aref, f.name.substr(0, f.name.length-ext.length-1),
+			"</a></td><td>", aref, (f.size/1024).toFixed(1), " КБ</a></td><td>",
+			aref, ('0' + d.getDate()).slice(-2), '.', ('0' + (d.getMonth() + 1)).slice(-2), '.', d.getFullYear(), "</a></td></tr>");
 	}
 	table.innerHTML = strs.join('');
 }
@@ -72,19 +73,6 @@ function BuildMidiFileTable(files)
 	xhr.open("GET", url, true);
 	xhr.send();
 })();
-
-document.body.onclick = function(e) {
-  e = e || window.event;
-  var el = e.target || e.srcElement;
-  if(el.tagName == "A") return true;
-  if(el.tagName == "TD") el = el.parentElement;
-  if(el.tagName != "TR") return true;
-  el = el.firstChild.firstChild;
-  if(el.tagName != "A") return true;
-  if(e.ctrlKey || e.metaKey) window.open(el.href, '_blank');
-  else window.location.href = el.href;
-  return true;
-}
 
 </script>
 

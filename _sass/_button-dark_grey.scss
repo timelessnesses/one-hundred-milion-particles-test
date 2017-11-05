@@ -1,27 +1,23 @@
 .button.dark_grey {
     background: #d1d1d1;
     background: -webkit-gradient(linear, 0 0, 0 bottom, from(#d1d1d1), to(#afafaf));
-    background: -moz-linear-gradient(#d1d1d1, #afafaf);
     background: linear-gradient(#d1d1d1, #afafaf);
     border: solid 1px #b4b4b4;
     border-bottom: solid 3px #878787;
     box-shadow: inset 0 0 0 1px #e3e3e3;
     color: #555;
-    text-shadow: 0 1px 0 #d6d6d6; }
+    text-shadow: 0 1px 0 #d6d6d6;
+}
     
 .button.dark_grey:hover {
     background: #b7b7b7;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#b7b7b7), to(#c2c2c2));
-    background: -moz-linear-gradient(#b7b7b7, #c2c2c2);
     background: linear-gradient(#b7b7b7, #c2c2c2);
     border: solid 1px #a2a2a2;
     border-bottom: solid 3px #878787;
-    box-shadow: inset 0 0 0 1px #d4d4d4; }
+    box-shadow: inset 0 0 0 1px #d4d4d4;}
     
 .button.dark_grey:active {
     background: #afafaf;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#afafaf), to(#a9a9a9));
-    background: -moz-linear-gradient(#afafaf, #a9a9a9);
     background: linear-gradient(#afafaf, #a9a9a9);
     border: solid 1px #757575;
     box-shadow: inset 0 10px 15px 0 #9a9a9a; }

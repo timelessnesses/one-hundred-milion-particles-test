@@ -1,0 +1,20 @@
+input, textarea {
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   background: white !important;
+   outline: none;
+   font-size: 100%;
+   transition: border 0.5s, shadow 1s;
+   padding:8px;
+}
+
+input:focus, textarea:focus {
+ background: white;
+ border:1px solid #1a3;
+ box-shadow: 0 0 3px #aaa;
+}
+
+input[type="text"], input[type="number"] {
+	padding: 2px 8px;
+}
+

@@ -19,17 +19,20 @@ layout: compress
 
 	<style>
 	{% capture inline_css %}
-		{% include main.scss %}
-		{% if styles contains "button" %} {% include button.scss %} {% endif %}
-		{% if styles contains "button-orange" %} {% include button-orange.scss %} {% endif %}
-		{% if styles contains "button-green" %} {% include button-green.scss %} {% endif %}
-		{% if styles contains "button-blue_alt" %} {% include button-blue_alt.scss %} {% endif %}
-		{% if styles contains "button-dark_grey" %} {% include button-dark_grey.scss %} {% endif %}
-		{% if styles contains "inputs" %} {% include inputs.scss %} {% endif %}
-		{% if styles contains "comment-form" %} {% include comment-form.scss %} {% endif %}
-		{% if styles contains "comments" %} {% include comments.scss %} {% endif %}
-		{% if styles contains "table" %} {% include table.scss %} {% endif %}
-		{% if styles contains "highlights" %} {% include highlights.scss %} {% endif %}
+		@import "main";
+		{% if styles contains "posts" %} @import "posts"; {% endif %}
+		{% if styles contains "button" %} @import "button"; {% endif %}
+		{% if styles contains "button-orange" %} @import "button-orange"; {% endif %}
+		{% if styles contains "button-green" %} @import "button-green"; {% endif %}
+		{% if styles contains "button-blue_alt" %} @import "button-blue_alt"; {% endif %}
+		{% if styles contains "button-dark_grey" %} @import "button-dark_grey"; {% endif %}
+		{% if styles contains "inputs" %} @import "inputs"; {% endif %}
+		{% if styles contains "checkbox" or styles contains "radiobox" %} @import "check_radio_box"; {% endif %}
+		{% if styles contains "file-chooser" %} @import "file-chooser"; {% endif %}
+		{% if styles contains "comment-form" %} @import "comment-form"; {% endif %}
+		{% if styles contains "comments" %} @import "comments"; {% endif %}
+		{% if styles contains "table" %} @import "table"; {% endif %}
+		{% if styles contains "highlights" %} @import "highlights"; {% endif %}
 	{% endcapture %}
     {{ inline_css | scssify }}
 	</style>
@@ -39,8 +42,6 @@ layout: compress
 
   <body>
   <header class="masthead clearfix">
-          <!--<a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>-->
-
           <div class="site-info">
             <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
             <p class="site-description">{{ site.description }}</p>
@@ -72,7 +73,6 @@ layout: compress
       </div>
     </div>
 	
-	<!-- Yandex.Metrika counter -->
 	<script type="text/javascript">
 		(function (d, w, c) {
 			(w[c] = w[c] || []).push(function() {
@@ -98,8 +98,5 @@ layout: compress
 		})(document, window, "yandex_metrika_callbacks");
 	</script>
 	<noscript><div><img src="https://mc.yandex.ru/watch/37810200" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-	<!-- /Yandex.Metrika counter -->
-
-    <!--{% include analytics.html %}-->
   </body>
 </html>
