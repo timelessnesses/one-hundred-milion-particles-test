@@ -56,7 +56,6 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 30px;
-  a, a:visited {color: #333;}
 }
 
 h2 {
@@ -114,6 +113,18 @@ img {
 // .masthead
 //
 
+header {
+	a, a:visited {
+		color: #333;
+		font-weight: 300;
+		transition: all .3s;
+	}
+	a:hover, a:visited:hover {
+		color: #cfd;
+		text-shadow: 0px 1px 1px #343;
+	}
+}
+
 .wrapper-masthead {
   margin-bottom: 50px;
 }
@@ -124,16 +135,14 @@ img {
   left: 0;
   right: 0;
   width: 100%;
-  background: rgba(240, 240, 240, 0.6);
-  padding: 10px 4em;
+  background: rgba(190, 210, 190, 0.85);
+  padding: 10px 1.25em;
   border-bottom: 1px solid LightGray;
   border-bottom-left-radius: 1.5em;
   border-bottom-right-radius: 1.5em;
   z-index: 100;
 
-  @include mobile {
-    text-align: center;
-  }
+  text-align: center;
 }
 
 .header-img-wrapper {
@@ -170,13 +179,9 @@ img {
 }
 
 .site-info {
-  float: left;
-
-  @include mobile {
-    float: none;
-    display: block;
-    margin: 0 auto;
-  }
+	float: none;
+	display: block;
+	margin: 0 auto;
 }
 
 .site-name {
@@ -200,29 +205,25 @@ img {
 }
 
 nav {
-  float: right;
-  margin-top: 23px; // @TODO: Vertically middle align
+  float: none;
   font-family: $helveticaNeue;
+  margin-top: 8px;
+  display: inline-block;
   font-size: 18px;
 
-  @include mobile {
-    float: none;
-    margin-top: 9px;
-    display: block;
-    font-size: 16px;
-  }
-
   a, a:visited {
-    margin-left: 20px;
-    color: #333;
-    text-align: right;
-    font-weight: 300;
+	box-shadow: 1px 1px 4px #343;
     letter-spacing: 1px;
-
-    @include mobile {
-      margin: 0 10px;
-      color: $blue;
-    }
+	border: 2px solid #555;
+	border-radius: 8px;
+	padding: 3px 8px;
+	line-height: 1.8;
+	white-space: nowrap;
+	margin: 0 6px;
+  }
+  
+  a:hover, a:visited:hover {
+	  border: 2px solid #cfd;
   }
 }
 

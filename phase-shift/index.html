@@ -4,13 +4,71 @@
 <meta charset="utf-8">
 
 <style>
-.spoiler > input + label:after{content: "+";float: right;font-family: monospace;font-weight: bold; color: FFF}
-.spoiler > input:checked + label:after{content: "-";float: right;font-family: monospace;font-weight: bold; color: FFF}
+html {
+  font-size: 100%;
+  font-weight: 400;
+}
+
+label {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 500;
+}
+
+pre {
+	font-size:110%;
+}
+
+.spoiler > input + label:after{content: "+";float: right;font-family: monospace;font-weight: bold; color: white;}
+.spoiler > input:checked + label:after{content: "-";float: right;font-family: monospace;font-weight: bold; color: white}
 .spoiler > input{display:none;}
-.spoiler > input + label , .spoiler > .spoiler_body{background:#2C4;padding:5px 15px;width:100%;box-sizing: border-box;display: block;}
+.spoiler > input + label {color:white; cursor:pointer; font-family: "Gotham Rounded A","Gotham Rounded B",Helvetica,Arial,sans-serif; font-weight: 700;}
+.spoiler > input + label , .spoiler > .spoiler_body{background:#2FBF50;padding:5px 15px;width:100%;box-sizing: border-box; border-radius:10px;display: block;}
 .spoiler > input + label + .spoiler_body{display:none;}
 .spoiler > input:checked + label + .spoiler_body{display: block;}
-.spoiler > .spoiler_body{background: #FFF;border: 3px solid #CCC;border-top: none;}
+.spoiler > .spoiler_body{background: #FFF;border: 3px solid #ccc;border-top: none;}
+
+button {
+border-style: solid;
+border-width: 0px 0px 3px;
+box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset;
+color: white;	   
+border-radius: 6px;
+cursor: pointer;
+display: inline-block;
+font-style: normal;
+overflow: hidden;
+text-align: center;
+text-decoration: none;
+text-overflow: ellipsis;
+transition: all 200ms ease-in-out 0s;
+white-space: nowrap;	
+font-family: "Gotham Rounded A","Gotham Rounded B",Helvetica,Arial,sans-serif;
+font-weight: 700;	
+padding: 9px 30px 8px;
+font-size: 18px;
+border-color: #3AB162;
+background-color: #2FBF50;
+}
+
+button:hover, button:focus, button:active {
+    background-color: #1BB940;
+    border-color: #2AB152;    
+}
+
+input:focus, textarea:focus {
+ background: white;
+ border:1px solid #26f;
+ box-shadow: 0 0 3px #aaa;
+}
+
+input, textarea {
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   background: white !important;
+   outline: none;
+   font-size: 100%;
+   padding:5px;
+}
 </style>
 
 </head>
@@ -41,7 +99,7 @@
 <p><label>Мин. расстояние между матрицами D<sub>0</sub> = </label><input type="number" step="0.1" id="MinDist" autocorrect="off" cols="5" value="0.5" min="0" max="3"></p>
 <p><label>Макс. итераций </label><input type="number" step="1" id="MaxIterations" autocorrect="off" cols="5" value="50" min="1" max="1000"></p>
 
-<p><button id="start" style="height:48px;width:256px;font-size: 18px" onclick="Start()">Старт</button></p>
+<p><button id="start" onclick="Start()">Старт</button></p>
 
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_1" checked><label for="spoilerid_1">
@@ -87,35 +145,35 @@
 	if(location.search)
 	{
 		var s = getParameterByName("s");
-		document.getElementById('Sequence').value = s==null? "": s;
+		Sequence.value = s==null? "": s;
 		var d = parseFloat(getParameterByName("d"));
 		if(getParameterByName("auto") != null) gAutoRun = true;
-		if(!isNaN(d)) document.getElementById('GapPenalty').value = d.toString();
+		if(!isNaN(d)) GapPenalty.value = d.toString();
 		
 		var period = getParameterByName("period");
 		if(period != null && period.length != 0)
 		{
 			period = RemoveNonSeqChars(period).toUpperCase();
-			document.getElementById('GeneratePeriod').value = period;
+			GeneratePeriod.value = period;
 		}
 		
 		var randomness = parseInt(getParameterByName("randomness"));
-		if(!isNaN(randomness)) document.getElementById('GenerateRandomness').value = randomness.toString();
+		if(!isNaN(randomness)) GenerateRandomness.value = randomness.toString();
 		
 		var length = parseInt(getParameterByName("length"));
-		if(!isNaN(length)) document.getElementById('GenerateLength').value = length.toString();
+		if(!isNaN(length)) GenerateLength.value = length.toString();
 		
 		var seed = parseInt(getParameterByName("seed"));
-		if(!isNaN(seed)) document.getElementById('GenerateSeed').value = seed.toString();
+		if(!isNaN(seed)) GenerateSeed.value = seed.toString();
 
 		var minDist = parseFloat(getParameterByName("mindist"));
-		if(!isNaN(minDist)) document.getElementById('MinDist').value = minDist.toString();
+		if(!isNaN(minDist)) MinDist.value = minDist.toString();
 		
 		var maxIter = parseInt(getParameterByName("maxiter"));
-		if(!isNaN(maxIter)) document.getElementById('MaxIterations').value = maxIter.toString();
+		if(!isNaN(maxIter)) MaxIterations.value = maxIter.toString();
 		
 		var matrixCount = parseInt(getParameterByName("matrices"));
-		if(!isNaN(matrixCount)) document.getElementById('MatrixCount').value = matrixCount.toString();
+		if(!isNaN(matrixCount)) MatrixCount.value = matrixCount.toString();
 		
 		if(getParameterByName("gen") != null) Generate();
 	}
@@ -127,11 +185,11 @@
 	
 	function Generate()
 	{
-		var period = RemoveNonSeqChars(document.getElementById('GeneratePeriod').value).toUpperCase();
+		var period = RemoveNonSeqChars(GeneratePeriod.value).toUpperCase();
 		if(period.length == 0) period = "ATG";
-		var randomness = parseInt(document.getElementById('GenerateRandomness').value);
-		var length = parseInt(document.getElementById('GenerateLength').value);
-		var seed = parseInt(document.getElementById('GenerateSeed').value);
+		var randomness = parseInt(GenerateRandomness.value);
+		var length = parseInt(GenerateLength.value);
+		var seed = parseInt(GenerateSeed.value);
 		
 		var result = "";
 		for(var i=0; i<length; i++)
@@ -142,7 +200,7 @@
 			result += c;
 			if(i % 50 == 49) result += '\n';
 		}
-		document.getElementById('Sequence').value = result;
+		Sequence.value = result;
 	}
 	
 	function ShuffleArray(a)
@@ -156,6 +214,11 @@
 		}
 	}
 	
+	function RemoveCommentLines(str)
+	{
+		return str.replace(/>.*/g, '');
+	}
+	
 	function ShuffleTripletsString(str)
 	{
 		var triplets = str.match(/.{1,3}/g);
@@ -166,8 +229,7 @@
 	
 	function ShuffleTriplets()
 	{
-		var seq = document.getElementById('Sequence');
-		seq.value = ShuffleTripletsString(RemoveNonSeqChars(seq.value)).match(/.{1,50}/g).join('\n');
+		Sequence.value = ShuffleTripletsString(RemoveNonSeqChars(RemoveCommentLines(Sequence.value))).match(/.{1,50}/g).join('\n');
 	}
 	
 	function Start()
@@ -178,13 +240,15 @@
 			return;
 		}
 	
-		var src = RemoveNonSeqChars(document.getElementById('Sequence').value);
-		var d = parseFloat(document.getElementById('GapPenalty').value);
+		var src = Sequence.value;
+		src = RemoveCommentLines(src);
+		src = RemoveNonSeqChars(src);
+		var d = parseFloat(GapPenalty.value);
 		if(isNaN(d)) d = 30;
-		var matrixCount = parseInt(document.getElementById('MatrixCount').value);
-		var minDist = parseFloat(document.getElementById('MinDist').value);
+		var matrixCount = parseInt(MatrixCount.value);
+		var minDist = parseFloat(MinDist.value);
 		if(isNaN(minDist)) minDist = 0.5;
-		var maxIterations = parseInt(document.getElementById('MaxIterations').value);
+		var maxIterations = parseInt(MaxIterations.value);
 		
 		var srcPtr = Module._malloc(src.length*2);
 		var stringPointersArrPtr = Module._malloc(12);
@@ -201,8 +265,8 @@
 		Module._free(Module.HEAPU32[stringPointersArrPtr/4+2]);
 		Module._free(stringPointersArrPtr);
 		
-		document.getElementById('Result').innerHTML = "<h2>Матрица</h2>"+matrixStr + "<br/><h2>Веса</h2>" + coloredPhasesStr;
-		document.getElementById('Alignment').innerHTML = alignmentStr;
+		Result.innerHTML = "<h2>Матрица</h2>"+matrixStr + "<br/><h2>Веса</h2>" + coloredPhasesStr;
+		Alignment.innerHTML = alignmentStr;
 	}
 </script>
 

@@ -29,7 +29,7 @@ styles: table
 ## Слушать онлайн
 <table>
 <thead><tr><th>Название</th><th width="100px">Размер</th><th>Добавлен</th></tr></thead>
-<tbody class="clickable" id="MidiTable">
+<tbody class="clickable" id="eMidiTable">
 <tr><td>Загрузка списка... <noscript><font color=red>Включите JavaScript в браузере!</font></noscript></td></tr>
 </tbody>
 </table>
@@ -38,7 +38,6 @@ styles: table
 
 function BuildMidiFileTable(files)
 {
-	var table = document.getElementById("MidiTable");
 	var strs = [];
 	for(var i = 0; i < files.length; i++)
 	{
@@ -52,10 +51,10 @@ function BuildMidiFileTable(files)
 			"</a></td><td>", aref, (f.size/1024).toFixed(1), " КБ</a></td><td>",
 			aref, ('0' + d.getDate()).slice(-2), '.', ('0' + (d.getMonth() + 1)).slice(-2), '.', d.getFullYear(), "</a></td></tr>");
 	}
-	table.innerHTML = strs.join('');
+	eMidiTable.innerHTML = strs.join('');
 }
 
-(function() {
+setTimeout(function() {
 	var url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=https%3A%2F%2Fyadi.sk%2Fd%2F-chbqBzK3NLGpU&fields=_embedded.items.name,_embedded.items.size,_embedded.items.created&limit=100";
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function()
@@ -63,7 +62,7 @@ function BuildMidiFileTable(files)
 		if(xhr.readyState != xhr.DONE) return;
 		if(xhr.status != 200)
 		{
-			document.getElementById("MidiTable").innerHTML = "<tr><td>Ошибка загрузки списка!</td></tr>";
+			document.getElementById("MidiTable").innerHTML = "<tr><td><font color=red>Ошибка загрузки списка!</font></td></tr>";
 			return;
 		}
 		var jsonResponse = JSON.parse(xhr.responseText);
@@ -72,7 +71,7 @@ function BuildMidiFileTable(files)
 	};
 	xhr.open("GET", url, true);
 	xhr.send();
-})();
+}, 1);
 
 </script>
 

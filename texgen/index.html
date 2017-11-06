@@ -25,9 +25,9 @@ textarea {
 <body>
 
 <noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
-<p id="WebGLSupportMsg"></p>
+<p id="eWebGLSupportMsg"></p>
 
-<p><label>Алгоритм генерации</label><br/><textarea cols="100" rows="10" id="Code" autocorrect="off">
+<p><label>Алгоритм генерации</label><br/><textarea cols="100" rows="10" id="eCode" autocorrect="off">
 </textarea></p>
 
 <div class="spoiler">
@@ -163,22 +163,22 @@ float DecodeFloatFromRG8(vec2 rg8)</pre>
 </div></div>
 
 <p><label>Шейдеры</label><br/>
-<textarea cols="100" rows="10" id="ShaderCode" autocorrect="off">
+<textarea cols="100" rows="10" id="eShaderCode" autocorrect="off">
 </textarea></p>
-<input id="GenerateButton" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
-<input id="SaveButton" value="Сохранить ссылку" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
+<input id="eGenerateButton" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
+<input id="eSaveButton" value="Сохранить ссылку" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
 
 <br/>Результат
 <hr>
-<span id="results"></span>
+<span id="eResults"></span>
 <hr>
 
 </body>
 
 <script src="Utils.js"></script>
 <script>
-var gCodeEditor = document.getElementById("Code");
-var gShaderCodeEditor = document.getElementById("ShaderCode");
+var gCodeEditor = eCode;
+var gShaderCodeEditor = eShaderCode;
 
 window.onbeforeunload = function(e) {
 	if(!gDocumentChanged) return;
@@ -348,7 +348,7 @@ void main()
 
 <script>
 
-var gResults = document.getElementById("results");
+var gResults = eResults;
 
 
 var gOffScreenCanvas = document.createElement("canvas");
@@ -479,7 +479,7 @@ if(gl)
 }
 else
 {
-	document.getElementById("WebGLSupportMsg").innerHtml = "<color=red>WebGL is not supported!</color>";
+	eWebGLSupportMsg.innerHtml = "<color=red>WebGL is not supported!</color>";
 }
 	
 function ParseGLType(str)

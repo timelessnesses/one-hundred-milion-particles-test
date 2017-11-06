@@ -58,7 +58,7 @@ Demo =
 
 	Init : function()
 	{
-		this.canvas = document.getElementById("canvas");
+		this.canvas = canvas;
 		if(!this.canvas) alert("Could not initialize canvas.");
 		
 		try
