@@ -109,40 +109,36 @@ img {
 /* LAYOUT / SECTIONS */
 /*********************/
 
-//
-// .masthead
-//
-
-header {
-	a, a:visited {
-		color: #333;
-		font-weight: 300;
-		transition: all .3s;
-	}
-	a:hover, a:visited:hover {
-		color: #cfd;
-		text-shadow: 0px 1px 1px #343;
-	}
-}
-
 .wrapper-masthead {
   margin-bottom: 50px;
 }
 
-.masthead {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  background: rgba(190, 210, 190, 0.85);
-  padding: 10px 1.25em;
-  border-bottom: 1px solid LightGray;
-  border-bottom-left-radius: 1.5em;
-  border-bottom-right-radius: 1.5em;
-  z-index: 100;
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	background: rgba(205, 215, 195, 0.85);
+	padding: 10px 1.25em;
+	border-bottom: 1px solid LightGray;
+	border-bottom-left-radius: 1.5em;
+	border-bottom-right-radius: 1.5em;
+	z-index: 100;
+  
+	transition: top .5s ease;
 
-  text-align: center;
+	text-align: center;
+  
+	a, a:visited {
+		color: #2163A4;
+		font-weight: 300;
+		transition: all .3s;
+	}
+	a:hover, a:visited:hover {
+		color: white;
+		text-shadow: 0px 1px 1px #343;
+	}
 }
 
 .header-img-wrapper {
@@ -161,7 +157,7 @@ header {
 	max-width: none;
 }
 
-.site-avatar {
+#eSiteAvatar {
   float: left;
   width: 70px;
   height: 70px;
@@ -178,13 +174,13 @@ header {
   }
 }
 
-.site-info {
+#eSiteInfo {
 	float: none;
 	display: block;
 	margin: 0 auto;
 }
 
-.site-name {
+#eSiteName {
   margin: 0;
   color: $darkGray;
   cursor: pointer;
@@ -194,36 +190,33 @@ header {
   letter-spacing: 1px;
 }
 
-.site-description {
+#eSiteDesc {
   margin: -5px 0 0 0;
-  color: $gray;
+  color: #333;
   font-size: 16px;
-
-  @include mobile {
-    margin: 3px 0;
-  }
 }
 
 nav {
   float: none;
   font-family: $helveticaNeue;
   margin-top: 8px;
-  display: inline-block;
+  display: block;
   font-size: 18px;
 
   a, a:visited {
 	box-shadow: 1px 1px 4px #343;
     letter-spacing: 1px;
-	border: 2px solid #555;
-	border-radius: 8px;
+	border: 1px solid #4183C4;
+	border-radius: 4px;
 	padding: 3px 8px;
 	line-height: 1.8;
 	white-space: nowrap;
 	margin: 0 6px;
+	color: #2163A4;
   }
   
   a:hover, a:visited:hover {
-	  border: 2px solid #cfd;
+	  border: 1px solid white;
   }
 }
 

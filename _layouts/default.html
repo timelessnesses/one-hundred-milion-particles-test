@@ -41,13 +41,13 @@ layout: compress
   </head>
 
   <body>
-  <header class="masthead clearfix">
-          <div class="site-info">
-            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
-            <p class="site-description">{{ site.description }}</p>
+  <header class="clearfix">
+          <div id="eSiteInfo">
+            <h1 id="eSiteName"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
+            <p class="eSiteDesc">{{ site.description }}</p>
           </div>
 
-          <nav>
+          <nav id="eNav">
             <a href="{{ site.baseurl }}/">Главная</a>
             <a href="{{ site.baseurl }}/blog">Блог</a>
             <a href="{{ site.baseurl }}/projects/">Мои проекты</a>
@@ -69,6 +69,48 @@ layout: compress
           <div class="ya-share2" style="margin-bottom:16px" data-services="vkontakte,facebook,gplus,twitter,viber,whatsapp" data-counter=""></div>
 
           {% include svg-icons.html %}
+		  
+<script>
+(function() {
+	var navStartTop = eNav.getBoundingClientRect().top, lastScrollOffset = 0, scrollAccum = 0;
+	var header = document.getElementsByTagName("HEADER")[0];
+	function HandleHeaderScroll()
+	{
+		var offset = window.pageYOffset || document.documentElement.scrollTop;
+		var delta = offset - lastScrollOffset;
+		if(delta*scrollAccum < 0) scrollAccum = 0;
+		if(offset < 200) header.style.top = "0";
+		else
+		{
+			scrollAccum += delta;
+			if(offset > 250)
+			{
+				if(scrollAccum < -80 || lastScrollOffset <= 250) header.style.top = -(navStartTop - 10) + "px";
+				else if(scrollAccum > 150) header.style.top = "-150px";
+			}
+		}
+		lastScrollOffset = offset;
+	}
+	if(window.addEventListener) {
+		window.addEventListener('scroll', HandleHeaderScroll);
+		document.addEventListener('focusin', function (e) {
+			if(lastScrollOffset < 200) return;
+			if(e.target.tagName === "INPUT")
+			{
+				var type = e.target.getAttribute("type");
+				if(type != "text" && type != "number") return;
+			}
+			else if(e.target.tagName !== "TEXTAREA") return;
+			document.getElementsByTagName("HEADER")[0].style.top = "-150px";
+		});
+	}
+	else {
+		var prev = window.onscroll;
+		window.onscroll = function() {if(prev) prev(); HandleHeaderScroll();}
+	}
+}());
+</script>
+		  
 		</footer>
       </div>
     </div>
