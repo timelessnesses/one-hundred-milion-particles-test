@@ -62,7 +62,7 @@ setTimeout(function() {
 		if(xhr.readyState != xhr.DONE) return;
 		if(xhr.status != 200)
 		{
-			document.getElementById("MidiTable").innerHTML = "<tr><td><font color=red>Ошибка загрузки списка!</font></td></tr>";
+			eMidiTable.innerHTML = "<tr><td><font color=red>Ошибка загрузки списка!</font></td></tr>";
 			return;
 		}
 		var jsonResponse = JSON.parse(xhr.responseText);

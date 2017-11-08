@@ -9,7 +9,7 @@
 		{% assign commentData = comment[1] %}
 		
     <div class="comment">
-	<div class="comment_user">{{ commentData.name }}</div>
+	<div class="comment_user">{{ commentData.name | xml_escape }}</div>
 	<div style="clear:both;"></div>
 	<div class="comment_message">
 		{{ commentData.message | xml_escape | markdownify }}

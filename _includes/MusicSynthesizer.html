@@ -5,7 +5,7 @@
 	<input type="radio" name="midi_source" id="url" value="url" checked>
 	<span>URL MIDI-файла:</span>
 	</label> 
-	<input type="text" id="midi_url" autocorrect="off" style="width:70%" value="./Skaters Waltz.mid">
+	<input type="text" id="eMidiUrl" autocorrect="off" style="width:70%" value="./Skaters Waltz.mid">
 </p>
 
 <p>
@@ -17,7 +17,7 @@
 </p>
 
 <label>
-<input type="checkbox" id="use_streaming"/>
+<input type="checkbox" id="eUseStreaming"/>
 <span>Синтез в реальном времени</span>
 </label>
 
@@ -93,10 +93,10 @@ if(location.search)
 	var url = location.search.substr(1);
 	gAutoPlay = url.indexOf('!') == 0;
 	if(gAutoPlay) url = url.substr(1);
-	var use_streaming = url.indexOf('~') == 0;
-	if(use_streaming) url = url.substr(1);
-	document.getElementById('midi_url').value = decodeURIComponent(url);
-	document.getElementById('use_streaming').checked = use_streaming;
+	var useStreaming = url.indexOf('~') == 0;
+	if(useStreaming) url = url.substr(1);
+	eMidiUrl.value = decodeURIComponent(url);
+	eUseStreaming.checked = useStreaming;
 }
 if(!(window.AudioContext || window.webkitAudioContext))
 {
@@ -106,11 +106,11 @@ if(!(window.AudioContext || window.webkitAudioContext))
 
 function GetUrl(onSuccess)
 {
-	var url = document.getElementById('midi_url').value;
-	var rel = url.indexOf('./') == 0;
+	var url = eMidiUrl.value;
+	var rel = url.indexOf('./') === 0;
 	if(rel)
 	{
-		url = "https://yadi.sk/d/-chbqBzK3NLGpU:" + url.substr(1);
+		url = "https://yadi.sk/d/-chbqBzK3NLGpU" + url.substr(1);
 	}
 	
 	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
@@ -351,7 +351,7 @@ function PlayMidi()
 {
 	var output = document.getElementById('output');
 	if(output) output.value = '';
-	var useStreaming = document.getElementById('use_streaming').checked;
+	var useStreaming = eUseStreaming.checked;
 	output.innerHTML = '';
 	
 	var urlChecked = document.getElementById('url').checked;

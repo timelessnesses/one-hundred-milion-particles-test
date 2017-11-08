@@ -134,7 +134,7 @@ function GetUrl(onSuccess)
 	var rel = url.indexOf('./') == 0;
 	if(rel)
 	{
-		url = "https://yadi.sk/d/-chbqBzK3NLGpU:" + url.substr(1);
+		url = "https://yadi.sk/d/-chbqBzK3NLGpU" + url.substr(1);
 	}
 	
 	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
