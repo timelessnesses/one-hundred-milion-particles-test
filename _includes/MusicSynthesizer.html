@@ -98,7 +98,8 @@ if(location.search)
 	eMidiUrl.value = decodeURIComponent(url);
 	eUseStreaming.checked = useStreaming;
 }
-if(!(window.AudioContext || window.webkitAudioContext))
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+if(!window.AudioContext)
 {
 	var output = document.getElementById('output');
 	output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
@@ -142,11 +143,12 @@ var gStreamedMusicIsPlaying = false;
 var gTempBufferPtr = 0;
 var gTempBufferSize = 16384;
 var gAudioSourcePtr = 0;
-var gWebAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+var gWebAudioContext = AudioContext? new AudioContext(): null;
 var gNumChannels = 2;
 
 function PauseAllSounds()
 {
+	if(!gWebAudioContext) return;
 	if(gStreamedMusic != null && gStreamedMusicIsPlaying)
 	{
 		gStreamedMusic.disconnect(gWebAudioContext.destination);
@@ -157,6 +159,7 @@ function PauseAllSounds()
 
 function StopAllSounds()
 {
+	if(!gWebAudioContext) return;
 	PauseAllSounds();
 	if(gAudioSourcePtr != 0)
 	{
@@ -197,6 +200,7 @@ function FillZeros(float32Array)
 	
 function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
 {
+	if(!gWebAudioContext) return;
 	var bufferSize = gTempBufferSize;
 	StopAllSounds();
 	if(gStreamedMusic == null) gStreamedMusic = gWebAudioContext.createScriptProcessor(bufferSize, 0, gNumChannels);
@@ -349,6 +353,7 @@ function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 	
 function PlayMidi()
 {
+	if(!gWebAudioContext) return;
 	var output = document.getElementById('output');
 	if(output) output.value = '';
 	var useStreaming = eUseStreaming.checked;
