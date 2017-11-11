@@ -71,14 +71,14 @@ layout: compress
 
 <div class="wrapper-footer"><div class="container"><footer class="footer"><div class="social-share">
 	{% capture url %}{{ site.url }}{{ site.baseurl }}{{ page.url }}{% endcapture %}
-	{% capture description %}{% if site.description %}{{ site.description }}{% endif %}{% endcapture %}
+	{% capture description %}{% if site.description %}{{ site.description }}{% else %}{{ site.name }}{% endif %}{% endcapture %}
 	{% capture title %}{% if page.title %}{{ page.title }}{% endif %}{% endcapture %}
 	
     <p>
-	<a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&title={{title}}&&description={{description}}&image=" title="Поделиться ссылкой во ВКонтакте">ВКонтакте</a>
-    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Поделиться ссылкой в Facebook">Facebook</a>
-    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Поделиться ссылкой в Twitter">Twitter</a>
-    <a class="soc-share gplus" href="https://plus.google.com/share?url={{url}}" title="Поделиться ссылкой в Google+">Google+</a>
+	<a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Поделиться ссылкой во ВКонтакте" target="_blank">ВКонтакте</a>
+    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Поделиться ссылкой в Facebook" target="_blank">Facebook</a>
+    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Поделиться ссылкой в Twitter" target="_blank">Twitter</a>
+    <a class="soc-share gplus" href="https://plus.google.com/share?url={{url}}" title="Поделиться ссылкой в Google+" target="_blank">Google+</a>
 	</p>
 	{% include svg-icons.html %}
 		  
