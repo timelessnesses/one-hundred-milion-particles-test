@@ -2,18 +2,18 @@
 <noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
 <p>
 	<label>
-	<input type="radio" name="midi_source" id="url" value="url" checked>
-	<span>URL MIDI-файла:</span>
+	<input type="radio" name="midi_source" id="eUrl" value="url" checked>
+	<span>Путь MIDI-файла:</span>
 	</label> 
-	<input type="text" id="eMidiUrl" autocorrect="off" style="width:70%" value="./Skaters Waltz.mid">
+	<input type="text" id="eMidiUrl" autocorrect="off" style="width:70%" value="./Skaters Waltz">
 </p>
 
 <p>
 	<label>
-	<input type="radio" name="midi_source" id="file" value="file">
+	<input type="radio" name="midi_source" id="eFile" value="file">
 	<span>Локальный файл:</span>
-	</label> 
-	<input type="file" id="midi_file" style="width:70%" onChange="getElementById('file').checked=true">
+	</label>
+	<input type="file" id="eMidiFile" style="width:70%" onChange="eFile.checked=true" accept=".mid,.midi,audio/mid,audio/midi">
 </p>
 
 <label>
@@ -28,7 +28,7 @@
 </p>
 
 <hr>
-<div id="output"></div>
+<div id="eOutput"></div>
 <hr>
 
 <script type="text/javascript">
@@ -50,11 +50,10 @@ document.body.appendChild(gScript);
 
 function PrintLineRaw(text)
 {
-	var output = document.getElementById('output');
-	if(output)
+	if(window.eOutput)
 	{
-		output.innerHTML += text + "<br/>";
-		output.scrollTop = output.scrollHeight;
+		eOutput.innerHTML += text + "<br/>";
+		eOutput.scrollTop = eOutput.scrollHeight;
 	}
 }
 	
@@ -84,8 +83,7 @@ function PrintLineError(text)
 	
 function ClearTextField()
 {
-	var output = document.getElementById('output');
-	if(output) output.innerHTML = "";
+	if(window.eOutput) eOutput.innerHTML = "";
 }
 
 if(location.search)
@@ -101,17 +99,17 @@ if(location.search)
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 if(!window.AudioContext)
 {
-	var output = document.getElementById('output');
-	output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
+	if(window.eOutput) eOutput.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
 }
 
 function GetUrl(onSuccess)
 {
 	var url = eMidiUrl.value;
-	var rel = url.indexOf('./') === 0;
+	var rel = url.substr(0, 2) == './';
 	if(rel)
 	{
 		url = "https://yadi.sk/d/-chbqBzK3NLGpU" + url.substr(1);
+		if(url.substr(-5) != ".midi" && url.substr(-4) != ".mid") url += ".mid";
 	}
 	
 	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
@@ -129,7 +127,7 @@ function GetUrl(onSuccess)
 	}
 	
 	if(url.charAt(0) == '/') url = document.domain + url;
-	if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0)
+	if(url.substr(0, 7) != 'http://' && url.substr(0, 8) != 'https://')
 	{
 		if(rel) url = window.location.protocol + "//" + url;
 		else url = 'http://' + url;
@@ -268,8 +266,7 @@ function PreloadBuffer(totalSamplesLeft, bufferOffset)
 	}
 	var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
 	if(percent > 100) percent = 100;
-	var synthPercent = document.getElementById('synthPercent');
-	if(synthPercent) synthPercent.innerHTML = percent.toFixed() + "%";
+	if(window.eSynthPercent) eSynthPercent.innerHTML = percent.toFixed() + "%";
 	if(totalSamplesLeft > 0)
 		gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamplesLeft, bufferOffset);
 	else
@@ -302,7 +299,7 @@ function PlayMidiDataPtr(midiDataPtr, midiDataLength)
 		PrintLineError("Неверный формат MIDI файла.");
 		return;
 	}
-	PrintLineRaw("Синтез... <span id='synthPercent'>0%</span>");
+	PrintLineRaw("Синтез... <span id='eSynthPercent'>0%</span>");
 	gPreloadedMusic.startTime = performance.now();
 	gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamples, 0);
 }
@@ -354,12 +351,11 @@ function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 function PlayMidi()
 {
 	if(!gWebAudioContext) return;
-	var output = document.getElementById('output');
-	if(output) output.value = '';
+	eOutput.value = '';
 	var useStreaming = eUseStreaming.checked;
-	output.innerHTML = '';
+	eOutput.innerHTML = '';
 	
-	var urlChecked = document.getElementById('url').checked;
+	var urlChecked = eUrl.checked;
 		
 	var midiData = null;
 	if(urlChecked)
@@ -370,7 +366,7 @@ function PlayMidi()
 		return;
 	}
 
-	var midiFiles = document.getElementById('midi_file').files;
+	var midiFiles = eMidiFile.files;
 	if(midiFiles.length == 0)
 	{
 		ClearTextField();

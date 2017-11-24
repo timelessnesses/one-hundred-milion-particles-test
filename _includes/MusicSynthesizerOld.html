@@ -2,22 +2,22 @@
 <noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
 <p>
 	<label>
-	<input type="radio" name="midi_source" id="url" value="url" checked/>
+	<input type="radio" name="midi_source" id="eUrl" value="url" checked/>
 	<span>URL MIDI-файла:</span>
 	</label> 
-	<input type="text" id="midi_url" autocorrect="off" style="width:70%" value="./Merry Christmas.mid">
+	<input type="text" id="eMidiUrl" autocorrect="off" style="width:70%" value="./Skaters Waltz">
 </p>
 
 <p>
 	<label>
-	<input type="radio" name="midi_source" id="file" value="file"/>
+	<input type="radio" name="midi_source" id="eFile" value="file"/>
 	<span>Локальный файл:</span>
 	</label> 
-	<input type="file" id="midi_file" style="width:70%" onChange="getElementById('file').checked=true"/>
+	<input type="file" id="eMidiFile" style="width:70%" onChange="eFile.checked=true" accept=".mid,.midi,audio/mid,audio/midi"/>
 </p>
 
 <label>
-<input type="checkbox" id="use_streaming">
+<input type="checkbox" id="eUseStreaming">
 <span>Синтез в реальном времени</span>
 </label>
 <p>
@@ -26,7 +26,7 @@
 	<button id="download" class="button blue_alt" onclick="GetUrl(Download)">Скачать MIDI</button>
 </p>
 <hr>
-<div id="output"></div>
+<div id="eOutput"></div>
 <hr>
 <script type="text/javascript">
 var gScript = document.createElement('script');
@@ -46,11 +46,10 @@ var Module = {
 			text = text.replace(/>/g, "&gt;");
 			text = text.replace('\n', '<br/>', 'g');
 			console.log(text);
-			var output = document.getElementById('output');
-			if(output)
+			if(window.eOutput)
 			{
-				output.innerHTML += text + "<br/>";
-				output.scrollTop = output.scrollHeight;
+				eOutput.innerHTML += text + "<br/>";
+				eOutput.scrollTop = eOutput.scrollHeight;
 			}
 		};
 		Module['printErr'] = window.PrintError = function(text)
@@ -62,11 +61,10 @@ var Module = {
 			text = text.replace(/>/g, "&gt;");
 			text = text.replace('\n', '<br/>', 'g');
 			console.log(text);
-			var output = document.getElementById('output');
-			if(output)
+			if(window.eOutput)
 			{
-				output.innerHTML += "<font color=red>" + text + "</font><br/>";
-				output.scrollTop = output.scrollHeight;
+				eOutput.innerHTML += "<font color=red>" + text + "</font><br/>";
+				eOutput.scrollTop = output.scrollHeight;
 			}
 		};
 		if(gAutoPlay) PlayMidi();
@@ -79,17 +77,16 @@ document.body.appendChild(gScript);
 if(location.search)
 {
 	var url = location.search.substr(1);
-	gAutoPlay = url.indexOf('!')==0;
+	gAutoPlay = url.indexOf('!') == 0;
 	if(gAutoPlay) url = url.substr(1);
-	var use_streaming = url.indexOf('~')==0;
-	if(use_streaming) url = url.substr(1);
-	document.getElementById('midi_url').value = url.replace(/%20/g, ' ');
-	document.getElementById('use_streaming').checked = use_streaming;
+	var useStreaming = url.indexOf('~') == 0;
+	if(useStreaming) url = url.substr(1);
+	eMidiUrl.value = decodeURIComponent(url);
+	eUseStreaming.checked = useStreaming;
 }
 if(!(window.AudioContext || window.webkitAudioContext))
 {
-	var output = document.getElementById('output');
-	output.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
+	eOutput.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте последние версии Chrome, Firefox, Opera, Edge</b></font>";
 }
 	
 	
@@ -130,11 +127,12 @@ function StopAllSounds()
 	
 function GetUrl(onSuccess)
 {
-	var url = document.getElementById('midi_url').value;
-	var rel = url.indexOf('./') == 0;
+	var url = eMidiUrl.value;
+	var rel = url.substr(0, 2) == './';
 	if(rel)
 	{
 		url = "https://yadi.sk/d/-chbqBzK3NLGpU" + url.substr(1);
+		if(url.substr(-5) != ".midi" && url.substr(-4) != ".mid") url += ".mid";
 	}
 	
 	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
@@ -152,37 +150,36 @@ function GetUrl(onSuccess)
 	}
 	
 	if(url.charAt(0) == '/') url = document.domain + url;
-	if(!url.indexOf('http://') == 0 && !url.indexOf('https://') == 0)
+	if(url.substr(0, 7) != 'http://' && url.substr(0, 8) != 'https://')
 	{
 		if(rel) url = window.location.protocol + "//" + url;
 		else url = 'http://' + url;
 	}
 	onSuccess(url);
 }
-		
+
 function PlayMidi()
 {
 	StopAllSounds();
 	
-	var output = document.getElementById('output');
-	if(output) output.value = '';
-	var use_streaming = document.getElementById('use_streaming').checked;
-	output.innerHTML = '';
+	eOutput.value = '';
+	var useStreaming = eUseStreaming.checked;
+	eOutput.innerHTML = '';
 	
-	var urlChecked = document.getElementById('url').checked;
+	var urlChecked = eUrl.checked;
 	
 	if(urlChecked)
 	{
 		GetUrl(function(url) {
 			var outPtr = Module._malloc(url.length*2);
 			stringToUTF8(url, outPtr, url.length*2);
-			Module._PlayUrl(outPtr, use_streaming);
+			Module._PlayUrl(outPtr, useStreaming);
 			Module._free(outPtr);
 		});
 	}
 	else
 	{
-		var midiFiles = document.getElementById('midi_file').files;
+		var midiFiles = eMidiFile.files;
 		if(midiFiles.length==0) return;
 		var reader = new FileReader();
 		reader.onload = function(e)
@@ -190,7 +187,7 @@ function PlayMidi()
 			var inArr = new Uint8Array(e.target.result);
 			var outPtr = Module._malloc(inArr.length);
 			Module.HEAPU8.subarray(outPtr, outPtr+inArr.length).set(inArr);
-			Module._PlayMidiFileInMemory(outPtr, inArr.length, use_streaming);
+			Module._PlayMidiFileInMemory(outPtr, inArr.length, useStreaming);
 			Module._free(outPtr);
 		};
 		reader.readAsArrayBuffer(midiFiles[0]);
