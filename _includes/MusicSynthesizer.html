@@ -250,19 +250,25 @@ function PreloadBuffer(totalSamplesLeft, bufferOffset)
 	while(totalSamplesLeft > 0 && buffersLeftToProcessInThisCall-- > 0)
 	{
 		var samplesRead = Module._SourceGetUninterleavedSamples(gAudioSourcePtr, gTempBufferPtr, gTempBufferSize, gTempBufferSize);
+		if(samplesRead > totalSamplesLeft) samplesRead = totalSamplesLeft;
 		if(samplesRead == 0) return;
 		for(var ch = 0; ch < gNumChannels; ch++)
 		{
 			var channelStartIndex = startIndex + ch * gTempBufferSize;
-			if(outputBuffer.copyToChannel === undefined)
-			{
-				var outputData = outputBuffer.getChannelData(ch);
+			/*if(outputBuffer.copyToChannel === undefined)
+			{*/
+				var outputData = gPreloadedMusic.channels[ch];
 				outputData.set(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), bufferOffset);
-			}
-			else outputBuffer.copyToChannel(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), ch, bufferOffset);
+			/*}
+			else
+			{
+				console.log("bo = " + bufferOffset + ", channelStartIndex = " + channelStartIndex + ", samplesRead = " + samplesRead);
+				outputBuffer.copyToChannel(Module.HEAPF32.subarray(channelStartIndex, channelStartIndex + samplesRead), ch, bufferOffset);
+			}*/
 		}
 		bufferOffset += samplesRead;
 		totalSamplesLeft -= samplesRead;
+		if(samplesRead < gTempBufferSize) totalSamplesLeft = 0;
 	}
 	var percent = 100*bufferOffset / (bufferOffset + totalSamplesLeft);
 	if(percent > 100) percent = 100;
@@ -277,6 +283,7 @@ function PreloadBuffer(totalSamplesLeft, bufferOffset)
 			PrintLine("Время синтеза: " + synthTimeMs.toFixed(2) + " мс");
 		}
 		PrintLine("Воспроизведение...");
+		gPreloadedMusic.channels = null;
 		gPreloadedMusic.connect(gWebAudioContext.destination);
 		gPreloadedMusic.start();
 		gPreloadedMusic.interval = null;
@@ -293,6 +300,9 @@ function PlayMidiDataPtr(midiDataPtr, midiDataLength)
 	gAudioSourcePtr = Module._SourceCreateFromMidiFileData(midiDataPtr, midiDataLength, gWebAudioContext.sampleRate, gNumChannels);
 	var totalSamples = Module._SourceSamplesLeft(gAudioSourcePtr);
 	gPreloadedMusic.buffer = gWebAudioContext.createBuffer(gNumChannels, totalSamples, gWebAudioContext.sampleRate);
+	gPreloadedMusic.channels = [];
+	for(var i=0; i<gNumChannels; i++) gPreloadedMusic.channels.push(gPreloadedMusic.buffer.getChannelData(i));
+	console.log("Created buffer with " + gPreloadedMusic.buffer.length + " samples");
 	if(gAudioSourcePtr == 0)
 	{
 		ClearTextField();
