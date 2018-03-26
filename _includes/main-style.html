@@ -1,0 +1,244 @@
+<style>
+html {
+  font-size: 100%;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 400;
+}
+
+*, *:before, *:after {box-sizing: border-box;}
+
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+	background: white;
+	font: 18px/1.4 Helvetica, Arial, sans-serif;
+	color: #446860;
+	font-weight: 400;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 740px;
+  padding: 0 10px;
+  width: 100%;
+}
+
+a {
+	color: #4183C4;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.5s;
+}
+
+a:hover, a:active, a:visited:hover {
+    color: #11A344;
+}
+a:visited {
+    color: #6143B4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+line-height: 1.7;
+margin: 1em 0 15px;
+padding: 0;
+  
+color: #16a085;
+font-weight: 400;
+
+@media screen and (max-width: 640px) {
+  line-height: 1.4;
+}
+}
+
+h1 {
+font-size: 30px;
+}
+
+h2 {
+font-size: 24px;
+}
+
+h3 {
+font-size: 20px;
+}
+
+h4 {
+font-size: 18px;
+color: #666;
+}
+
+p {
+margin: 15px 0;
+}
+
+img {
+max-width: 100%;
+}
+
+.date {
+font-style: italic;
+color: gray;
+}
+
+/* Specify the color of the selection */
+::-moz-selection {
+color: black;
+background: #AFA;
+}
+
+::selection {
+color: black;
+background: #AFA;
+}
+
+/*
+Nicolas Gallagher's micro clearfix hack
+http://nicolasgallagher.com/micro-clearfix-hack/
+*/
+.clearfix:before, .clearfix:after {
+content: " ";
+display: table;
+}
+
+.clearfix:after {
+clear: both;
+}
+
+/*********************/
+/* LAYOUT / SECTIONS */
+/*********************/
+
+.wrapper-masthead {
+margin-bottom: 50px;
+}
+
+header {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+width: 100%;
+background: rgb(205, 215, 195); /* IE8- */
+background: rgba(205, 215, 195, 0.85);
+padding: 10px 1.25em;
+border-bottom: 1px solid LightGray;
+border-bottom-left-radius: 1.5em;
+border-bottom-right-radius: 1.5em;
+z-index: 100;
+  
+transition: top .5s ease;
+
+text-align: center;
+}
+
+header a {
+font-weight: 300;
+transition: all .3s;
+}
+
+header a, header a:visited {color: #2163A4;}
+header a:hover, header a:visited:hover {
+color: white;
+}
+
+header a:hover {
+text-shadow: 0px 1px 1px #343;
+}
+
+.header-img-wrapper {
+left: 0;
+right: 0;
+width: auto;
+height: 300px;
+overflow: hidden;
+}
+
+.header-img-wrapper img {
+min-height:300px;
+min-width:796px;
+height:auto;
+width:100%;
+max-width: none;
+}
+
+#eSiteAvatar {
+float: left;
+width: 70px;
+height: 70px;
+margin-right: 15px;
+
+@media screen and (max-width: 640px) {
+  float: none;
+  display: block;
+  margin: 0 auto;
+}
+}
+
+#eSiteAvatar img {
+border-radius: 5px;
+}
+
+#eSiteInfo {
+float: none;
+display: block;
+margin: 0 auto;
+}
+
+#eSiteName {
+margin: 0;
+color: #333;
+cursor: pointer;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-weight: 300;
+font-size: 28px;
+letter-spacing: 1px;
+}
+
+#eSiteDesc {
+margin: -5px 0 0 0;
+color: #333;
+font-size: 16px;
+}
+
+nav {
+float: none;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+margin-top: 8px;
+display: block;
+font-size: 18px;
+}
+
+nav a {
+box-shadow: 1px 1px 4px #343;
+letter-spacing: 1px;
+border: 1px solid #4183C4;
+border-radius: 4px;
+padding: 3px 8px;
+line-height: 1.8;
+white-space: nowrap;
+margin: 0 6px;
+}
+
+nav a, a:visited {
+color: #2163A4;
+}
+  
+nav a:hover {
+border: 1px solid white;
+}
+
+
+.wrapper-footer {
+margin-top: 50px;
+border-top: 1px solid #ddd;
+border-bottom: 1px solid #ddd;
+background-color: $lightGray;
+}
+
+footer {
+padding: 20px 0;
+text-align: center;
+}
+</style>

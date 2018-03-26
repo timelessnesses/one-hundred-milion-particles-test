@@ -1,154 +1,56 @@
 ---
-layout: compress
 ---
-
-{% if page.styles %}
-{% assign styles = page.styles %}
-{% else %}
-{% assign styles = '' %}
-{% endif %}
-{% if layout.styles %}
-{% assign styles = styles | append: ', ' | append: layout.styles %}
-{% endif %}
 
 <!DOCTYPE html>
 <html>
-  <head>
-	{% include meta.html %}
-	<!--[if lte IE 8]>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-	<![endif]-->
+<head>
+{% include meta.html %}
+<!--[if lte IE 8]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+<![endif]-->
+<title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }}{% if site.description %} – {{ site.description }}{% endif %}</title>
+{% include main-style.html %}
+<link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
+</head>
 
-    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }}{% if site.description %} – {{ site.description }}{% endif %}</title>
-
-	<style>
-	{% capture inline_css %}
-		@import "main";
-		{% if styles contains "posts" %} @import "posts"; {% endif %}
-		{% if styles contains "button" %} @import "button"; {% endif %}
-		{% if styles contains "button-orange" %} @import "button-orange"; {% endif %}
-		{% if styles contains "button-green" %} @import "button-green"; {% endif %}
-		{% if styles contains "button-blue_alt" %} @import "button-blue_alt"; {% endif %}
-		{% if styles contains "button-dark_grey" %} @import "button-dark_grey"; {% endif %}
-		{% if styles contains "inputs" %} @import "inputs"; {% endif %}
-		{% if styles contains "checkbox" or styles contains "radiobox" %} @import "check_radio_box"; {% endif %}
-		{% if styles contains "file-chooser" %} @import "file-chooser"; {% endif %}
-		{% if styles contains "comment-form" %} @import "comment-form"; {% endif %}
-		{% if styles contains "comments" %} @import "comments"; {% endif %}
-		{% if styles contains "table" %} @import "table"; {% endif %}
-		{% if styles contains "highlights" %} @import "highlights"; {% endif %}
-	{% endcapture %}
-    {{ inline_css | scssify }}
-	</style>
-	<link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
-
-  </head>
-
-  <body>
-  <header class="clearfix">
-          <div id="eSiteInfo">
-            <h1 id="eSiteName"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
-            <p class="eSiteDesc">{{ site.description }}</p>
-          </div>
-
-          <nav id="eNav">
-            <a href="{{ site.baseurl }}/">Главная</a>
-            <a href="{{ site.baseurl }}/blog">Блог</a>
-            <a href="{{ site.baseurl }}/projects/">Мои проекты</a>
-          </nav>
-  </header>
-  <div class="header-img-wrapper">
-    <img src="{{ site.baseurl }}/images/header.jpg">
+<body>
+<header class="clearfix">
+  <div id="eSiteInfo">
+    <h1 id="eSiteName"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
+    <!--<p class="eSiteDesc">{{ site.description }}</p>-->
   </div>
 
-  <div id="main" role="main" class="container">
-    {{ content }}
-  </div>
-  
-  
-  
-  
+  <nav id="eNav">
+    <a href="{{ site.baseurl }}/">Главная</a>
+    <a href="{{ site.baseurl }}/blog">Блог</a>
+    <a href="{{ site.baseurl }}/projects/">Мои проекты</a>
+  </nav>
+</header>
+<div class="header-img-wrapper">
+<img src="{{ site.baseurl }}/images/header.jpg">
+</div>
+
+<div id="main" role="main" class="container">
+{{ content }}
+</div>
+
 
 <div class="wrapper-footer"><div class="container"><footer class="footer"><div class="social-share">
 	{% capture url %}{{ site.url }}{{ site.baseurl }}{{ page.url }}{% endcapture %}
 	{% capture description %}{% if site.description %}{{ site.description }}{% else %}{{ site.name }}{% endif %}{% endcapture %}
 	{% capture title %}{% if page.title %}{{ page.title }}{% endif %}{% endcapture %}
 	
-    <p>
+  <p>
 	<a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Поделиться ссылкой во ВКонтакте" target="_blank">ВКонтакте</a>
     <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Поделиться ссылкой в Facebook" target="_blank">Facebook</a>
     <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Поделиться ссылкой в Twitter" target="_blank">Twitter</a>
     <a class="soc-share gplus" href="https://plus.google.com/share?url={{url}}" title="Поделиться ссылкой в Google+" target="_blank">Google+</a>
 	</p>
 	{% include svg-icons.html %}
-		  
-<script>
-(function() {
-	var navStartTop = eNav.getBoundingClientRect().top, lastScrollOffset = 0, scrollAccum = 0;
-	var header = document.getElementsByTagName("HEADER")[0];
-	function HandleHeaderScroll()
-	{
-		var offset = window.pageYOffset || document.documentElement.scrollTop;
-		var delta = offset - lastScrollOffset;
-		if(delta*scrollAccum < 0) scrollAccum = 0;
-		if(offset < 200) header.style.top = "0";
-		else
-		{
-			scrollAccum += delta;
-			if(offset > 250)
-			{
-				if(scrollAccum < -80 || lastScrollOffset <= 250) header.style.top = -(navStartTop - 10) + "px";
-				else if(scrollAccum > 150) header.style.top = "-150px";
-			}
-		}
-		lastScrollOffset = offset;
-	}
-	if(window.addEventListener) {
-		window.addEventListener('scroll', HandleHeaderScroll);
-		document.addEventListener('focusin', function (e) {
-			if(lastScrollOffset < 200) return;
-			if(e.target.tagName === "INPUT")
-			{
-				var type = e.target.getAttribute("type");
-				if(type != "text" && type != "number") return;
-			}
-			else if(e.target.tagName !== "TEXTAREA") return;
-			document.getElementsByTagName("HEADER")[0].style.top = "-150px";
-		});
-	}
-	else {
-		var prev = window.onscroll;
-		window.onscroll = function() {if(prev) prev(); HandleHeaderScroll();}
-	}
-}());
-</script>
-		  
 </div></footer></div></div>
 	
-	<script type="text/javascript">
-		(function (d, w, c) {
-			(w[c] = w[c] || []).push(function() {
-				try {
-					w.yaCounter37810200 = new Ya.Metrika({
-						id:37810200,
-						clickmap:true,
-						trackLinks:true,
-						accurateTrackBounce:true
-					});
-				} catch(e) {}
-			});
-
-			var n = d.getElementsByTagName("script")[0],
-				s = d.createElement("script"),
-				f = function () {n.parentNode.insertBefore(s, n);};
-			s.type = "text/javascript";
-			s.async = true;
-			s.src = "https://mc.yandex.ru/metrika/watch.js";
-
-			if(w.opera == "[object Opera]") d.addEventListener("DOMContentLoaded", f, false);
-			else f();
-		})(document, window, "yandex_metrika_callbacks");
-	</script>
-	<noscript><div><img src="https://mc.yandex.ru/watch/37810200" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  </body>
+{% include header-hide-script.html %}
+{% include yametrics.html %}
+<link rel="stylesheet" href="/styles.css"/>
+</body>
 </html>
