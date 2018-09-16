@@ -104,7 +104,13 @@ float ValueNoise3D(vec3 v, sampler2D noiseTex, vec2 noiseTex_PixelSize)
 float GradientNoise(vec2 v)
 vec2 SmoothVoronoi(vec2 v, float smoothness)
 float Voronoise(vec2 x, float gridControl, float metricControl)
+
+//Несколько октав шума Перлина
 float PerlinOctaves(vecN coord, vecN repeat, int octaves[, float gain=0.5, float lacunarity=2.0, vecN offset=vecN(0.0)])
+
+//Несколько октав шума Перлина с указанным уровнем низких (coeffLow) и высоких (gainHigh) частот.
+//Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain
+float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh[, float lacunarity, vec2 offset])
 
 //Цветовые пространства
 vec3 RGB2HSV(vec3 c)

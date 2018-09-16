@@ -842,8 +842,32 @@ float Voronoise(vec2 x, float gridControl, float metricControl)
 	return va/wt;
 }
 	
-	
-	
+
+//Несколько октав шума Перлина с указанным уровнем низких (coeffLow) и высоких (gainHigh) частот.
+//Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain
+float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh, float lacunarity, vec2 offset)
+{
+	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0, kL = max(0.01, coeffLow);
+	for(int i=0; i<15; i++)
+	{
+		if(i == octaves) break;
+		vec2 rm = period*l;
+		float k = g*kL;
+		sum += k*cnoise(coord*l + offset, rm);
+		normalizer += k;
+		l *= lacunarity;
+		g *= gainHigh;
+		kL = pow(kL, 0.6);
+	}
+	return sum / normalizer;
+}
+
+float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh, float lacunarity)
+{return PerlinOctavesSpectrum(coord, period, octaves, coeffLow, gainHigh, lacunarity, vec2(0.0));}
+
+float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh)
+{return PerlinOctavesSpectrum(coord, period, octaves, coeffLow, gainHigh, 2.0);}
+
 //Несколько октав шума Перлина.
 float PerlinOctaves(vec2 coord, vec2 period, int octaves, float gain, float lacunarity, vec2 offset)
 {
