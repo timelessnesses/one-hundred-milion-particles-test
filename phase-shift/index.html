@@ -94,7 +94,7 @@ input, textarea {
 <br/>
 
 <h2>Параметры алгоритма</h2>
-<p><label>d = </label><input type="number" step="1" id="GapPenalty" autocorrect="off" cols="5" value="30" min="1" max="1000"></p>
+<p><label>d = </label><input type="number" step="1" id="GapPenalty" autocorrect="off" cols="5" value="0" min="0" max="1000"> (0 - авто)</p>
 <p><label>Количество матриц </label><input type="number" step="1" id="MatrixCount" autocorrect="off" cols="5" value="1" min="1" max="1000"></p>
 <p><label>Мин. расстояние между матрицами D<sub>0</sub> = </label><input type="number" step="0.1" id="MinDist" autocorrect="off" cols="5" value="0.5" min="0" max="3"></p>
 <p><label>Макс. итераций </label><input type="number" step="1" id="MaxIterations" autocorrect="off" cols="5" value="50" min="1" max="1000"></p>
@@ -195,7 +195,7 @@ input, textarea {
 		for(var i=0; i<length; i++)
 		{
 			var c = period.charAt(i % period.length);
-			seed = (seed*16807) & 0xFFFFFFFF;
+			seed = (seed*16807) & 0x7FFFFFFF;
 			if((seed >> 16) % 100 < randomness) c = "ATGC".charAt((seed >> 23) & 3);
 			result += c;
 			if(i % 50 == 49) result += '\n';
@@ -244,17 +244,41 @@ input, textarea {
 		src = RemoveCommentLines(src);
 		src = RemoveNonSeqChars(src);
 		var d = parseFloat(GapPenalty.value);
-		if(isNaN(d)) d = 30;
 		var matrixCount = parseInt(MatrixCount.value);
 		var minDist = parseFloat(MinDist.value);
 		if(isNaN(minDist)) minDist = 0.5;
 		var maxIterations = parseInt(MaxIterations.value);
+
+		var resultHtml = "";
 		
 		var srcPtr = Module._malloc(src.length*2);
-		var stringPointersArrPtr = Module._malloc(12);
 		stringToUTF8(src, srcPtr, src.length*2);
+
+		var detectedD, info, estimatedRandomness;
+		if(Module._CBinding_PeriodicityMeasureChooseShiftPenalty)
+		{
+			var infoArrPtr = Module._malloc(8);
+			detectedD = Module._CBinding_PeriodicityMeasureChooseShiftPenalty(srcPtr, infoArrPtr, infoArrPtr+4);
+			info = Module.HEAPF32[infoArrPtr/4];
+			estimatedRandomness = Module.HEAPF32[infoArrPtr/4 + 1];
+			Module._free(infoArrPtr);
+
+			if(isNaN(d) || d <= 0)
+			{
+				d = detectedD;
+			}
+
+			resultHtml += "<h2>Параметры последовательности</h2>" +
+				"<p><b>I</b> = " + info.toFixed(1) + "</p>" +
+				"<p>Оценка процента мутаций: " + estimatedRandomness.toFixed(1) + "%</p>" +
+				"<p>Рекомендуемое d = " + detectedD.toFixed(1) + "</p>";
+		}
+		else console.log("error: CBinding_PeriodicityMeasureChooseShiftPenalty not found!");
+
+		var stringPointersArrPtr = Module._malloc(12);
 		Module._CBinding_FindPhases(srcPtr, d, matrixCount, minDist,
 			maxIterations, stringPointersArrPtr, stringPointersArrPtr+4, stringPointersArrPtr+8);
+
 		Module._free(srcPtr);
 		
 		var matrixStr = Pointer_stringify(Module.HEAPU32[stringPointersArrPtr/4]);
@@ -264,8 +288,11 @@ input, textarea {
 		Module._free(Module.HEAPU32[stringPointersArrPtr/4+1]);
 		Module._free(Module.HEAPU32[stringPointersArrPtr/4+2]);
 		Module._free(stringPointersArrPtr);
-		
-		Result.innerHTML = "<h2>Матрица</h2>"+matrixStr + "<br/><h2>Веса</h2>" + coloredPhasesStr;
+
+		resultHtml += "<h2>Матрица</h2>" + matrixStr + "<br/>" +
+			"<h2>Веса</h2>" + coloredPhasesStr;
+
+		Result.innerHTML = resultHtml;
 		Alignment.innerHTML = alignmentStr;
 	}
 </script>

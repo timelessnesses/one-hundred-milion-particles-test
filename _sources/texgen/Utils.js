@@ -293,7 +293,7 @@ function CreateImageFromPixels(pixelsRGBA8, width, height)
 	var blobUrl = URL.createObjectURL(blob);
 	img.onload = function()
 	{
-		if(ChromeVersion && ChromeVersion < 61 && window.location.protocol == "file:")
+		if(ChromeVersion)
 		{
 			//Chrome cross origin bug workaround: it is necessary for future ImageToCanvas
 			img.reviveCanvas = document.createElement("canvas");

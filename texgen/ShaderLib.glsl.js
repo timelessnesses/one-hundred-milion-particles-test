@@ -847,7 +847,7 @@ float Voronoise(vec2 x, float gridControl, float metricControl)
 //Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain
 float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh, float lacunarity, vec2 offset)
 {
-	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0, kL = max(0.01, coeffLow);
+	float sum = 0.0, g = 1.0, l = 1.0, normalizer = 0.0, kL = max(0.001, coeffLow);
 	for(int i=0; i<15; i++)
 	{
 		if(i == octaves) break;

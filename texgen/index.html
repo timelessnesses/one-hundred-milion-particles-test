@@ -1,197 +1,997 @@
-﻿<html>
-
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="utf-8">
-<title>Texture Generator</title>
-
-<style type="text/css">
-textarea { 
-	position: relative;
-	width: auto;
-	height: 200px;
+<title>ProcedGen Textures</title>
+<style>
+html,
+body {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    margin: 0;
 }
 
-.spoiler > input + label:after{content: "+";float: right;font-family: monospace;font-weight: bold; color: FFF}
-.spoiler > input:checked + label:after{content: "-";float: right;font-family: monospace;font-weight: bold; color: FFF}
-.spoiler > input{display:none;}
-.spoiler > input + label , .spoiler > .spoiler_body{background:#2C4;padding:5px 15px;width:100%;box-sizing: border-box;display: block;}
-.spoiler > input + label + .spoiler_body{display:none;}
-.spoiler > input:checked + label + .spoiler_body{display: block;}
-.spoiler > .spoiler_body{background: #FFF;border: 3px solid #CCC;border-top: none;}
-</style>
+body {
+    font-family: "Candara", sans-serif;
+    color: white;
+    background-color: #222;
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column;
+}
 
+.hidden {
+    display: none;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+header.main {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 0 70px;
+    -moz-flex: 0 0 70px;
+    -ms-flex: 0 0 70px;
+    flex: 0 0 70px;
+    height: 70px;
+    border-bottom: 4px solid #444;
+    background-color: black;
+}
+
+header.main::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+header.main .info,
+header.main .toolbar {
+    height: 100%;
+}
+
+header.main .info {
+    float: left;
+    padding: 8px;
+    padding-left: 12px;
+}
+
+header.main .info .title {
+    font-size: 22px;
+}
+
+header.main .info .last-update {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+header.main .info .last-update .value {
+    margin-left: 2px;
+    font-size: 14px;
+    color: #ccc;
+    text-transform: none;
+    margin-right: 10px;    
+}
+
+header.main .toolbar {
+    float: right;
+    padding: 10px;
+}
+
+header.main .toolbar::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+header.main .toolbar .action {
+    float: left;
+    cursor: pointer;
+    border: 3px solid #333;
+    border-radius: 3px;
+    padding: 10px 12px;
+    background-color: black;
+    font-family: "Candara", sans-serif;
+    font-size: 18px;
+    color: white;
+}
+
+header.main .toolbar .action:not(:last-child) {
+    margin-right: 12px;
+}
+
+header.main .toolbar .action:hover {
+    background-color: #1f1f1f;
+}
+
+header.main .toolbar .action.highlight {
+    border-top-color: rgba(255, 255, 0, 0.7);
+}
+
+footer.status {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 0 34px;
+    -moz-flex: 0 0 34px;
+    -ms-flex: 0 0 34px;
+    flex: 0 0 34px;
+    height: 34px;
+    background-color: #333;
+    border-top: 1px solid #444;
+}
+
+.main-layout {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.main-layout .splitter {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 0 8px;
+    -moz-flex: 0 0 8px;
+    -ms-flex: 0 0 8px;
+    flex: 0 0 8px;
+    width: 8px;
+    background-color: #444;
+    cursor: e-resize;
+}
+
+.main-layout .editors,
+.main-layout .result {
+    width: 50%;
+}
+
+.main-layout .result iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-layout .area {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    overflow: hidden;
+}
+
+.main-layout .area .tabs {
+  background-color: #111;
+  border-bottom: 4px solid #333;
+  box-shadow: 0 1px 14px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.main-layout .editors .tabs {
+    position: relative;
+    z-index: 2;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 0 44px;
+    -moz-flex: 0 0 44px;
+    -ms-flex: 0 0 44px;
+    flex: 0 0 44px;
+}
+
+#eRightTabs {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  height: 44px;
+  width: 100%;
+}
+
+#eRightPages {
+  margin-top: 44px;
+}
+
+#eRightArea {
+  position: relative;
+  height: 100%;
+}
+
+.main-layout .area .tabs::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.main-layout .area .tabs:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 0;
+    border-bottom: 1px solid #202020;
+}
+
+.main-layout .area .tabs .tab {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+    min-width: 230px;
+    height: 100%;
+    cursor: pointer;
+    text-align: left;
+    padding: 13px 14px 10px;
+    border-right: 2px solid #333;
+}
+
+.main-layout .area .tabs .tab:not(.tab-active):hover {
+    background-color: #1a1a1a;
+}
+
+.main-layout .area .tabs .tab.tab-active {
+    background-color: #333;
+}
+
+.main-layout .area .tabs .tab .filename {
+    font-size: 14px;
+    color: #bbb;
+}
+
+.main-layout .area .pages {
+    position: relative;
+    z-index: 1;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+
+.main-layout .area .pages .page {
+  width: 100%;
+  height: auto;
+  display: none;
+}
+
+.main-layout .editors .pages .page {
+    height: 100%;
+}
+
+.main-layout .area .pages .page.page-active {
+    display: block;
+}
+
+.editor-files {
+    display: none;
+}
+
+.editor {
+    width: 100%;
+    height: 100%;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #555;
+    border: none;
+    border-radius: 0px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background: #666;
+}
+
+*::-webkit-scrollbar-track {
+    background: #141414;
+    border: 0px none #fff;
+    border-radius: 0px;
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.hl_cc {
+  color: #8a8;
+}
+
+.hl_kv {
+  color: #ca6;
+}
+
+.hl_op {
+  color: #ca6;
+}
+
+.hl_num {
+  color: #c64;
+}
+
+#eCode, #eShaderCode {
+  width: 100%;
+  height: 100%;
+  background-color: #141414;
+  color: white;
+  border: 0;
+  resize: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-size: 16px;
+}
+
+input[type=button] {
+    outline: none;
+}
+
+.docs {
+    width: 100%;
+    padding-left: 10px;
+    line-height: 125%;
+    font-size: 16px;
+    overflow: wrap;
+}
+</style>
 </head>
 
 <body>
+<header class="main">
+  <div class="info">
+    <noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+    <div id="eTitle" class="title"></div>
+    <div class="last-update hidden" id="eDocumentDates">Создано: <span id="eCreationDate" class="value">никогда</span> Сохранено: <span id="eSaveDate" class="value">никогда</span></div>
+  </div>
+  <div class="toolbar">
+    <input id="eGenerateButton" class="action" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
+    <input id="eSaveButton" class="action" value="Сохранить" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
+  </div>
+</header>
+<div class="main-layout">
+  <div class="area editors" data-tabs="yes">
+    <div class="tabs">
+      <div data-tab="js" class="tab tab-active">JavaScript<span id="js-filename" class="filename">(управляющий код)</span></div>
+      <div data-tab="glsl" class="tab">GLSL<span id="glsl-filename" class="filename">(код шейдеров)</span></div>
+    </div>
+    <div class="pages">
+      <div data-page="js" class="page page-active">
+<textarea id="eCode">
+var tex = TextureFromShader("vec4(Main(), 1.0)", 1024, 1024, "byte4");
+ExportTexture(tex, "tex");
+</textarea>
+      </div>
+      <div data-page="glsl" class="page">
+<textarea id="eShaderCode">
+vec3 Main()
+{
+    return vec3(
+        PerlinOctaves(TexCoord*10.0, vec2(10.0), 10)*0.5 + 0.5
+    );
+}
+</textarea>
+      </div>
+    </div>
+  </div>
 
-<noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
-<p id="eWebGLSupportMsg"></p>
+  <div class="splitter" data-splitter="yes"></div>
 
-<p><label>Алгоритм генерации</label><br/><textarea cols="100" rows="10" id="eCode" autocorrect="off">
-</textarea></p>
+  <div class="result">
+      <div class="area" data-tabs="yes" id="eRightArea">
+          <div class="tabs" id="eRightTabs">
+            <div data-tab="result" class="tab tab-active">Результат</div>
+            <div data-tab="docs" class="tab">Документация<span class="filename">(прототипы GLSL-функций)</span></div>
+          </div>
+          <div class="pages" id="eRightPages">
+            <div data-page="result" class="page page-active" style="height:100%;overflow:hidden">
+              <iframe id="eResultFrame" sandbox="allow-scripts" src="result.html"></iframe>
+            </div>
+            <div data-page="docs" class="page">
+<pre class="docs"><span class="hl_cc">//Совместимость с новыми версиями GLSL</span>
+<span class="hl_kv">vec4</span> texture(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> texcoord)
+<span class="hl_kv">vec4</span> texture(<span class="hl_kv">samplerCube</span> s, <span class="hl_kv">vec3</span> texcoord)
+                
+<span class="hl_cc">//Совместимость с HLSL</span>
+<span class="hl_kv">float</span> saturate(<span class="hl_kv">float</span> x)
+<span class="hl_kv">vec2</span> saturate(<span class="hl_kv">vec2</span> x)
+<span class="hl_kv">vec3</span> saturate(<span class="hl_kv">vec3</span> x)
+<span class="hl_kv">vec4</span> saturate(<span class="hl_kv">vec4</span> x)
+<span class="hl_kv">float</span> frac(<span class="hl_kv">float</span> x)
+<span class="hl_kv">vec2</span> frac(<span class="hl_kv">vec2</span> x)
+<span class="hl_kv">vec3</span> frac(<span class="hl_kv">vec3</span> x)
+<span class="hl_kv">vec4</span> frac(<span class="hl_kv">vec4</span> x)
+                
+<span class="hl_cc">//Математика</span>
+<span class="hl_kv">const</span> <span class="hl_kv">float</span> PI
+<span class="hl_kv">vec4</span> taylorInvSqrt(<span class="hl_kv">vec4</span> r)
+<span class="hl_kv">mat3</span> RotationEulerMatrix(<span class="hl_kv">vec3</span> rotRads)
+<span class="hl_kv">float</span> ExpSmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b, <span class="hl_kv">float</span> k)
+<span class="hl_kv">float</span> ExpSmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b)
+<span class="hl_kv">float</span> SmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b, <span class="hl_kv">float</span> k)
+<span class="hl_kv">float</span> SmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b)
+<span class="hl_kv">float</span> PowerSmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b, <span class="hl_kv">float</span> k)
+<span class="hl_kv">float</span> PowerSmoothMin(<span class="hl_kv">float</span> a, <span class="hl_kv">float</span> b)
+<span class="hl_kv">genType</span> sqr(<span class="hl_kv">genType</span> x)
+<span class="hl_kv">genType</span> sinh(<span class="hl_kv">genType</span> x)
+<span class="hl_kv">genType</span> cosh(<span class="hl_kv">genType</span> x)
+<span class="hl_kv">genType</span> tanh(<span class="hl_kv">genType</span> x)
+<span class="hl_kv">genType</span> sigma(<span class="hl_kv">genType</span> x) <span class="hl_op">=</span> x <span class="hl_op">/</span> (<span class="hl_num">1.0</span> <span class="hl_op">+</span> abs(x))
+<span class="hl_kv">genType</span> sinc(genType x) <span class="hl_op">=</span> sin(x) <span class="hl_op">/</span> x
+                
+<span class="hl_cc">//SDF для 3D примитивов с центром в начале координат</span>
+<span class="hl_kv">float</span> SphereSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">float</span> radius)
+<span class="hl_kv">float</span> PlaneSignedDistance(<span class="hl_kv">vec3</span> point)
+<span class="hl_kv">float</span> BoxSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> extents)
+<span class="hl_kv">float</span> RoundBoxDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> extents, <span class="hl_kv">float</span> radius)
+<span class="hl_kv">float</span> TorusSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec2</span> magMinRadius)
+<span class="hl_kv">float</span> HexPrismSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec2</span> h)
+<span class="hl_kv">float</span> CapsuleSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> a, <span class="hl_kv">vec3</span> b, <span class="hl_kv">float</span> radius)
+<span class="hl_kv">float</span> TriPrismSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec2</span> h)
+<span class="hl_kv">float</span> CylinderSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec2</span> h)
+<span class="hl_kv">float</span> ConeSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> c)
+                
+<span class="hl_cc">//Псевдослучайные числа, хеши</span>
+<span class="hl_kv">float</span> frand(<span class="hl_kv">vec2</span> seed)
+<span class="hl_kv">vec2</span> f2rand(<span class="hl_kv">vec2</span> seed)
+<span class="hl_kv">vec3</span> f3rand(<span class="hl_kv">vec2</span> seed)
+<span class="hl_kv">float</span> permute(<span class="hl_kv">float</span> x)
+<span class="hl_kv">vec3</span> permute(<span class="hl_kv">vec3</span> x)
+<span class="hl_kv">vec4</span> permute(<span class="hl_kv">vec4</span> x)
+<span class="hl_kv">vec2</span> fade(<span class="hl_kv">vec2</span> t)
+<span class="hl_kv">vec3</span> fade(<span class="hl_kv">vec3</span> t)
+                
+<span class="hl_cc">//Шум перлина</span>
+<span class="hl_kv">float</span> snoise(<span class="hl_kv">vecN</span> v)
+<span class="hl_kv">float</span> cnoise(<span class="hl_kv">vecN</span> v[, <span class="hl_kv">vecN</span> period<span class="hl_op">=</span><span class="hl_kv">vecN</span>(<span class="hl_num">289.0</span>)])
+<span class="hl_kv">vec2</span> cellular(<span class="hl_kv">vec2</span> P[, <span class="hl_kv">vec2</span> rep<span class="hl_op">=</span><span class="hl_kv">vec2</span>(<span class="hl_num">289.0</span>)])
+<span class="hl_kv">vec2</span> cellular(<span class="hl_kv">vec3</span> P[, <span class="hl_kv">vec3</span> rep<span class="hl_op">=</span><span class="hl_kv">vec3</span>(<span class="hl_num">289.0</span>)])
+<span class="hl_kv">vec2</span> grad2(<span class="hl_kv">vec2</span> p, <span class="hl_kv">float</span> rot)
+<span class="hl_kv">float</span> srdnoise(<span class="hl_kv">vec2</span> P, <span class="hl_kv">float</span> rot, <span class="hl_kv">out</span> <span class="hl_kv">vec2</span> grad)
+<span class="hl_kv">float</span> FloatHash(<span class="hl_kv">float</span> n)
+<span class="hl_kv">float</span> FloatHash(<span class="hl_kv">vec2</span> v)
+<span class="hl_kv">vec2</span> Vec2Hash(<span class="hl_kv">vec2</span> v)
+<span class="hl_kv">vec3</span> Vec3Hash(<span class="hl_kv">vec2</span> v)
+<span class="hl_kv">float</span> ValueNoise2D(<span class="hl_kv">vec2</span> v)
+<span class="hl_kv">float</span> ValueNoise3D(<span class="hl_kv">vec3</span> v)
+<span class="hl_kv">float</span> ValueNoise3D(<span class="hl_kv">vec3</span> v, <span class="hl_kv">sampler2D</span> noiseTex, <span class="hl_kv">vec2</span> noiseTex_PixelSize)
+<span class="hl_kv">float</span> GradientNoise(<span class="hl_kv">vec2</span> v)
+<span class="hl_kv">vec2</span> SmoothVoronoi(<span class="hl_kv">vec2</span> v, <span class="hl_kv">float</span> smoothness)
+<span class="hl_kv">float</span> Voronoise(<span class="hl_kv">vec2</span> x, <span class="hl_kv">float</span> gridControl, <span class="hl_kv">float</span> metricControl)
+                
+<span class="hl_cc">//Несколько октав шума Перлина</span>
+<span class="hl_kv">float</span> PerlinOctaves(<span class="hl_kv">vecN</span> coord, <span class="hl_kv">vecN</span> repeat, <span class="hl_kv">int</span> octaves[, <span class="hl_kv">float</span> gain<span class="hl_op">=</span><span class="hl_num">0.5</span>, <span class="hl_kv">float</span> lacunarity<span class="hl_op">=</span><span class="hl_num">2.0</span>, vecN offset<span class="hl_op">=</span>vecN(<span class="hl_num">0.0</span>)])
+                
+<span class="hl_cc">//Несколько октав шума Перлина с указанным уровнем низких (coeffLow) и высоких (gainHigh) частот.</span>
+<span class="hl_cc">//Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain</span>
+<span class="hl_kv">float</span> PerlinOctavesSpectrum(<span class="hl_kv">vec2</span> coord, <span class="hl_kv">vec2</span> period, <span class="hl_kv">int</span> octaves, <span class="hl_kv">float</span> coeffLow, <span class="hl_kv">float</span> gainHigh[, <span class="hl_kv">float</span> lacunarity, <span class="hl_kv">vec2</span> offset])
+                
+<span class="hl_cc">//Цветовые пространства</span>
+<span class="hl_kv">vec3</span> RGB2HSV(<span class="hl_kv">vec3</span> c)
+<span class="hl_kv">vec3</span> HSV2RGB(<span class="hl_kv">vec3</span> c)
+<span class="hl_kv">vec3</span> RGB2YUV(<span class="hl_kv">vec3</span> rgb)
+<span class="hl_kv">vec3</span> YUV2RGB(<span class="hl_kv">vec3</span> yuv)
+<span class="hl_kv">vec4</span> RGB2RGBM(<span class="hl_kv">vec3</span> color)
+<span class="hl_kv">vec3</span> RGBM2RGB(<span class="hl_kv">vec4</span> rgbm)
+<span class="hl_kv">float</span> Linear2SRGB(<span class="hl_kv">float</span> x)
+<span class="hl_kv">vec2</span> Linear2SRGB(<span class="hl_kv">vec2</span> x)
+<span class="hl_kv">vec3</span> Linear2SRGB(<span class="hl_kv">vec3</span> x)
+<span class="hl_kv">vec4</span> Linear2SRGB(<span class="hl_kv">vec4</span> x)
+<span class="hl_kv">float</span> SRGB2Linear(<span class="hl_kv">float</span> x)
+<span class="hl_kv">vec2</span> SRGB2Linear(<span class="hl_kv">vec2</span> x)
+<span class="hl_kv">vec3</span> SRGB2Linear(<span class="hl_kv">vec3</span> x)
+<span class="hl_kv">vec4</span> SRGB2Linear(<span class="hl_kv">vec4</span> x)
+                
+<span class="hl_cc">//Нормали по высотам</span>
+<span class="hl_kv">vec3</span> NormalFromHeights(<span class="hl_kv">float</span> center, <span class="hl_kv">float</span> right, <span class="hl_kv">float</span> bottom, <span class="hl_kv">float</span> scale)
+<span class="hl_kv">vec3</span> NormalFromHeightMapR(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapG(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapB(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapA(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
+<span class="hl_kv">void</span> Gather8AdjacentTexelsR(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> texelSize, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> top, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> bottom)
+<span class="hl_kv">void</span> Gather8AdjacentTexelsG(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> texelSize, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> top, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> bottom)
+<span class="hl_kv">void</span> Gather8AdjacentTexelsB(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> texelSize, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> top, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> bottom)
+<span class="hl_kv">void</span> Gather8AdjacentTexelsA(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> texelSize, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> top, <span class="hl_kv">out</span> <span class="hl_kv">vec4</span> bottom)
+<span class="hl_kv">vec3</span> NormalFromHeightMapSobel3R(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapSobel3G(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapSobel3B(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
+<span class="hl_kv">vec3</span> NormalFromHeightMapSobel3A(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
+                
+<span class="hl_cc">//Свёртка, размытие, дифференцирование изображения</span>
+<span class="hl_kv">vec4</span> ConvolutionFilter3(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">9</span>])
+<span class="hl_kv">vec4</span> ConvolutionFilter5(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">25</span>])
+<span class="hl_kv">vec4</span> ConvolutionFilter7(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">49</span>])
+<span class="hl_kv">vec4</span> EdgeDetect(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> texelSize)
+<span class="hl_kv">vec4</span> GaussianBlur9(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> center, <span class="hl_kv">vec2</span> dir)
+<span class="hl_kv">vec4</span> GaussianBlur17(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> center, <span class="hl_kv">vec2</span> dir)
+<span class="hl_kv">vec4</span> NoiseBlur(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> center, <span class="hl_kv">float</span> blurAmount)
+<span class="hl_kv">vec4</span> DiffFree(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> pixSize)
+                
+<span class="hl_cc">//Фильтры выборки из текстуры</span>
+<span class="hl_kv">vec4</span> textureBicubic(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> texcoord, <span class="hl_kv">vec2</span> texelSize)
+<span class="hl_kv">vec4</span> textureSmooth(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> texcoord, <span class="hl_kv">vec2</span> texelSize)
+                
+<span class="hl_cc">//Генерация сетки</span>
+<span class="hl_kv">float</span> GenBricks(<span class="hl_kv">vec2</span> pos, <span class="hl_kv">ivec2</span> count, <span class="hl_kv">vec2</span> dist, <span class="hl_kv">float</span> scrollX)
+<span class="hl_kv">void</span> HexGrid(<span class="hl_kv">out</span> <span class="hl_kv">vec4</span> o, <span class="hl_kv">vec2</span> TexCoord)
+                
+<span class="hl_cc">//Запаковка float в текстуры с 8-битными каналами, актуально для старых мобильных устройств</span>
+<span class="hl_kv">vec4</span> EncodeFloatAsRGBA8(<span class="hl_kv">float</span> v)
+<span class="hl_kv">float</span> DecodeFloatFromRGBA8(<span class="hl_kv">vec4</span> rgba8)
+<span class="hl_kv">vec2</span> EncodeFloatAsRG8(<span class="hl_kv">float</span> v)
+<span class="hl_kv">float</span> DecodeFloatFromRG8(<span class="hl_kv">vec2</span> rg8)
+</pre>
+                
+            </div>
+          </div>
+        </div>
+  </div>
+</div>
+<footer class="status">
+  
+</footer>
 
-<div class="spoiler">
-<input type="checkbox" id="spoilerid_1"><label for="spoilerid_1">
-Встроенные функции, доступные для использования в шейдере
-</label><div class="spoiler_body" id="BuitinFunctions"><pre>
-//Совместимость с новыми версиями GLSL
-vec4 texture(sampler2D s, vec2 texcoord)
-vec4 texture(samplerCube s, vec3 texcoord)
-
-//Совместимость с HLSL
-float saturate(float x)
-vec2 saturate(vec2 x)
-vec3 saturate(vec3 x)
-vec4 saturate(vec4 x)
-float frac(float x)
-vec2 frac(vec2 x)
-vec3 frac(vec3 x)
-vec4 frac(vec4 x)
-
-//Математика
-const float PI
-vec4 taylorInvSqrt(vec4 r)
-mat3 RotationEulerMatrix(vec3 rotRads)
-float ExpSmoothMin(float a, float b, float k)
-float ExpSmoothMin(float a, float b)
-float SmoothMin(float a, float b, float k)
-float SmoothMin(float a, float b)
-float PowerSmoothMin(float a, float b, float k)
-float PowerSmoothMin(float a, float b)
-genType sqr(genType x)
-genType sinh(genType x)
-genType cosh(genType x)
-genType tanh(genType x)
-genType sigma(genType x) = x / (1.0 + abs(x))
-genType sinc(genType x) = sin(x) / x
-
-//SDF для 3D примитивов с центром в начале координат
-float SphereSignedDistance(vec3 point, float radius)
-float PlaneSignedDistance(vec3 point)
-float BoxSignedDistance(vec3 point, vec3 extents)
-float RoundBoxDistance(vec3 point, vec3 extents, float radius)
-float TorusSignedDistance(vec3 point, vec2 magMinRadius)
-float HexPrismSignedDistance(vec3 point, vec2 h)
-float CapsuleSignedDistance(vec3 point, vec3 a, vec3 b, float radius)
-float TriPrismSignedDistance(vec3 point, vec2 h)
-float CylinderSignedDistance(vec3 point, vec2 h)
-float ConeSignedDistance(vec3 point, vec3 c)
-
-//Псевдослучайные числа, хеши
-float frand(vec2 seed)
-vec2 f2rand(vec2 seed)
-vec3 f3rand(vec2 seed)
-float permute(float x)
-vec3 permute(vec3 x)
-vec4 permute(vec4 x)
-vec2 fade(vec2 t)
-vec3 fade(vec3 t)
-
-//Шум перлина
-float snoise(vecN v)
-float cnoise(vecN v[, vecN period=vecN(289.0)])
-vec2 cellular(vec2 P[, vec2 rep=vec2(289.0)])
-vec2 cellular(vec3 P[, vec3 rep=vec3(289.0)])
-vec2 grad2(vec2 p, float rot)
-float srdnoise(vec2 P, float rot, out vec2 grad)
-float FloatHash(float n)
-float FloatHash(vec2 v)
-vec2 Vec2Hash(vec2 v)
-vec3 Vec3Hash(vec2 v)
-float ValueNoise2D(vec2 v)
-float ValueNoise3D(vec3 v)
-float ValueNoise3D(vec3 v, sampler2D noiseTex, vec2 noiseTex_PixelSize)
-float GradientNoise(vec2 v)
-vec2 SmoothVoronoi(vec2 v, float smoothness)
-float Voronoise(vec2 x, float gridControl, float metricControl)
-
-//Несколько октав шума Перлина
-float PerlinOctaves(vecN coord, vecN repeat, int octaves[, float gain=0.5, float lacunarity=2.0, vecN offset=vecN(0.0)])
-
-//Несколько октав шума Перлина с указанным уровнем низких (coeffLow) и высоких (gainHigh) частот.
-//Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain
-float PerlinOctavesSpectrum(vec2 coord, vec2 period, int octaves, float coeffLow, float gainHigh[, float lacunarity, vec2 offset])
-
-//Цветовые пространства
-vec3 RGB2HSV(vec3 c)
-vec3 HSV2RGB(vec3 c)
-vec3 RGB2YUV(vec3 rgb)
-vec3 YUV2RGB(vec3 yuv)
-vec4 RGB2RGBM(vec3 color)
-vec3 RGBM2RGB(vec4 rgbm)
-float Linear2SRGB(float x)
-vec2 Linear2SRGB(vec2 x)
-vec3 Linear2SRGB(vec3 x)
-vec4 Linear2SRGB(vec4 x)
-float SRGB2Linear(float x)
-vec2 SRGB2Linear(vec2 x)
-vec3 SRGB2Linear(vec3 x)
-vec4 SRGB2Linear(vec4 x)
-
-//Нормали по высотам
-vec3 NormalFromHeights(float center, float right, float bottom, float scale)
-vec3 NormalFromHeightMapR(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
-vec3 NormalFromHeightMapG(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
-vec3 NormalFromHeightMapB(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
-vec3 NormalFromHeightMapA(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
-void Gather8AdjacentTexelsR(sampler2D tex, vec2 pos, vec2 texelSize, out vec4 top, out vec4 bottom)
-void Gather8AdjacentTexelsG(sampler2D tex, vec2 pos, vec2 texelSize, out vec4 top, out vec4 bottom)
-void Gather8AdjacentTexelsB(sampler2D tex, vec2 pos, vec2 texelSize, out vec4 top, out vec4 bottom)
-void Gather8AdjacentTexelsA(sampler2D tex, vec2 pos, vec2 texelSize, out vec4 top, out vec4 bottom)
-vec3 NormalFromHeightMapSobel3R(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
-vec3 NormalFromHeightMapSobel3G(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
-vec3 NormalFromHeightMapSobel3B(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
-vec3 NormalFromHeightMapSobel3A(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
-
-//Свёртка, размытие, дифференцирование изображения
-vec4 ConvolutionFilter3(sampler2D s, vec2 pos, vec2 st, float kernel[9])
-vec4 ConvolutionFilter5(sampler2D s, vec2 pos, vec2 st, float kernel[25])
-vec4 ConvolutionFilter7(sampler2D s, vec2 pos, vec2 st, float kernel[49])
-vec4 EdgeDetect(sampler2D s, vec2 pos, vec2 texelSize)
-vec4 GaussianBlur9(sampler2D s, vec2 center, vec2 dir)
-vec4 GaussianBlur17(sampler2D s, vec2 center, vec2 dir)
-vec4 NoiseBlur(sampler2D s, vec2 center, float blurAmount)
-vec4 DiffFree(sampler2D s, vec2 pos, vec2 pixSize)
-
-//Фильтры выборки из текстуры
-vec4 textureBicubic(sampler2D tex, vec2 texcoord, vec2 texelSize)
-vec4 textureSmooth(sampler2D tex, vec2 texcoord, vec2 texelSize)
-
-//Генерация сетки
-float GenBricks(vec2 pos, ivec2 count, vec2 dist, float scrollX)
-void HexGrid(out vec4 o, vec2 TexCoord)
-
-//Запаковка float в текстуры с 8-битными каналами, актуально для старых мобильных устройств
-vec4 EncodeFloatAsRGBA8(float v)
-float DecodeFloatFromRGBA8(vec4 rgba8)
-vec2 EncodeFloatAsRG8(float v)
-float DecodeFloatFromRG8(vec2 rg8)</pre>
-</div></div>
-
-<p><label>Шейдеры</label><br/>
-<textarea cols="100" rows="10" id="eShaderCode" autocorrect="off">
-</textarea></p>
-<input id="eGenerateButton" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
-<input id="eSaveButton" value="Сохранить ссылку" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
-
-<br/>Результат
-<hr>
-<span id="eResults"></span>
-<hr>
-
-</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-html.js"></script>
 
 <script src="Utils.js"></script>
+
+
 <script>
+function Tabs(id) {
+  this.element = (typeof id === 'string') ? document.getElementById(id) : id;
+  this.events = new Events(this);
+  this.attach();
+}
+
+Tabs.prototype.attach = function () {
+  this.tabs = this.getElements(this.element, '[data-tab]');
+  this.pages = this.getElements(this.element, '[data-page]');
+
+  this.tabs.forEach(function (tab, idx) {
+    tab.addEventListener('click', this.select.bind(this, idx));
+  }, this);
+}
+
+Tabs.prototype.select = function (idx, event) {
+  if (idx < 0 || idx >= this.tabs.length) return;
+  var tab = this.tabs[idx];
+  var id = tab.getAttribute('data-tab');
+
+  this.tabs.forEach(function (_tab) {
+    if (_tab == tab) _tab.classList.add('tab-active');
+    else _tab.classList.remove('tab-active');
+  }, this);
+
+  this.pages.forEach(function (page) {
+    var pageId = page.getAttribute('data-page');
+    if (pageId == id) page.classList.add('page-active');
+    else page.classList.remove('page-active');
+  }, this);
+
+  this.events.fire('change', idx);
+}
+
+Tabs.prototype.getElements = function (el, selector) {
+  return [].slice.call(el.querySelectorAll(selector));
+}
+
+// --- Splitter
+
+function Splitter(id, options) {
+  this.element = (typeof id === 'string') ? document.getElementById(id) : id;
+  this.options = options || {};
+
+  if (!this.options.cookieKey) this.options.cookieKey = null;
+  if (!this.options.minWidth) this.options.minWidth = 0;
+
+  this.binds = {
+    start: this.start.bind(this),
+    move: this.move.bind(this),
+    end: this.end.bind(this)
+  };
+
+  this.attach();
+}
+
+Splitter.prototype.attach = function () {
+  this.left = this.element.previousElementSibling;
+  this.right = this.element.nextElementSibling;
+
+  // TODO: load from cookie?
+
+  this.dragging = false;
+
+  this.element.addEventListener('mousedown', this.binds.start);
+}
+
+Splitter.prototype.start = function (event) {
+  var isLeftButton = (event.which ? (event.which == 1) : false) ||
+    (event.button ? (event.button == 1) : false);
+  if (!isLeftButton) return;
+
+  event.stopPropagation();
+  event.preventDefault();
+
+  this.startPos = this.eventPosition(event);
+
+  // Add transparent cover to avoid IFRAMEs
+  if (!this.cover) {
+    this.cover = document.createElement('div');
+    this.cover.style.position = 'fixed';
+    this.cover.style.top = '0px';
+    this.cover.style.bottom = '0px';
+    this.cover.style.left = '0px';
+    this.cover.style.right = '0px';
+    this.cover.style.cursor = this.getComputedStyle(this.element, 'cursor');
+    document.body.appendChild(this.cover);
+  } else {
+    this.cover.style.display = 'block';
+  }
+
+  document.body.addEventListener('mousemove', this.binds.move);
+  document.body.addEventListener('mouseup', this.binds.end);
+  this.dragging = true;
+
+  var iframes = document.querySelectorAll('iframe');
+  for(var i = 0; i < iframes.length; i++)
+    iframes[i].style.pointerEvents = 'none';
+}
+
+Splitter.prototype.move = function (event) {
+  if (!this.dragging) return;
+
+  event.stopPropagation();
+  event.preventDefault();
+
+  var pos = this.eventPosition(event);
+
+  // TODO: resize
+  var delta = pos.x - this.startPos.x;
+  this.startPos = pos;
+
+  //console.log(delta);
+
+  var leftWidth = this.left.offsetWidth;
+  var rightWidth = this.right.offsetWidth;
+
+  //console.log(leftWidth, rightWidth);
+
+  if (delta < 0) {
+    if ((leftWidth + delta) < this.options.minWidth) delta -= this.options.minWidth - (leftWidth + delta);
+  } else {
+    if ((rightWidth - delta) < this.options.minWidth) delta -= this.options.minWidth - (rightWidth - delta);
+  }
+
+  this.left.style.width = (leftWidth + delta) + 'px';
+  this.right.style.width = (rightWidth - delta) + 'px';
+}
+
+Splitter.prototype.end = function (event) {
+  if (!this.dragging) return;
+
+  event.stopPropagation();
+  event.preventDefault();
+
+  this.cover.style.display = 'none';
+
+  var pos = this.eventPosition(event);
+
+  // TODO: end dragging, fix new sizes
+
+  // TODO: save to cookie?
+
+  var iframes = document.querySelectorAll('iframe');
+  for(var i = 0; i < iframes.length; i++)
+    iframes[i].style.pointerEvents = 'auto';
+
+  document.body.removeEventListener('mousemove', this.binds.move);
+  document.body.removeEventListener('mouseup', this.binds.end);
+  this.dragging = false;
+}
+
+Splitter.prototype.eventPosition = function (event) {
+  var pageX = event.pageX;
+  var pageY = event.pageY;
+  if (pageX === undefined) {
+    pageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    pageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+  }
+  return {
+    x: pageX,
+    y: pageY
+  };
+}
+
+Splitter.prototype.getComputedStyle = function (elem, prop) {
+  if (elem.currentStyle) {
+    return elem.currentStyle[prop];
+  } else if (window.getComputedStyle) {
+    return window.getComputedStyle(elem, null).getPropertyValue(prop);
+  }
+}
+
+
 var gCodeEditor = eCode;
 var gShaderCodeEditor = eShaderCode;
+var gDocumentChanged = false;
 
-window.onbeforeunload = function(e) {
-	if(!gDocumentChanged) return;
-	var dialogText = 'Вы уверены, что хотите закрыть страницу без сохранения изменений?';
-	e.returnValue = dialogText;
-	return dialogText;
-};
+function ReplaceTextAreaWithAce(textarea, lang, wordList)
+{
+	var editDiv = document.createElement("div");
+	editDiv.style.position = "relative";
+	editDiv.style.width = "100%";
+	editDiv.style.height = "100%";
+	textarea.parentNode.insertBefore(editDiv, textarea);
+  var editor = ace.edit(editDiv);
+	editor.commands.bindKeys({"ctrl-l": null});
+	editor.$blockScrolling = Infinity;
+  editor.getSession().setValue(textarea.value);
+  editor.getSession().setMode("ace/mode/" + lang);
+  editor.setTheme("ace/theme/twilight");
+  editor.setFontSize(16);
+	editor.setOptions({
+		enableBasicAutocompletion: true,
+		enableSnippets: true,
+		enableLiveAutocompletion: true
+	});
+	var staticWordCompleter = {
+		getCompletions: function(editor1, session, pos, prefix, callback) {
+			if(editor == editor1) callback(null, wordList.map(function(word) {
+				var caption = word[0];
+				if(word[1] != null) caption += "(" + word[1].join(", ") + ")";
+				return {
+					caption: caption,
+					value: word[0] + ((word[1] != null)? "(": ""),
+					meta: word[1] == null? "parameter": "function"
+				};
+			}));
+		}
+	}
+	editor.completers.unshift(staticWordCompleter);
+	if(!editor.completer) {
+		// make sure completer is initialized
+		editor.execCommand("startAutocomplete")
+		editor.completer.detach()
+	}
+	editor.completer.popup.container.style.width = "60%";
+	textarea.parentNode.removeChild(textarea);
+	return editor;
+}
+
+function ReplaceTextAreasWithAce()
+{
+	ace.require("ace/ext/language_tools");
+	gCodeEditor = ReplaceTextAreaWithAce(gCodeEditor, "javascript", [
+		["TextureFromShader", ["exprOrShader", "width", "height", "format", "inputTexturesArr", "params [opt]"]],
+		["CreateShaderExpression", ["expr", "numComponents"]],
+		["ExportTexture", ["tex", "name"]]
+	]);
+	gShaderCodeEditor = ReplaceTextAreaWithAce(gShaderCodeEditor, "glsl", [
+		["TexCoord", null]
+  ]);
+  function markChanges()
+  {
+    gDocumentChanged = true;
+    eSaveButton.classList.add('highlight');
+    eGenerateButton.classList.add('highlight');
+  }
+	gCodeEditor.getSession().on('change', markChanges);
+	gShaderCodeEditor.getSession().on('change', markChanges);
+}
+
+
+// ---
+
+window.addEventListener('DOMContentLoaded', function () {
+  var splitterEl = document.querySelector('[data-splitter]');
+  new Splitter(splitterEl/*, {minWidth: 200}*/);
+
+  var tabsEl = document.querySelectorAll('[data-tabs]');
+  var tabs = new Tabs(tabsEl[0]);
+  var tabsRight = new Tabs(tabsEl[1]);
+
+  ReplaceTextAreasWithAce();
+
+  tabs.events.add('change', function (idx) {
+    if(idx == 0) gCodeEditor.focus();
+    else gShaderCodeEditor.focus();
+  });
+
+  if (window == window.top)
+    gCodeEditor.focus();
+});
+
+
+var Events = function (context) {
+  this.context = context || null;
+  this.events = {};
+}
+
+Events.prototype.add = function (event, listener) {
+  if (typeof this.events[event] !== 'object') {
+    this.events[event] = [];
+  }
+
+  this.events[event].push(listener);
+}
+
+Events.prototype.adds = function (events) {
+  Object.forEach(events, function (listener, event) {
+    this.add(event, listener);
+  }, this);
+}
+
+Events.prototype.remove = function (event, listener) {
+  var idx;
+
+  if (typeof this.events[event] === 'object') {
+    idx = this.events[event].indexOf(listener);
+
+    if (idx > -1) {
+      this.events[event].splice(idx, 1);
+    }
+  }
+}
+
+Events.prototype.fire = function (event) {
+  var i, listeners, length, args = [].slice.call(arguments, 1);
+
+  if (typeof this.events[event] === 'object') {
+    listeners = this.events[event].slice();
+    length = listeners.length;
+
+    for (i = 0; i < length; i++) {
+      listeners[i].apply(this.context, args);
+    }
+  }
+}
+
+Events.prototype.fireOnce = function (event, listener) {
+  this.add(event, function g() {
+    this.remove(event, g);
+    listener.apply(this.context, arguments);
+  });
+}
+
+
+function ExecuteInIFrame(controlCode, glsl)
+{
+  eResultFrame.contentWindow.postMessage({
+    controlCode: controlCode,
+    glsl: glsl
+  }, "*");
+}
+
+function GetCodeInput()
+{
+	return EditorGetText(gCodeEditor);
+}
+
+function GetShaderInput()
+{
+	return EditorGetText(gShaderCodeEditor);
+}
+
+function Generate()
+{
+  eGenerateButton.classList.remove('highlight');
+	ExecuteInIFrame(GetCodeInput(), GetShaderInput());
+}
+
+function Save(showMsg)
+{
+	DBInsert("texgens", {
+			"code": GetCodeInput(),
+			"shader": GetShaderInput(),
+			"name": "<unnamed>"
+		}, function(result) {
+      eSaveButton.classList.remove('highlight');
+			gDocumentChanged = false;
+			var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + result._id;
+			window.history.replaceState({}, document.title, newUrl);
+			if(showMsg) alert("Сохранено. Скопируйте ссылку из адресной строки.");
+		});
+}
+
+function Load()
+{
+	if(!location.search) return;
+  var id = GetParameterByName("id");
+  
+  function OnLoad(result)
+  {
+    if(result != "<unnamed>") eTitle.innerText = result.name;
+    else eTitle.innerText = result._id;
+    eDocumentDates.classList.remove("hidden");
+    eCreationDate.innerText = result.createdAt.toLocaleString();
+    eSaveDate.innerText = result.updatedAt.toLocaleString();
+    EditorSetText(gCodeEditor, result.code);
+    EditorSetText(gShaderCodeEditor, result.shader);
+    eSaveButton.classList.remove("highlight");
+    gDocumentChanged = false;
+  }
+
+	if(id !== null)
+	{
+		DBReadById("texgens", id, ["code", "shader", "_id", "name", "createdAt", "updatedAt"], OnLoad);
+		return;
+	}
+	var name = GetParameterByName("name");
+	if(name !== null)
+	{
+		DBQuery("texgens",
+			{"name": {"$eq": name}},
+			function(results) {
+				if(results[0] === undefined) return;
+				OnLoad(results[0]);
+			},
+			{fields: ["code", "shader", "_id", "name", "createdAt", "updatedAt"], limit: 1});
+		return;
+	}
+}
 
 function EditorGetText(editor)
 {
@@ -224,609 +1024,12 @@ if(location.search)
 	if(shaderCode !== null) EditorSetText(gShaderCodeEditor, decodeURI(shaderCode));
 }
 
-
-function ReplaceTextAreasWithAce()
-{
-	ace.require("ace/ext/language_tools");
-	gCodeEditor = ReplaceTextAreaWithAce(gCodeEditor, "javascript", [
-		["TextureFromShader", ["exprOrShader", "width", "height", "format", "inputTexturesArr", "params [opt]"]],
-		["CreateShaderExpression", ["expr", "numComponents"]],
-		["ExportTexture", ["tex", "name"]]
-	]);
-	gShaderCodeEditor = ReplaceTextAreaWithAce(gShaderCodeEditor, "glsl", [
-		["TexCoord", null]
-	]);
-	gCodeEditor.getSession().on('change', function() {
-		gDocumentChanged = true;
-	});
-	gShaderCodeEditor.getSession().on('change', function() {
-		gDocumentChanged = true;
-	});
-}
-
-function Save(showMsg)
-{
-	DBInsert("texgens", {
-			"code": GetCodeInput(),
-			"shader": GetShaderInput(),
-			"name": "<unnamed>"
-		}, function(result) {
-			gDocumentChanged = false;
-			var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + result._id;
-			window.history.replaceState({}, document.title, newUrl);
-			if(showMsg) alert("Сохранено. Скопируйте ссылку из адресной строки.");
-		});
-}
-
-function Load()
-{
-	if(!location.search) return;
-	var id = GetParameterByName("id");
-	if(id !== null)
-	{
-		DBReadById("texgens", id,
-			["code", "shader"],
-			function(result) {
-				EditorSetText(gCodeEditor, result.code);
-				EditorSetText(gShaderCodeEditor, result.shader);
-				gDocumentChanged = false;
-			});
-		return;
-	}
-	var name = GetParameterByName("name");
-	if(name !== null)
-	{
-		DBQuery("texgens",
-			{"name": {"$eq": name}},
-			function(results) {
-				if(results[0] === undefined) return;
-				EditorSetText(gCodeEditor, results[0].code);
-				EditorSetText(gShaderCodeEditor, results[0].shader);
-				gDocumentChanged = false;
-			},
-			{fields: ["code", "shader"], limit: 1});
-		return;
-	}
-}
-
-var gShaderLibraryLoader = LoadShaderAsync("ShaderLib.glsl.js");
-</script>
-
-<script src="BsonLib.js" onload="Load()"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js" onload="ReplaceTextAreasWithAce()"></script>
-
-<script id="VertexShaderCode" type="x-shader/x-vertex">
-#version 100
-attribute vec2 aTexCoord;
-varying vec2 TexCoord;
-void main()
-{
-	TexCoord = aTexCoord;
-	gl_Position = vec4(TexCoord*2.0 - vec2(1.0), 0.0, 1.0);
-}
-</script>
-
-<script id="FragmentExportShaderCode" type="x-shader/x-fragment">
-#version 100
-precision mediump float;
-varying vec2 TexCoord;
-uniform sampler2D TexA;
-void main()
-{
-	gl_FragColor = texture2D(TexA, TexCoord);
-}
-</script>
-
-<script id="FragmentShaderCodeStart" type="x-shader/x-fragment">
-#version 100
-
-#ifdef GL_ES
-
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-
-#if GL_FRAGMENT_PRECISION_HIGH == 1
-precision highp float;
-#else
-precision mediump float;
-#endif
-
-#else
-precision mediump float;
-#endif
-
-#endif
-
-varying vec2 TexCoord;
-uniform vec2 TextureSize;
-uniform sampler2D TexA, TexB, TexC, TexD, TexE, TexF, TexG, TexH;
-uniform vec2 TexASize, TexBSize, TexCSize, TexDSize, TexESize, TexFSize, TexHSize;
-</script>
-
-<script id="DefaultFragmentShaderCode" type="x-shader/x-fragment">
-void main()
-{
-	vec2 coord = TexCoord*2.0 - 1.0;
-	float factor = max(0.0, 1.0 - dot(coord, coord));
-	gl_FragColor = vec4(mix(vec3(1.0, 0.5, 1.0), vec3(1.0, 1.0, 0.3), factor)*factor, 1.0);
-}
-</script>
-
-<script>
-
-var gResults = eResults;
-
-
-var gOffScreenCanvas = document.createElement("canvas");
-
-function InitGL(canvas)
-{
-	var gl = canvas.getContext("webgl2", {antialias : false});
-	if(!gl)
-	{
-		gl = canvas.getContext("webgl", {antialias : false}) ||
-			canvas.getContext("experimental-webgl", {antialias : false});
-		if(gl) gl.version = 10;
-	}
-	else gl.version = 20;
-
-	if(!gl) return null;
-
-	gl.extTextureFloat = gl.getExtension("OES_texture_float");
-	gl.extTextureFloatLinear = gl.getExtension("OES_texture_float_linear");
-	gl.extTextureHalfFloat = gl.getExtension("OES_texture_half_float");
-	gl.extTextureHalfFloatLinear = gl.getExtension("OES_texture_half_float_linear");
-	if(gl.version >= 20) gl.getExtension("EXT_color_buffer_float");
-	else gl.getExtension("WEBGL_color_buffer_float");
-	var floatTextureRenderSupported = gl.version >= 20 || gl.extTextureFloat && gl.extTextureFloatLinear;
-	var halfFloatTextureRenderSupported = gl.version >= 20 || gl.extTextureHalfFloat && gl.extTextureHalfFloatLinear;
-	if(gl.version < 20 && halfFloatTextureRenderSupported) gl.HALF_FLOAT = gl.extTextureHalfFloat.HALF_FLOAT_OES;
-
-	return gl;
-}
-var gl = InitGL(gOffScreenCanvas);
-
-function CompileShader(code, type)
-{
-	var sh = gl.createShader(type);
-	gl.shaderSource(sh, code);
-	gl.compileShader(sh);
-	var log = gl.getShaderInfoLog(sh);
-	var success = gl.getShaderParameter(sh, gl.COMPILE_STATUS);
-	if(!success || log.toLowerCase().indexOf("warn") !== -1)
-	{
-		if(!log.endsWith('\n')) log += "\n";
-		gResults.log += "<font color=" + (success? "#DAA520": "red") + ">" + EscapeHTML(log) + "</font>";
-		console.log(log);
-	}
-	if(success) return sh;
-	
-	gl.deleteShader(sh);
-	return null;
-}
-
-function LinkShaderProgram(vertexShaderId, fragmentShaderId)
-{
-	if(!vertexShaderId || !fragmentShaderId) return null;
-	var prog = gl.createProgram();
-	gl.attachShader(prog, vertexShaderId);
-	gl.attachShader(prog, fragmentShaderId);
-	gl.linkProgram(prog);
-	gl.detachShader(prog, vertexShaderId);
-	gl.detachShader(prog, fragmentShaderId);
-	var success = gl.getProgramParameter(prog, gl.LINK_STATUS);
-	gl.useProgram(prog);
-	var log = gl.getProgramInfoLog(prog);
-	if(!success || log.toLowerCase().indexOf("warn") !== -1)
-	{
-		if(!log.endsWith('\n')) log += "\n";
-		gResults.log += "<font color=" + (success? "#DAA520": "red") + ">" + EscapeHTML(log) + "</font>";
-		console.log(log);
-	}
-	if(success) return prog;
-	
-	gl.deleteProgram(prog);
-	return null;
-}
-
-function CompileShaderProgram(vertexCode, fragmentCode)
-{
-	return LinkShaderProgram(gl,
-		CompileShader(gl, vertexCode, gl.VERTEX_SHADER),
-		CompileShader(gl, fragmentCode, gl.FRAGMENT_SHADER));
-}
-
-function GetShaderCode(id)
-{
-    var shaderScript = document.getElementById(id);
-    if(!shaderScript) return null;
-    var str = "";
-    var k = shaderScript.firstChild;
-    while(k)
-    {
-        if(k.nodeType == 3)
-            str += k.textContent;
-        k = k.nextSibling;
-    }
-	return str;
-}
-
-function GetCodeInput()
-{
-	return EditorGetText(gCodeEditor);
-}
-
-function GetShaderInput()
-{
-	return EditorGetText(gShaderCodeEditor);
-}
-
-if(gl)
-{
-	gCommonVertexShaderId = CompileShader(GetShaderCode("VertexShaderCode"), gl.VERTEX_SHADER);
-	gExportFragmentShader = {
-		id: CompileShader(GetShaderCode("FragmentExportShaderCode"), gl.FRAGMENT_SHADER),
-		samplerLocs: [0]
-	};
-
-	var gQuadBufferId = function()
-	{
-		var buffer = new ArrayBuffer(32);
-		new Float32Array(buffer).set([0,0, 1,0, 0,1, 1,1]);
-		var bufId = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, bufId);
-		gl.bufferData(gl.ARRAY_BUFFER, buffer, gl.STATIC_DRAW);
-		return bufId;
-	}();
-
-
-	var gFBO = gl.createFramebuffer();
-	gl.bindFramebuffer(gl.FRAMEBUFFER, gFBO);
-}
-else
-{
-	eWebGLSupportMsg.innerHtml = "<color=red>WebGL is not supported!</color>";
-}
-	
-function ParseGLType(str)
-{
-	switch(str)
-	{
-	case "byte": return gl.UNSIGNED_BYTE;
-	case "sbyte": return gl.BYTE;
-	case "ushort": return gl.UNSIGNED_SHORT;
-	case "short": return gl.SHORT;
-	case "float": return gl.FLOAT;
-	case "int": return gl.INT;
-	case "uint": return gl.UNSIGNED_INT;
-	case "half": return gl.HALF_FLOAT;
-	}
-	return null;
-}
-
-function ParseWebGL2InternalFormat(str)
-{
-	switch(str)
-	{
-	case "byte1": return gl.R8;
-	case "half1": return gl.R16F;
-	case "float1": return gl.R32F;
-	
-	case "byte2": return gl.RG8;
-	case "half2": return gl.RG16F;
-	case "float2": return gl.RG32F;
-	
-	case "byte3": return gl.RGB8;
-	case "half3": return gl.RGB16F;
-	case "float3": return gl.RGB32F;
-	
-	case "byte4": return gl.RGBA8;
-	case "half4": return gl.RGBA16F;
-	case "float4": return gl.RGBA32F;
-	}
-	return null;
-}
-
-function ParseTextureFormat(str)
-{
-	var numComponents = str.charCodeAt(str.length - 1) - 48;
-	if(numComponents < 1 || numComponents > 4)
-	{
-		gResults.log += "<font color=red>Invalid texture format " + EscapeHTML(str) + "!</font></br>";
-		return null;
-	}
-	var typeStr = str.slice(0, -1);
-	var type = ParseGLType(typeStr);
-	var format = [gl.version >= 20? gl.RED: null, gl.version >= 20? gl.RG: null, gl.RGB, gl.RGBA][numComponents-1];
-	var internalFormat = format;
-	if(gl.version >= 20)
-	{
-		internalFormat = ParseWebGL2InternalFormat(str);
-		if(!internalFormat)
-		{
-			gResults.log += "<font color=red>Invalid texture format " + EscapeHTML(str) + "!</font><br/>";
-			return null;
-		}
-	}
-	return {
-		numComponents : numComponents,
-		type : type,
-		format : format,
-		internalFormat : internalFormat
-	};
-}
-
-function CreateTexture(width, height, format, mipmapped)
-{
-	if(mipmapped === undefined) mipmapped = false;
-	var result = ParseTextureFormat(format);
-	if(!result)
-	{
-		gResults.log == "<font color=red>Invalid texture format " + EscapeHTML(format) + "!</font><br/>";
-		return null;
-	}
-	result.formatStr = format;
-	result.width = width;
-	result.height = height;
-	result.id = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_2D, result.id);
-	gl.texImage2D(gl.TEXTURE_2D, 0, result.internalFormat, width, height, 0, result.format, result.type, null);
-	var isLinearFilteringUnsupported = gl.version < 20 && (
-		format.startsWith("half") && !gl.extTextureHalfFloatLinear ||
-		format.startsWith("float") && !gl.extTextureFloatLinear);
-	if(isLinearFilteringUnsupported)
-	{
-		gResults.log += "<font color=#DAA520>LINEAR filtering for texture format " + EscapeHTML(format) + " is not supported! Using NEAREST instead.</font><br/>";
-		mipmapped = false;
-	}
-	result.mipmapped = mipmapped;
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, isLinearFilteringUnsupported? gl.NEAREST: gl.LINEAR);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, isLinearFilteringUnsupported? gl.NEAREST: (mipmapped? gl.LINEAR_MIPMAP_LINEAR: gl.LINEAR));
-	gResults.textures.push(result);
-	return result;
-}
-
-function CreateShaderExpression(expr, numComponents)
-{
-	var shaderKey = "rgba".substr(0, numComponents) + " = " + expr;
-	if(shaderKey in gResults.shaders && gResults.shaders[shaderKey])
-		return gResults.shaders[shaderKey];
-	
-	var result = {};
-	result.expr = expr;
-	result.key = shaderKey;
-	result.numComponents = numComponents;
-	
-	var code = GetShaderCode("FragmentShaderCodeStart");
-	if(gShaderLibraryLoader.code) code += "#line 1 0\n" + gShaderLibraryLoader.code;
-	code += "\n#line 1 1\n";
-	code += GetShaderInput();
-	code += "\n#line 1 2\n";
-	code += "void main() {gl_FragColor." + shaderKey + ";}";
-	var fragmentShaderId = CompileShader(code, gl.FRAGMENT_SHADER);
-	result.id = LinkShaderProgram(gCommonVertexShaderId, fragmentShaderId);
-	if(!result.id)
-	{
-		gResults.log += "<font color=red>Couldn't compile expression \"" + EscapeHTML(expr) + "\".</font><br/>";
-		return null;
-	}
-	gl.deleteShader(fragmentShaderId);
-	result.textureSizeLoc = gl.getUniformLocation(result.id, "TextureSize");
-	result.samplerLocs = [];
-	result.textureSizeLocs = [];
-	
-	for(var i=0; i<8; i++)
-	{
-		var uniformName = "Tex" + String.fromCharCode(65 + i);
-		var loc = gl.getUniformLocation(result.id, uniformName);
-		result.samplerLocs.push(loc);
-		var sizeLoc = gl.getUniformLocation(result.id, uniformName + "Size");
-		result.textureSizeLocs.push(sizeLoc);
-		if(loc == -1) continue;
-		gl.uniform1i(loc, i);
-	}
-	
-	gResults.shaders[shaderKey] = result;
-	return result;
-}
-
-function DrawFullScreenQuad()
-{
-	gl.bindBuffer(gl.ARRAY_BUFFER, gQuadBufferId);
-	gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 0);
-	gl.enableVertexAttribArray(0);
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-	gl.disableVertexAttribArray(0);
-}
-
-function TextureFromShader(exprOrShader, width, height, format, inputTextures, params)
-{
-	if(inputTextures === undefined) inputTextures = [];
-	if(params === undefined) params = {};
-	var result = CreateTexture(width, height, format, params.mipmapped);
-	if(!result) return null;
-	
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, result.id, 0);
-	var fbStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-	if(fbStatus !== gl.FRAMEBUFFER_COMPLETE)
-	{
-		gResults.log += "<font color=red>Error: framebuffer incomplete status 0x" + fbStatus.toString(16) + "</font><br/>";
-		DeleteTexture(result);
-		return null;
-	}
-	
-	var prog = exprOrShader;
-	if(typeof exprOrShader == 'string' || exprOrShader instanceof String)
-		prog = CreateShaderExpression(exprOrShader, result.numComponents);
-	if(!prog)
-	{
-		DeleteTexture(result);
-		return null;
-	}
-	
-	if(prog.textureSizeLoc && prog.textureSizeLoc != -1)
-		gl.uniform2f(prog.textureSizeLoc, width, height);
-	
-	
-	for(var i=0; i<prog.samplerLocs.length && i<inputTextures.length; i++)
-	{
-		gl.activeTexture(gl.TEXTURE0 + i);
-		if(prog.samplerLocs[i] == -1 || !inputTextures[i])
-		{
-			gl.bindTexture(gl.TEXTURE_2D, null);
-			continue;
-		}
-		if(prog.textureSizeLocs && prog.textureSizeLocs[i] != -1)
-			gl.uniform2f(prog.textureSizeLocs[i], inputTextures[i].width, inputTextures[i].height);
-		gl.bindTexture(gl.TEXTURE_2D, inputTextures[i].id);
-	}
-	
-	gl.viewport(0, 0, width, height);
-	DrawFullScreenQuad();
-	
-	if(prog !== exprOrShader)
-	{
-		gl.deleteProgram(prog.id);
-		gResults.shaders[prog.key] = undefined;
-	}
-	
-	if(result.mipmapped) gl.generateMipmap(gl.TEXTURE_2D);
-	return result;
-}
-
-
-
-
-
-function DeleteTexture(tex)
-{
-	gl.deleteTexture(tex.id);
-	tex.id = null;
-	gResults[tex.name] = undefined;
-}
-
-function CreateImageFromTexture(tex, name)
-{
-	if(tex.formatStr != "byte4")
-	{
-		var tex2 = TextureFromShader(gExportFragmentShader, tex.width, tex.height, "byte4", [tex], {mipmapped: false});
-		var result = CreateImageFromTexture(tex2, name + "->byte4");
-		DeleteTexture(tex2);
-		return result;
-	}
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex.id, 0);
-	var pixels = new Uint8Array(tex.width*tex.height*tex.numComponents);
-	gl.readPixels(0, 0, tex.width, tex.height, tex.format, tex.type, pixels);
-	return CreateImageFromPixels(pixels, tex.width, tex.height);
-}
-
-function ExportTexture(tex, name)
-{
-	if(!tex) return;
-	gResults.images[name] = CreateImageFromTexture(tex, name);
-}
-
-function CleanUpResults()
-{
-	gResults.log = "";
-	gl.useProgram(null);
-	if(gResults.shaders)
-	for(var shaderKey in gResults.shaders)
-	{
-		var shader = gResults.shaders[shaderKey];
-		if(shader) gl.deleteProgram(shader.id);
-	}
-	gResults.shaders = {};
-	
-	if(gResults.textures)
-	gResults.textures.forEach(function(tex) {
-		if(!tex) return;
-		gl.deleteTexture(tex.id);
-	});
-	gResults.textures = [];
-	
-	if(gResults.images)
-	for(var name in gResults.images)
-	{
-		var img = gResults.images[name];
-		if(!img) return;
-		if(img.onunload) img.onunload();
-	}
-	gResults.images = {};
-	
-	while(gResults.hasChildNodes()) gResults.removeChild(gResults.firstChild);
-}
-window.onunload = function(event) {
-	CleanUpResults();
-	return false;
+window.onbeforeunload = function(e) {
+	if(!gDocumentChanged) return;
+	var dialogText = 'Вы уверены, что хотите закрыть страницу без сохранения изменений?';
+	e.returnValue = dialogText;
+	return dialogText;
 };
-
-function Generate()
-{
-	CleanUpResults();
-	var genfunc = function() {
-		try {eval(GetCodeInput());}
-		catch(err)
-		{
-			gResults.log += "<font color=red>";
-			if(err.stack) gResults.log += EscapeHTML(err.stack);
-			else gResults.log += EscapeHTML(err.toString());
-			gResults.log += "</font>";
-		}
-		if(gResults.log) gResults.innerHTML += "<p>" + gResults.log + "</p>";
-		for(var name in gResults.images)
-		{
-			var imageElements = document.createElement("p");
-			
-			var header = document.createElement("h2");
-			header.innerHTML = "<b>" + name + "</b>";
-			imageElements.appendChild(header);
-			
-			var filename = name.replace(/[\W_]+/g, "_");
-			var image = gResults.images[name];
-			
-			var savePng = document.createElement("input");
-			savePng.type = "button";
-			savePng.value = "Сохранить PNG";
-			savePng.onclick = function(image, filename) {return function() {
-				SaveImagePNG(image, filename + ".png");
-			}}(image, filename);
-			imageElements.appendChild(savePng);
-			
-			var saveJpeg = document.createElement("input");
-			saveJpeg.type = "button";
-			saveJpeg.value = "Сохранить JPEG";
-			saveJpeg.onclick = function(image, filename) {return function() {
-				SaveImageJPEG(image, filename + ".jpg");
-			}}(image, filename);
-			imageElements.appendChild(saveJpeg);
-			
-			var saveBmp = document.createElement("input");
-			saveBmp.type = "button";
-			saveBmp.value = "Сохранить BMP";
-			saveBmp.onclick = function(image, filename) {return function() {
-				SaveImageBMP(image, filename + ".bmp");
-			}}(image, filename);
-			imageElements.appendChild(saveBmp);
-			
-			if(ChromeVersion)
-			{
-				var saveWebp = document.createElement("input");
-				saveWebp.type = "button";
-				saveWebp.value = "Сохранить WEBP";
-				saveWebp.onclick = function(image, filename) {return function() {
-					SaveImageWEBP(image, filename + ".webp");
-				}}(image, filename);
-				imageElements.appendChild(saveWebp);
-			}
-			
-			gResults.appendChild(imageElements);
-			gResults.appendChild(gResults.images[name]);
-		}
-	}
-	if(gShaderLibraryLoader.code !== undefined) genfunc();
-	else gShaderLibraryLoader.onload = genfunc;
-}
 
 document.onkeydown = function(e)
 {
@@ -841,7 +1044,8 @@ document.onkeydown = function(e)
 		return true;
 	}
 };
-
 </script>
 
+<script src="BsonLib.js" onload="Load()"></script>
+</body>
 </html>
