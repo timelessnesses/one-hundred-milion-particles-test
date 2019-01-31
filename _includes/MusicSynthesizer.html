@@ -141,7 +141,7 @@ var gStreamedMusicIsPlaying = false;
 var gTempBufferPtr = 0;
 var gTempBufferSize = 16384;
 var gAudioSourcePtr = 0;
-var gWebAudioContext = AudioContext? new AudioContext(): null;
+var gWebAudioContext = null;
 var gNumChannels = 2;
 
 function PauseAllSounds()
@@ -357,9 +357,10 @@ function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 	xhr.responseType = "arraybuffer";
 	xhr.send();
 }
-	
+
 function PlayMidi()
 {
+	if(!gWebAudioContext) gWebAudioContext = AudioContext? new AudioContext(): null;
 	if(!gWebAudioContext) return;
 	eOutput.value = '';
 	var useStreaming = eUseStreaming.checked;
