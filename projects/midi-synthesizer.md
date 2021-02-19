@@ -29,7 +29,7 @@ styles: table
 ## Слушать онлайн
 <div id="eMidiTable">
 <table>
-<thead><tr><th>Название</th><th width="100px">Размер</th><th>Добавлен</th></tr></thead>
+<thead><tr><th>Название</th><th width="100px">Размер</th></tr></thead>
 <tbody class="clickable">
 <noscript><tr><td><font color=red>Для загрузки таблицы включите JavaScript в браузере.</font></td></tr></noscript>
 </tbody>
@@ -58,14 +58,14 @@ function BuildMidiFileTable(files)
 		if(ext !== "mid" && ext !== "midi") continue;
 		var aref = '<a href="../midisynth/?~./' + encodeURIComponent(name) + '">';
 		strs.push('<tr><td>', aref, name,
-			"</a></td><td>", aref, (f.size/1024).toFixed(1), " КБ</a></td><td>",
-			aref, f.created.split("T")[0].split("-").reverse().join("."), "</a></td></tr>");
+			"</a></td><td>", aref, (f.size/1024).toFixed(1), " КБ</a></td></tr>");
 	}
 	SetMidiTableContent(strs.join(''));
 }
 
 setTimeout(function() {
-	var url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=https%3A%2F%2Fyadi.sk%2Fd%2F-chbqBzK3NLGpU&fields=_embedded.items.name,_embedded.items.size,_embedded.items.created&limit=100";
+	//var url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=https%3A%2F%2Fyadi.sk%2Fd%2F-chbqBzK3NLGpU&fields=_embedded.items.name,_embedded.items.size,_embedded.items.created&limit=100";
+	var url = "https://api.github.com/repos/devoln/devoln.github.io/contents/midi"
 	var xhr = new XMLHttpRequest();
 	function onerror()
 	{
@@ -74,8 +74,7 @@ setTimeout(function() {
 	function onload()
 	{
 		var jsonResponse = JSON.parse(xhr.responseText);
-		if(jsonResponse._embedded !== undefined && jsonResponse._embedded.items !== undefined)
-			BuildMidiFileTable(jsonResponse._embedded.items);
+		if(jsonResponse.length) BuildMidiFileTable(jsonResponse);
 	}
 	if(!('withCredentials' in xhr))
 	{

@@ -46,8 +46,6 @@ var Module = {
 	
 document.body.appendChild(gScript);
 
-{% include yadisk.js %}
-
 function PrintLineRaw(text)
 {
 	if(window.eOutput)
@@ -105,28 +103,14 @@ if(!window.AudioContext)
 function GetUrl(onSuccess)
 {
 	var url = eMidiUrl.value;
-	var rel = url.substr(0, 2) == './';
+	var rel = url.substr(0, 2) === './';
 	if(rel)
 	{
-		url = "https://yadi.sk/d/-chbqBzK3NLGpU" + url.substr(1);
+		url = "/midi" + url.substr(1);
 		if(url.substr(-5) != ".midi" && url.substr(-4) != ".mid") url += ".mid";
 	}
 	
-	if(url.substr(0, 10) == "yadi.sk/d/") url = "https://" + url;
-	if(url.substr(0, 18) == "https://yadi.sk/d/")
-	{
-		var path;
-		var nextSlashIndex = url.indexOf("/", 18);
-		if(nextSlashIndex > 17)
-		{
-			path = url.substr(nextSlashIndex);
-			url = url.substr(0, nextSlashIndex);
-		}
-		YandexDisk.GetDownloadLink(url, path, onSuccess);
-		return;
-	}
-	
-	if(url.charAt(0) == '/') url = document.domain + url;
+	if(url.charAt(0) == '/') url = window.location.protocol + "//" + document.domain + url;
 	if(url.substr(0, 7) != 'http://' && url.substr(0, 8) != 'https://')
 	{
 		if(rel) url = window.location.protocol + "//" + url;
