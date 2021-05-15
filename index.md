@@ -8,13 +8,13 @@ Welcome to my website!
 
 ## About me
 
-Hey! My name is Alexander Volnov and I'm a software engineer.
+My name is Alexander Volnov and I'm a software engineer.
 
 My main areas of interest are:
 1. Graphics programming and game engine development
 2. Generic code and metaprogramming
 3. Software optimization
-4. Procedural generation (audio synthesis, textures and 3D models)
+4. Procedural generation (audio synthesis, textures, and 3D models)
 5. Library development
 
 I develop software in:
@@ -32,6 +32,6 @@ See my projects in the [Projects](/projects) section or in [my GitHub account](h
 
 I strongly believe that code reuse by using libraries is broken. This is why I avoid third-party libraries so much. Inability to reuse code is the root issue in the software industry that leads to bloated software with exponentially growing complexity. I feel that it affects libraries written by me as well, so this isn't just a so-called NIH (not invented here) syndrome.
 
-In my projects, I constantly look for ways to write less code that does more things without sacrificing its efficiency. I try to achieve this by leveraging metaprogramming to make code more generic, composable and reusable. My experience shows that it works really well but the deeper I go the more difficult it becomes to continue.
+In my projects, I constantly look for ways to write less code that does more things without sacrificing its efficiency. I try to achieve this by leveraging metaprogramming to make code more generic, composable and reusable. My experience shows that it works really well but the deeper I go the more difficult it becomes to continue generalizing code. I aim to find the best balance between the complexity of the generic code I write and its power to solve practical tasks.
 
-My dream is to make a revolution in software development by creating a new technology that will allow unlimited code reuse. This is the long-term goal of my projects and I've been researching this for a long time. Particularly, [Intra's](/projects/Intra) `dev-next` branch is a test area for most of my ideas about code composability. I also have an early on-paper draft describing a programming language specifically designed for code reuse.
+My dream is to make a revolution in software development by creating a new technology that will allow almost unlimited code reuse. This is the long-term goal of my projects and I've been researching this for a long time. Particularly, [Intra's](/projects/intra) `dev-next` branch is a test area for most of my ideas about code composability. I'm also developing an early on-paper draft describing a programming language specifically designed for code reuse.
