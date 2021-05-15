@@ -1,9 +1,0 @@
-<form class="comment_form" method="POST" action="https://api.staticman.net/v2/entry/gammaker/gammaker.github.io/master/comments">
-  <ul>
-  <input name="options[redirect]" type="hidden" value="https://{{ site.url }}{{ site.baseurl }}{{ page.url }}">
-  <li><input name="options[slug]" type="hidden" value="{{ page.url | slugify }}"></li>
-  <li><input name="fields[name]" type="text" placeholder="Ваше имя"></li>
-  <li><textarea name="fields[message]" placeholder="Текст комментария. Для форматирования можно использовать Markdown." cols="100" rows="10"></textarea></li>
-  <li><button class="button orange" type="submit">Отправить</button></li>
-  </ul>
-</form>

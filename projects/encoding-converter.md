@@ -1,63 +1,39 @@
 ---
 layout: post
-title: Encoding Converter - преобразователь кодировок
+title: Encoding Converter
 ---
 
-- [Скачать приложение](https://github.com/gammaker/encoding-converter/blob/master/bin/Release/EncodingConverter.exe?raw=true)
-- [Проект на github](https://github.com/gammaker/encoding-converter/)
+- [Download application](https://github.com/gammaker/encoding-converter/blob/master/bin/Release/EncodingConverter.exe?raw=true)
+- [Github project](https://github.com/gammaker/encoding-converter/)
 
-Для работы программы требуется .NET Framework 3.5. Возможно скомпилировать версию и для более новых версий фреймворков.
+The application binary requires .NET Framework 3.5.
 
-![Скриншот программы]({{ site.baseurl }}/images/encoding-converter.png)
+![Screenshot]({{ site.baseurl }}/images/encoding-converter.png)
 
-## Описание
- Это программа для преобразования кодировок всех текстовых файлов, подходящих под фильтр, в указанной директории и её поддиректориях.
+## Description
+ This is a GUI application to convert all the files in the selected directory with names matching the filter to Unicode. It was developed long before I started to use English in all my projects, so it is in Russian.
 
- Использовать программу очень просто. Для начала нужно указать:
-
-- путь к папке с текстовыми файлами, которые требуется преобразовать;
-- новую кодировку, в которую планируется преобразовать файлы. Доступны все юникодовые кодировки и CP1251;
-- новые окончания строк в стиле:
-  - Windows (CRLF - \r\n)
-  - Linux (LF - \n)
-  - (CR - \r)
-  - не преобразовывать (по умолчанию)
-- фильтр - маски файлов, которые будут обрабатываться. По умолчанию фильтр настроен на расширения многих текстовых форматов файлов, но если у вас другое расширение файла, его нужно будет вписать;
-- поиск рекурсивно в поддиректориях или только в указанной папке.
-
-Настраивайте фильтр так, чтобы он не затронул бинарные файлы, иначе они будут испорчены.
-
-Когда путь будет указывать на существующую папку, станет доступна кнопка Анализ.
-При нажатии этой кнопки все файлы будут просканированы и в таблице будет указано, какие файлы будут обработаны, какая у них кодировка в данный момент и какие окончания строк.
-
-После завершения анализа можно будет подтвердить отмеченные изменения кнопкой Конвертировать.
-
-<font color="red">Внимание, при этом все файлы будут перезаписаны! Если файлы в этой папке для вас важны, сделайте их резервную копию.</font>
-
-После подтверждения в таблице будут показаны результаты. Если все обрабатываемые файлы были доступны для записи, мы получили файлы в указанной кодировке с указанными окончаниями строк.
+## Usage
+1. Specify:
+  - The directory containing the files you want to convert;
+  - Target encoding (UTF-8/16/32 with or without BOM, LE/BE, CP1251);
+  - Target line endings:
+    - Windows (CRLF - \r\n)
+    - Linux (LF - \n)
+    - (CR - \r)
+    - Don't change (by default)
+  - Filter - masks for file names that should be converted. Add the extensions of your files if they are not present by default. Make sure to exclude any binary files to avoid their corruption;
+  - Recursive search or not
+2. Analysis:
+  - Press the button "Анализ" on the left
+  - Review what modifications the app is going to do
+  - WARNING: make sure, you have made a backup for your files!
+3. Conversion:
+  - Press the button "Конвертировать" on the right
+  - Review the conversion results in the window
  
 
 
-## Предыстория. Зачем ещё один преобразователь кодировок?
+## Why another encoding converter?
 
-Когда я захотел скомпилировать свой игровой движок на Linux, выяснилось, что все исходные файлы,
-содержащие русские комментарии имеют стандартную для Windows кодировку CP1251.
-Так как стандартной кодировкой для Linux является UTF-8 и компиляторы не понимают никакие кодировки кроме Юникода, мне пришлось конвертировать все эти файлы в UTF-8.
-
-Но позже, когда я вернулся на Windows и Visual Studio, оказалось, что она неправильно трактует файлы UTF-8 без BOM.
-Она трактовала их как файлы в кодировке CP1251. Кроме того она сохраняла новые файлы в CP1251.
-Но выяснилось, что Visual Studio правильно понимает файлы в UTF-8 с BOM.
-
-Поэтому было решено поменять кодировки всех файлов проекта из смеси UTF-8 без BOM и CP1251 в UTF-8 с BOM.
-С такой кодировкой хорошо работает как GCC в Linux, так и MSVC в Windows.
-
-Так как я не хотел делать это вручную через Notepad++, преобразуя файлы по-одиночке, я начал искать программы, которые могли бы это сделать автоматически сразу со всеми моими исходными файлами.
-Практически сразу наткнулся на UTFCast Express.
-После того, как я ей воспользовался, она распознала UTF-8 без BOM как CP1251, и произвела конверсию повторно, вместо того, чтобы просто добавить BOM в UTF-8 файл.
-В итоге получился двойной Юникод, когда один кириллический символ занимает 4 байта.
-
-Также я пробовал пробные версии платных программ, в том числе и тот же UTFCast, только платный.
-Но все эти программы оказались перегружены функционалом, в них было тяжело ориентироваться, и я не нашёл, как решить мою задачу с их помощью.
-
-Не найдя бесплатной альтернативы, я решил написать эту программу.
-
+Back then, I was porting my game engine to Linux. The engine contained a lot of Russian strings and comments and most source files were saved by MSVC in CP1251. Some files were ASCII and a few files were UTF8 with BOM. GCC refused to accept CP1251. I didn't want to convert all my sources manually file by file, so started to look for a tool. I couldn't find a free tool that could convert my mixed code base to UTF-8 with BOM, so I decided to write such a tool myself.

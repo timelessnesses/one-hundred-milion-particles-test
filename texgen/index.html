@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>ProcedGen Textures</title>
+<title>Synthgen (Old)</title>
 <style>
 html,
 body {
@@ -401,20 +401,20 @@ input[type=button] {
 <body>
 <header class="main">
   <div class="info">
-    <noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+    <noscript><font size=4 color=red><b>The application requires enabled JavaScript!</b></font></noscript>
     <div id="eTitle" class="title"></div>
-    <div class="last-update hidden" id="eDocumentDates">Создано: <span id="eCreationDate" class="value">никогда</span> Сохранено: <span id="eSaveDate" class="value">никогда</span></div>
+    <div class="last-update hidden" id="eDocumentDates">Created: <span id="eCreationDate" class="value">never</span> Saved: <span id="eSaveDate" class="value">never</span></div>
   </div>
   <div class="toolbar">
-    <input id="eGenerateButton" class="action" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
-    <input id="eSaveButton" class="action" value="Сохранить" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
+    <input id="eGenerateButton" class="action" value="Generate" title="Hotkey is Shift+Enter" onclick="Generate()" type="button"/>
+    <input id="eSaveButton" disabled class="action" value="Save" title="Backend is unavailable" onclick="Save(true)" type="button"/>
   </div>
 </header>
 <div class="main-layout">
   <div class="area editors" data-tabs="yes">
     <div class="tabs">
-      <div data-tab="js" class="tab tab-active">JavaScript<span id="js-filename" class="filename">(управляющий код)</span></div>
-      <div data-tab="glsl" class="tab">GLSL<span id="glsl-filename" class="filename">(код шейдеров)</span></div>
+      <div data-tab="js" class="tab tab-active">JavaScript<span id="js-filename" class="filename">(control code)</span></div>
+      <div data-tab="glsl" class="tab">GLSL<span id="glsl-filename" class="filename">(shader code)</span></div>
     </div>
     <div class="pages">
       <div data-page="js" class="page page-active">
@@ -441,19 +441,19 @@ vec3 Main()
   <div class="result">
       <div class="area" data-tabs="yes" id="eRightArea">
           <div class="tabs" id="eRightTabs">
-            <div data-tab="result" class="tab tab-active">Результат</div>
-            <div data-tab="docs" class="tab">Документация<span class="filename">(прототипы GLSL-функций)</span></div>
+            <div data-tab="result" class="tab tab-active">Result</div>
+            <div data-tab="docs" class="tab">Documentation<span class="filename">(GLSL function prototypes)</span></div>
           </div>
           <div class="pages" id="eRightPages">
             <div data-page="result" class="page page-active" style="height:100%;overflow:hidden">
               <iframe id="eResultFrame" sandbox="allow-scripts" src="result.html"></iframe>
             </div>
             <div data-page="docs" class="page">
-<pre class="docs"><span class="hl_cc">//Совместимость с новыми версиями GLSL</span>
+<pre class="docs"><span class="hl_cc">//Newer GLSL version compatibility</span>
 <span class="hl_kv">vec4</span> texture(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> texcoord)
 <span class="hl_kv">vec4</span> texture(<span class="hl_kv">samplerCube</span> s, <span class="hl_kv">vec3</span> texcoord)
                 
-<span class="hl_cc">//Совместимость с HLSL</span>
+<span class="hl_cc">//HLSL compatibility</span>
 <span class="hl_kv">float</span> saturate(<span class="hl_kv">float</span> x)
 <span class="hl_kv">vec2</span> saturate(<span class="hl_kv">vec2</span> x)
 <span class="hl_kv">vec3</span> saturate(<span class="hl_kv">vec3</span> x)
@@ -463,7 +463,7 @@ vec3 Main()
 <span class="hl_kv">vec3</span> frac(<span class="hl_kv">vec3</span> x)
 <span class="hl_kv">vec4</span> frac(<span class="hl_kv">vec4</span> x)
                 
-<span class="hl_cc">//Математика</span>
+<span class="hl_cc">//Math</span>
 <span class="hl_kv">const</span> <span class="hl_kv">float</span> PI
 <span class="hl_kv">vec4</span> taylorInvSqrt(<span class="hl_kv">vec4</span> r)
 <span class="hl_kv">mat3</span> RotationEulerMatrix(<span class="hl_kv">vec3</span> rotRads)
@@ -480,7 +480,7 @@ vec3 Main()
 <span class="hl_kv">genType</span> sigma(<span class="hl_kv">genType</span> x) <span class="hl_op">=</span> x <span class="hl_op">/</span> (<span class="hl_num">1.0</span> <span class="hl_op">+</span> abs(x))
 <span class="hl_kv">genType</span> sinc(genType x) <span class="hl_op">=</span> sin(x) <span class="hl_op">/</span> x
                 
-<span class="hl_cc">//SDF для 3D примитивов с центром в начале координат</span>
+<span class="hl_cc">//SDF for 3D primitives with center at {0,0,0}</span>
 <span class="hl_kv">float</span> SphereSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">float</span> radius)
 <span class="hl_kv">float</span> PlaneSignedDistance(<span class="hl_kv">vec3</span> point)
 <span class="hl_kv">float</span> BoxSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> extents)
@@ -492,7 +492,7 @@ vec3 Main()
 <span class="hl_kv">float</span> CylinderSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec2</span> h)
 <span class="hl_kv">float</span> ConeSignedDistance(<span class="hl_kv">vec3</span> point, <span class="hl_kv">vec3</span> c)
                 
-<span class="hl_cc">//Псевдослучайные числа, хеши</span>
+<span class="hl_cc">//Pseudo random numbers, hashes</span>
 <span class="hl_kv">float</span> frand(<span class="hl_kv">vec2</span> seed)
 <span class="hl_kv">vec2</span> f2rand(<span class="hl_kv">vec2</span> seed)
 <span class="hl_kv">vec3</span> f3rand(<span class="hl_kv">vec2</span> seed)
@@ -502,7 +502,7 @@ vec3 Main()
 <span class="hl_kv">vec2</span> fade(<span class="hl_kv">vec2</span> t)
 <span class="hl_kv">vec3</span> fade(<span class="hl_kv">vec3</span> t)
                 
-<span class="hl_cc">//Шум перлина</span>
+<span class="hl_cc">//Perlin noise</span>
 <span class="hl_kv">float</span> snoise(<span class="hl_kv">vecN</span> v)
 <span class="hl_kv">float</span> cnoise(<span class="hl_kv">vecN</span> v[, <span class="hl_kv">vecN</span> period<span class="hl_op">=</span><span class="hl_kv">vecN</span>(<span class="hl_num">289.0</span>)])
 <span class="hl_kv">vec2</span> cellular(<span class="hl_kv">vec2</span> P[, <span class="hl_kv">vec2</span> rep<span class="hl_op">=</span><span class="hl_kv">vec2</span>(<span class="hl_num">289.0</span>)])
@@ -520,14 +520,14 @@ vec3 Main()
 <span class="hl_kv">vec2</span> SmoothVoronoi(<span class="hl_kv">vec2</span> v, <span class="hl_kv">float</span> smoothness)
 <span class="hl_kv">float</span> Voronoise(<span class="hl_kv">vec2</span> x, <span class="hl_kv">float</span> gridControl, <span class="hl_kv">float</span> metricControl)
                 
-<span class="hl_cc">//Несколько октав шума Перлина</span>
+<span class="hl_cc">//Multiple perlin noise octaves</span>
 <span class="hl_kv">float</span> PerlinOctaves(<span class="hl_kv">vecN</span> coord, <span class="hl_kv">vecN</span> repeat, <span class="hl_kv">int</span> octaves[, <span class="hl_kv">float</span> gain<span class="hl_op">=</span><span class="hl_num">0.5</span>, <span class="hl_kv">float</span> lacunarity<span class="hl_op">=</span><span class="hl_num">2.0</span>, vecN offset<span class="hl_op">=</span>vecN(<span class="hl_num">0.0</span>)])
                 
-<span class="hl_cc">//Несколько октав шума Перлина с указанным уровнем низких (coeffLow) и высоких (gainHigh) частот.</span>
-<span class="hl_cc">//Соответствует PerlinOctaves при coeffLow = 1 и gainHigh = gain</span>
+<span class="hl_cc">//Multiple perlin noise octaves with specified low (coeffLow) and high (gainHigh) levels of frequency.</span>
+<span class="hl_cc">//Matches PerlinOctaves with coeffLow = 1 and gainHigh = gain</span>
 <span class="hl_kv">float</span> PerlinOctavesSpectrum(<span class="hl_kv">vec2</span> coord, <span class="hl_kv">vec2</span> period, <span class="hl_kv">int</span> octaves, <span class="hl_kv">float</span> coeffLow, <span class="hl_kv">float</span> gainHigh[, <span class="hl_kv">float</span> lacunarity, <span class="hl_kv">vec2</span> offset])
                 
-<span class="hl_cc">//Цветовые пространства</span>
+<span class="hl_cc">//Color spaces</span>
 <span class="hl_kv">vec3</span> RGB2HSV(<span class="hl_kv">vec3</span> c)
 <span class="hl_kv">vec3</span> HSV2RGB(<span class="hl_kv">vec3</span> c)
 <span class="hl_kv">vec3</span> RGB2YUV(<span class="hl_kv">vec3</span> rgb)
@@ -543,7 +543,7 @@ vec3 Main()
 <span class="hl_kv">vec3</span> SRGB2Linear(<span class="hl_kv">vec3</span> x)
 <span class="hl_kv">vec4</span> SRGB2Linear(<span class="hl_kv">vec4</span> x)
                 
-<span class="hl_cc">//Нормали по высотам</span>
+<span class="hl_cc">//Normal from height map calculation</span>
 <span class="hl_kv">vec3</span> NormalFromHeights(<span class="hl_kv">float</span> center, <span class="hl_kv">float</span> right, <span class="hl_kv">float</span> bottom, <span class="hl_kv">float</span> scale)
 <span class="hl_kv">vec3</span> NormalFromHeightMapR(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
 <span class="hl_kv">vec3</span> NormalFromHeightMapG(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> pixelSize)
@@ -558,7 +558,7 @@ vec3 Main()
 <span class="hl_kv">vec3</span> NormalFromHeightMapSobel3B(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
 <span class="hl_kv">vec3</span> NormalFromHeightMapSobel3A(<span class="hl_kv">sampler2D</span> hmap, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">float</span> scale, <span class="hl_kv">vec2</span> texelSize)
                 
-<span class="hl_cc">//Свёртка, размытие, дифференцирование изображения</span>
+<span class="hl_cc">//Convolution, blur, image differentiation</span>
 <span class="hl_kv">vec4</span> ConvolutionFilter3(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">9</span>])
 <span class="hl_kv">vec4</span> ConvolutionFilter5(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">25</span>])
 <span class="hl_kv">vec4</span> ConvolutionFilter7(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> st, <span class="hl_kv">float</span> kernel[<span class="hl_num">49</span>])
@@ -568,15 +568,15 @@ vec3 Main()
 <span class="hl_kv">vec4</span> NoiseBlur(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> center, <span class="hl_kv">float</span> blurAmount)
 <span class="hl_kv">vec4</span> DiffFree(<span class="hl_kv">sampler2D</span> s, <span class="hl_kv">vec2</span> pos, <span class="hl_kv">vec2</span> pixSize)
                 
-<span class="hl_cc">//Фильтры выборки из текстуры</span>
+<span class="hl_cc">//Filtered texture sampling</span>
 <span class="hl_kv">vec4</span> textureBicubic(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> texcoord, <span class="hl_kv">vec2</span> texelSize)
 <span class="hl_kv">vec4</span> textureSmooth(<span class="hl_kv">sampler2D</span> tex, <span class="hl_kv">vec2</span> texcoord, <span class="hl_kv">vec2</span> texelSize)
                 
-<span class="hl_cc">//Генерация сетки</span>
+<span class="hl_cc">//Grid generation</span>
 <span class="hl_kv">float</span> GenBricks(<span class="hl_kv">vec2</span> pos, <span class="hl_kv">ivec2</span> count, <span class="hl_kv">vec2</span> dist, <span class="hl_kv">float</span> scrollX)
 <span class="hl_kv">void</span> HexGrid(<span class="hl_kv">out</span> <span class="hl_kv">vec4</span> o, <span class="hl_kv">vec2</span> TexCoord)
                 
-<span class="hl_cc">//Запаковка float в текстуры с 8-битными каналами, актуально для старых мобильных устройств</span>
+<span class="hl_cc">//Packing float to 8-bit channels, useful for old mobile devices</span>
 <span class="hl_kv">vec4</span> EncodeFloatAsRGBA8(<span class="hl_kv">float</span> v)
 <span class="hl_kv">float</span> DecodeFloatFromRGBA8(<span class="hl_kv">vec4</span> rgba8)
 <span class="hl_kv">vec2</span> EncodeFloatAsRG8(<span class="hl_kv">float</span> v)
@@ -943,17 +943,7 @@ function Generate()
 
 function Save(showMsg)
 {
-	DBInsert("texgens", {
-			"code": GetCodeInput(),
-			"shader": GetShaderInput(),
-			"name": "<unnamed>"
-		}, function(result) {
-      eSaveButton.classList.remove('highlight');
-			gDocumentChanged = false;
-			var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + result._id;
-			window.history.replaceState({}, document.title, newUrl);
-			if(showMsg) alert("Сохранено. Скопируйте ссылку из адресной строки.");
-		});
+	alert("Saving is unavailable because the backend stopped working.");
 }
 
 function Load()
@@ -1026,7 +1016,7 @@ if(location.search)
 
 window.onbeforeunload = function(e) {
 	if(!gDocumentChanged) return;
-	var dialogText = 'Вы уверены, что хотите закрыть страницу без сохранения изменений?';
+	var dialogText = 'Are you sure that you want to close the page without saving?';
 	e.returnValue = dialogText;
 	return dialogText;
 };
@@ -1046,6 +1036,5 @@ document.onkeydown = function(e)
 };
 </script>
 
-<script src="BsonLib.js" onload="Load()"></script>
 </body>
 </html>

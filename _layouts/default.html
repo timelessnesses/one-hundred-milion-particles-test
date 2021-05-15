@@ -21,9 +21,9 @@
   </div>
 
   <nav id="eNav">
-    <a href="{{ site.baseurl }}/">Главная</a>
-    <a href="{{ site.baseurl }}/blog">Блог</a>
-    <a href="{{ site.baseurl }}/projects/">Мои проекты</a>
+    <a href="{{ site.baseurl }}/">Home</a>
+    <a href="{{ site.baseurl }}/blog">Blog</a>
+    <a href="{{ site.baseurl }}/projects/">Projects</a>
   </nav>
 </header>
 <div class="header-img-wrapper">
@@ -41,10 +41,9 @@
 	{% capture title %}{% if page.title %}{{ page.title }}{% endif %}{% endcapture %}
 	
   <p>
-	<a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Поделиться ссылкой во ВКонтакте" target="_blank">ВКонтакте</a>
-    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Поделиться ссылкой в Facebook" target="_blank">Facebook</a>
-    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Поделиться ссылкой в Twitter" target="_blank">Twitter</a>
-    <a class="soc-share gplus" href="https://plus.google.com/share?url={{url}}" title="Поделиться ссылкой в Google+" target="_blank">Google+</a>
+	  <a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Share in VKontakte" target="_blank">ВКонтакте</a>
+    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Share in Facebook" target="_blank">Facebook</a>
+    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Share in Twitter" target="_blank">Twitter</a>
 	</p>
 	{% include svg-icons.html %}
 </div></footer></div></div>

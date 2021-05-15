@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>ProcedGen Textures</title>
+<title>Synthgen (Old)</title>
 
 <style>
 html,
@@ -615,7 +615,7 @@ function Generate(controlCode, shaderCode)
 			
 			var savePng = document.createElement("input");
 			savePng.type = "button";
-			savePng.value = "Сохранить PNG";
+			savePng.value = "Save PNG";
 			savePng.onclick = function(image, filename) {return function() {
 				SaveImagePNG(image, filename + ".png");
 			}}(image, filename);
@@ -623,7 +623,7 @@ function Generate(controlCode, shaderCode)
 			
 			var saveJpeg = document.createElement("input");
 			saveJpeg.type = "button";
-			saveJpeg.value = "Сохранить JPEG";
+			saveJpeg.value = "Save JPEG";
 			saveJpeg.onclick = function(image, filename) {return function() {
 				SaveImageJPEG(image, filename + ".jpg");
 			}}(image, filename);
@@ -631,7 +631,7 @@ function Generate(controlCode, shaderCode)
 			
 			var saveBmp = document.createElement("input");
 			saveBmp.type = "button";
-			saveBmp.value = "Сохранить BMP";
+			saveBmp.value = "Save BMP";
 			saveBmp.onclick = function(image, filename) {return function() {
 				SaveImageBMP(image, filename + ".bmp");
 			}}(image, filename);
@@ -641,7 +641,7 @@ function Generate(controlCode, shaderCode)
 			{
 				var saveWebp = document.createElement("input");
 				saveWebp.type = "button";
-				saveWebp.value = "Сохранить WEBP";
+				saveWebp.value = "Save WEBP";
 				saveWebp.onclick = function(image, filename) {return function() {
 					SaveImageWEBP(image, filename + ".webp");
 				}}(image, filename);

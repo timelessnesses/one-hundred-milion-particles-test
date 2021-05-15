@@ -1,20 +1,25 @@
 ---
 layout: post
-title: Платформер типа соника
+title: A sonic-like platformer
 ---
 
-- [Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIM296X3l1cUdtREE)
+- [Download [ru]](https://drive.google.com/open?id=0B0wvbicW8OQIM296X3l1cUdtREE)
 
 ___
 
-![Скриншот игры]({{ site.baseurl }}/images/PlatformerScreenshot.jpg)
-Моя платформенная игра типа Соника.
-Так как я рисовать не умею, графика получилась довольно примитивной.
+![Game screenshot]({{ site.baseurl }}/images/PlatformerScreenshot.jpg)
 
-Управление:
+When I was a child, Sonic was one of my favorite games. This is why I decided to try to create something like it.
 
-- Всё управление персонажем производится стрелками на клавиатуре.
-- Выход из игры на ESC.
+Screenshots should allow you to quickly evaluate how "great" my art is.
+If you want to look at it closer, feel free to download the game.
+
+Controls:
+
+- Arrows - move the character.
+- ESC - quit the game
+
+Note: the game is not translated into English, it was initially created for Russian speakers.
 
 ___
 

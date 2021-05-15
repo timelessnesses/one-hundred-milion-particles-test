@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Онлайн синтезатор MIDI
+title: Online MIDI Synthesizer
 styles: inputs, checkbox, radiobox, button-green, button-blue_alt, file-chooser
 ---
 
-Подробное описание и ссылки смотрите [здесь](/projects/midi-synthesizer).
+See more details [here](/projects/midi-synthesizer).
 {% include MusicSynthesizer.html %}

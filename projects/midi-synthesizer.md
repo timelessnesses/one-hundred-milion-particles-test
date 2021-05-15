@@ -1,37 +1,51 @@
 ---
 layout: post
-title: Синтезатор MIDI
+title: MIDI synthesizer
 styles: table
 ---
 
- Маленький по объёму синтезатор MIDI, не требующий для синтеза никаких данных кроме самого MIDI-файла.
- Является частью репозитория библиотеки [Intra](intra-lib).
+ A very small MIDI synthesizer. It is procedural, so it doesn't require any data other than MIDI files to play. There are two versions and you can listen to both of them running in your browser.
+ The first one is written in C++ and supports many platforms.
+ The second one is written in JavaScript specifically for Web.
+
+ Currently, the JavaScript version is newer and has better sound quality. Especially, its guitars and violins are way better. JavaScript version also supports MIDI keyboards.
+ However, the C++ version implements reverberation, has better instrument volume balance and has a couple of drums implemented by using physical modelling. Its compiled (Windows or Linux) version can also save the result to a WAV file. It doesn't support MIDI keyboards, because its current architecture is not optimized for real-time input.
+
+ You can find more details about how both synthesizers work on the JavaScript version's [GitHub page](https://github.com/devoln/web-midisynth).
+
+## JavaScript version
+
+- [GitHub](https://github.com/devoln/web-midisynth)
+
+You can listen to some samples [here](https://codepen.io/devoln/pen/jOqXOBR). There you can also see how to embed it on your site or on a forum that supports HTML and iframes.
+And [here](../web-midisynth) you can try all the features:
+- play with a MIDI keyboard:
+  - use Chrome-based browser
+  - connect your MIDI device
+  - then open/refresh the page
+  - then press any key or click anywhere to unmute
+- play with the computer keyboard
+- play any MIDI file you have
  
-- [Репозиторий](https://github.com/gammaker/Intra/)
-- [Онлайн-версия](/midisynth/)
 
-Сам [проект](https://github.com/gammaker/Intra/tree/master/Demos/MusicSynthesizer) состоит только из кода интерфейса и настройки инструментов, а основной код синтезатора находится в Intra/Audio.
-Программа под Windows\Linux\FreeBSD консольная, выбор воспроизводимого MIDI-файла производится передачей пути через командную строку (в проводнике Windows - перенести мышью MIDI-файл на бинарник). Если передать два параметра через командную строку, то результат синтеза будет записан в WAV файл по пути, указанному во втором параметре.
+## C++ version
 
-В целом синтезатор звучит уже неплохо, но в данный момент присутствуют следующие недоработки:
+- [GitHub](https://github.com/devoln/Intra) - is currently part of Intra but I'm going to move it to its own repository soon. Just build Intra CMake project and you will find MusicSynthesizer binary inside your build directory. Or you can listen to the web version.
 
-- Нет некоторых инструментов и вместо них звучат другие. Особенно мало ударников.
-- Баланс громкостей различных инструментов ещё не до конца проработан, но со временем улучшается.
-- Нет звука на Raspberry Pi.
+### Tested to build and run on:
 
-### Поддерживаемые платформы:
+- Windows
+- Linux
+- FreeBSD
+- [Web via Emscripten](../midisynth/), you can listen to the MIDIs from the table below or open your own MIDI
 
-- Windows;
-- Linux;
-- FreeBSD;
-- [Web через Emscripten](/midisynth/);
+### Listen to the C++ version online
 
-## Слушать онлайн
 <div id="eMidiTable">
 <table>
-<thead><tr><th>Название</th><th width="100px">Размер</th></tr></thead>
+<thead><tr><th>Name</th><th width="100px">Size</th></tr></thead>
 <tbody class="clickable">
-<noscript><tr><td><font color=red>Для загрузки таблицы включите JavaScript в браузере.</font></td></tr></noscript>
+<noscript><tr><td><font color=red>Enable JavaScript to see the table.</font></td></tr></noscript>
 </tbody>
 </table>
 </div>
@@ -58,18 +72,17 @@ function BuildMidiFileTable(files)
 		if(ext !== "mid" && ext !== "midi") continue;
 		var aref = '<a href="../midisynth/?~./' + encodeURIComponent(name) + '">';
 		strs.push('<tr><td>', aref, name,
-			"</a></td><td>", aref, (f.size/1024).toFixed(1), " КБ</a></td></tr>");
+			"</a></td><td>", aref, (f.size/1024).toFixed(1), " KB</a></td></tr>");
 	}
 	SetMidiTableContent(strs.join(''));
 }
 
 setTimeout(function() {
-	//var url = "https://cloud-api.yandex.net:443/v1/disk/public/resources?public_key=https%3A%2F%2Fyadi.sk%2Fd%2F-chbqBzK3NLGpU&fields=_embedded.items.name,_embedded.items.size,_embedded.items.created&limit=100";
 	var url = "https://api.github.com/repos/devoln/devoln.github.io/contents/midi"
 	var xhr = new XMLHttpRequest();
 	function onerror()
 	{
-		SetMidiTableContent("<tr><td><font color=red>Ошибка загрузки списка доступных MIDI: " + xhr.status + ", " + xhr.statusText + "</font></td></tr>");
+		SetMidiTableContent("<tr><td><font color=red>Midi list loading error: " + xhr.status + ", " + xhr.statusText + ". Try again by reloading the page</font></td></tr>");
 	}
 	function onload()
 	{
@@ -93,4 +106,3 @@ setTimeout(function() {
 }, 1);
 
 </script>
-

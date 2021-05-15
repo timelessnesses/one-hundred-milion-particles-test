@@ -24,7 +24,7 @@ textarea {
 
 <body>
 
-<noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+<noscript><font size=4 color=red><b>JavaScript is required!</b></font></noscript>
 <p id="eWebGLSupportMsg"></p>
 
 <p><label>Алгоритм генерации</label><br/><textarea cols="100" rows="10" id="eCode" autocorrect="off">
@@ -32,13 +32,13 @@ textarea {
 
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_1"><label for="spoilerid_1">
-Встроенные функции, доступные для использования в шейдере
+Additional builtin functions available in shaders
 </label><div class="spoiler_body" id="BuitinFunctions"><pre>
-//Совместимость с новыми версиями GLSL
+// GLSL ES 3.0 compatibility
 vec4 texture(sampler2D s, vec2 texcoord)
 vec4 texture(samplerCube s, vec3 texcoord)
 
-//Совместимость с HLSL
+// HLSL compatibility
 float saturate(float x)
 vec2 saturate(vec2 x)
 vec3 saturate(vec3 x)
@@ -48,7 +48,7 @@ vec2 frac(vec2 x)
 vec3 frac(vec3 x)
 vec4 frac(vec4 x)
 
-//Математика
+// Math
 const float PI
 vec4 taylorInvSqrt(vec4 r)
 mat3 RotationEulerMatrix(vec3 rotRads)
@@ -65,7 +65,7 @@ genType tanh(genType x)
 genType sigma(genType x) = x / (1.0 + abs(x))
 genType sinc(genType x) = sin(x) / x
 
-//SDF для 3D примитивов с центром в начале координат
+//SDF for 3D primitive with center at origin {0,0,0}
 float SphereSignedDistance(vec3 point, float radius)
 float PlaneSignedDistance(vec3 point)
 float BoxSignedDistance(vec3 point, vec3 extents)
@@ -77,7 +77,7 @@ float TriPrismSignedDistance(vec3 point, vec2 h)
 float CylinderSignedDistance(vec3 point, vec2 h)
 float ConeSignedDistance(vec3 point, vec3 c)
 
-//Псевдослучайные числа, хеши
+// Pseudorandom, hashes
 float frand(vec2 seed)
 vec2 f2rand(vec2 seed)
 vec3 f3rand(vec2 seed)
@@ -87,7 +87,7 @@ vec4 permute(vec4 x)
 vec2 fade(vec2 t)
 vec3 fade(vec3 t)
 
-//Шум перлина
+// Perlin noise
 float snoise(vecN v)
 float cnoise(vecN v[, vecN period=vecN(289.0)])
 vec2 cellular(vec2 P[, vec2 rep=vec2(289.0)])
@@ -106,7 +106,7 @@ vec2 SmoothVoronoi(vec2 v, float smoothness)
 float Voronoise(vec2 x, float gridControl, float metricControl)
 float PerlinOctaves(vecN coord, vecN repeat, int octaves[, float gain=0.5, float lacunarity=2.0, vecN offset=vecN(0.0)])
 
-//Цветовые пространства
+// Color spaces
 vec3 RGB2HSV(vec3 c)
 vec3 HSV2RGB(vec3 c)
 vec3 RGB2YUV(vec3 rgb)
@@ -122,7 +122,7 @@ vec2 SRGB2Linear(vec2 x)
 vec3 SRGB2Linear(vec3 x)
 vec4 SRGB2Linear(vec4 x)
 
-//Нормали по высотам
+// Compute normals
 vec3 NormalFromHeights(float center, float right, float bottom, float scale)
 vec3 NormalFromHeightMapR(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
 vec3 NormalFromHeightMapG(sampler2D hmap, vec2 pos, float scale, vec2 pixelSize)
@@ -137,7 +137,7 @@ vec3 NormalFromHeightMapSobel3G(sampler2D hmap, vec2 pos, float scale, vec2 texe
 vec3 NormalFromHeightMapSobel3B(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
 vec3 NormalFromHeightMapSobel3A(sampler2D hmap, vec2 pos, float scale, vec2 texelSize)
 
-//Свёртка, размытие, дифференцирование изображения
+// Filters: convolution, blur, differentiation
 vec4 ConvolutionFilter3(sampler2D s, vec2 pos, vec2 st, float kernel[9])
 vec4 ConvolutionFilter5(sampler2D s, vec2 pos, vec2 st, float kernel[25])
 vec4 ConvolutionFilter7(sampler2D s, vec2 pos, vec2 st, float kernel[49])
@@ -147,28 +147,28 @@ vec4 GaussianBlur17(sampler2D s, vec2 center, vec2 dir)
 vec4 NoiseBlur(sampler2D s, vec2 center, float blurAmount)
 vec4 DiffFree(sampler2D s, vec2 pos, vec2 pixSize)
 
-//Фильтры выборки из текстуры
+// Texture sampling filters
 vec4 textureBicubic(sampler2D tex, vec2 texcoord, vec2 texelSize)
 vec4 textureSmooth(sampler2D tex, vec2 texcoord, vec2 texelSize)
 
-//Генерация сетки
+// Grid generation
 float GenBricks(vec2 pos, ivec2 count, vec2 dist, float scrollX)
 void HexGrid(out vec4 o, vec2 TexCoord)
 
-//Запаковка float в текстуры с 8-битными каналами, актуально для старых мобильных устройств
+// Pack float to 8-bit per channel textures. Relevant for older (GLES 2.0) mobile devices
 vec4 EncodeFloatAsRGBA8(float v)
 float DecodeFloatFromRGBA8(vec4 rgba8)
 vec2 EncodeFloatAsRG8(float v)
 float DecodeFloatFromRG8(vec2 rg8)</pre>
 </div></div>
 
-<p><label>Шейдеры</label><br/>
+<p><label>Shaders</label><br/>
 <textarea cols="100" rows="10" id="eShaderCode" autocorrect="off">
 </textarea></p>
 <input id="eGenerateButton" value="Генерировать" title="Горячая клавиша Shift+Enter" onclick="Generate()" type="button"/>
 <input id="eSaveButton" value="Сохранить ссылку" title="Горячая клавиша F6 или Ctrl+L" onclick="Save(true)" type="button"/>
 
-<br/>Результат
+<br/>Result
 <hr>
 <span id="eResults"></span>
 <hr>

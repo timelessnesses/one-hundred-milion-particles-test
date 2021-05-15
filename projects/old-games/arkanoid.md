@@ -1,29 +1,28 @@
 ---
 layout: post
-title: Арканоид
+title: Arkanoid-like game
 ---
 
-- [Скачать](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
+- [Download [ru]](https://drive.google.com/open?id=0B0wvbicW8OQIelVLYVlCemJ5MFU)
 
 ___
 
-![Скриншот игры]({{ site.baseurl }}/images/ArkanoidScreenshot.jpg)
+![Game screenshot]({{ site.baseurl }}/images/ArkanoidScreenshot.jpg)
 
-Мой арканоид, созданный где-то в 2007 или 2008 году.
-Как и в классическом арканоиде, из разломанных блоков выпадают различные бонусы.
-Кроме того в игре есть монстры и боссы, которые умеют стрелять в платформу и наносить ей урон.
-Если её здоровье падает до нуля, то теряется жизнь.
-Между уровнями доступен магазин, в котором можно потратить очки на усовершенствования.
+I created this game in 2008.
+Move the paddle to bounce the stone towards blocks and monsters. To finish the level, break all the blocks and monsters in it.
+Some levels have monsters and bosses attempting to destroy your paddle by shooting at it.
+There is a store between levels to buy impovements with your score points.
 
-Управление:
+Controls:
 
-- Стрелки влево\вправо - движение платформы.
-- Пробел - стрелять бомбой.
-- CTRL - стрелять "молнией" - супероружие, пробивающее всё на своём пути. Патроны этого супероружия даются после убийства боссов. Один из них даётся в начале.
-- F2\F3 - сохранение\загрузка.
-- P - пауза, ESC - отмена паузы.
-- ESC - выход.
+- Left and right arrows: move the paddle.
+- Space - shoot with a bomb from the paddle.
+- CTRL - shoot with a superweapon, that destroys everything on its way. Ammo is very limited. You have one charge at the beginning of the game and get one more for each boss.
+- F2 / F3 - Save / Load.
+- P - pause, ESC - unpause.
+- ESC - exit.
+
+Note: the game is not translated into English, it was initially created for Russian speakers. The main gameplay barrier for non-Russian speakers is understanding what items to buy in the store. Other things can be guessed out of context.
 
 ___
-
-

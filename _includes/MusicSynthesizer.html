@@ -1,9 +1,9 @@
 <meta charset="utf-8"/>
-<noscript><font size=4 color=red><b>Для работы синтезатора включите JavaScript в браузере!</b></font></noscript>
+<noscript><font size=4 color=red><b>Synthesizer requires JavaScript to work in your browser!</b></font></noscript>
 <p>
 	<label>
 	<input type="radio" name="midi_source" id="eUrl" value="url" checked>
-	<span>Путь MIDI-файла:</span>
+	<span>MIDI URL:</span>
 	</label> 
 	<input type="text" id="eMidiUrl" autocorrect="off" style="width:70%" value="./Skaters Waltz">
 </p>
@@ -11,20 +11,20 @@
 <p>
 	<label>
 	<input type="radio" name="midi_source" id="eFile" value="file">
-	<span>Локальный файл:</span>
+	<span>Local file:</span>
 	</label>
 	<input type="file" id="eMidiFile" style="width:70%" onChange="eFile.checked=true" accept=".mid,.midi,audio/mid,audio/midi">
 </p>
 
 <label>
 <input type="checkbox" id="eUseStreaming"/>
-<span>Синтез в реальном времени</span>
+<span>Real-time synthesis</span>
 </label>
 
 <p>
-	<button id="play" class="button green" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Проиграть</button>
-	<button id="stop" class="button grey" onclick="StopAllSounds()">Стоп</button>
-	<button id="download" class="button blue_alt" onclick="GetUrl(Download)">Скачать MIDI</button>
+	<button id="play" class="button green" onclick="if(gScript.loaded) PlayMidi(); else gAutoPlay=true;">Play</button>
+	<button id="stop" class="button grey" onclick="StopAllSounds()">Stop</button>
+	<button id="download" class="button blue_alt" onclick="GetUrl(Download)">Download MIDI</button>
 </p>
 
 <hr>
@@ -97,7 +97,7 @@ if(location.search)
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 if(!window.AudioContext)
 {
-	if(window.eOutput) eOutput.innerHTML = "<font color=red size=4><b>Этот браузер не поддерживает Web Audio API! Попробуйте использовать новые версии Chrome, Firefox, Opera, Edge.</b></font>";
+	if(window.eOutput) eOutput.innerHTML = "<font color=red size=4><b>This browser doesn't support Web Audio API! Try to latest versions of Chrome, Firefox, Opera, Edge.</b></font>";
 }
 
 function GetUrl(onSuccess)
@@ -154,7 +154,7 @@ function StopAllSounds()
 		if(gPreloadedMusic.interval !== undefined && gPreloadedMusic.interval != null)
 		{
 			clearInterval(gPreloadedMusic.interval);
-			PrintLine("Отменено.");
+			PrintLine("Canceled.");
 			gPreloadedMusic.interval = null;
 		}
 		else gPreloadedMusic.disconnect(gWebAudioContext.destination);
@@ -191,7 +191,7 @@ function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
 	if(gAudioSourcePtr == 0)
 	{
 		ClearTextField();
-		PrintLineError("Неверный формат MIDI файла.");
+		PrintLineError("Invalid MIDI file format.");
 		return;
 	}
 		
@@ -222,7 +222,7 @@ function PlayMidiDataPtrStreamed(midiDataPtr, midiDataLength)
 	};
 	gStreamedMusic.connect(gWebAudioContext.destination);
 	gStreamedMusicIsPlaying = true;
-	PrintLine("Воспроизведение...");
+	PrintLine("Playing...");
 }
 	
 function PreloadBuffer(totalSamplesLeft, bufferOffset)
@@ -264,9 +264,9 @@ function PreloadBuffer(totalSamplesLeft, bufferOffset)
 		if(gPreloadedMusic.startTime !== undefined)
 		{
 			var synthTimeMs = performance.now() - gPreloadedMusic.startTime;
-			PrintLine("Время синтеза: " + synthTimeMs.toFixed(2) + " мс");
+			PrintLine("Synthesis took: " + synthTimeMs.toFixed(2) + " ms");
 		}
-		PrintLine("Воспроизведение...");
+		PrintLine("Playing...");
 		gPreloadedMusic.channels = null;
 		gPreloadedMusic.connect(gWebAudioContext.destination);
 		gPreloadedMusic.start();
@@ -290,10 +290,10 @@ function PlayMidiDataPtr(midiDataPtr, midiDataLength)
 	if(gAudioSourcePtr == 0)
 	{
 		ClearTextField();
-		PrintLineError("Неверный формат MIDI файла.");
+		PrintLineError("Invalid MIDI file format.");
 		return;
 	}
-	PrintLineRaw("Синтез... <span id='eSynthPercent'>0%</span>");
+	PrintLineRaw("Synthesis... <span id='eSynthPercent'>0%</span>");
 	gPreloadedMusic.startTime = performance.now();
 	gPreloadedMusic.interval = setTimeout(PreloadBuffer, 0, totalSamples, 0);
 }
@@ -310,7 +310,7 @@ function PlayStreamedMidiDataAndPrintInfo(midiDataArrayBuffer)
 {
 	var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
 	PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
-	PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+	PrintLine("Sample rate: " + gWebAudioContext.sampleRate);
 	PlayMidiDataPtrStreamed(midiDataPtr, midiDataArrayBuffer.byteLength);
 	Module._free(midiDataPtr);
 }
@@ -319,7 +319,7 @@ function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
 {
 	var midiDataPtr = ArrayBufferToHeap(midiDataArrayBuffer);
 	PrintLine(GetMidiPtrInfoString(midiDataPtr, midiDataArrayBuffer.byteLength));
-	PrintLine("Частота дискретизации: " + gWebAudioContext.sampleRate);
+	PrintLine("Sample rate: " + gWebAudioContext.sampleRate);
 	PlayMidiDataPtr(midiDataPtr, midiDataArrayBuffer.byteLength);
 	Module._free(midiDataPtr);
 }
@@ -327,14 +327,14 @@ function PlayMidiDataAndPrintInfo(midiDataArrayBuffer)
 function DownloadBinaryFileAsArrayBuffer(url, successCallback)
 {
 	ClearTextField();
-	PrintLineRaw("Загрузка <a href='" + url + "'>MIDI файла</a>...");
+	PrintLineRaw("Downloading <a href='" + url + "'>MIDI file</a>...");
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function()
 	{
 		if(xhr.readyState == xhr.DONE)
 		{
 			if (xhr.status == 200 && xhr.response) successCallback(xhr.response);
-			else PrintLineError("Не удалось загрузить файл. Ошибка " + xhr.status + ", " + xhr.statusText);
+			else PrintLineError("Couldn't download file. HTTP status: " + xhr.status + ", " + xhr.statusText);
 		}
 	};
 	xhr.open("GET", url, true);
@@ -365,7 +365,7 @@ function PlayMidi()
 	if(midiFiles.length == 0)
 	{
 		ClearTextField();
-		PrintLineError("Выберите локальный файл для воспроизведения.");
+		PrintLineError("Select a local file to play.");
 		return;
 	}
 	var reader = new FileReader();
@@ -392,4 +392,3 @@ function Download(url)
 	iframe.src = url;
 }
 </script>
-

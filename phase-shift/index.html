@@ -76,34 +76,34 @@ input, textarea {
 <body>
 
 
-<noscript><font size=4 color=red><b>Для работы приложения включите JavaScript в браузере!</b></font></noscript>
+<noscript><font size=4 color=red><b>The page requires JavaScript!</b></font></noscript>
 
-<p><label>Нуклеотидная последовательность: </label><br/><textarea cols="100" rows="25" id="Sequence" autocorrect="off" style="width:100%" value=""></textarea></p>
-<p><button onclick="ShuffleTriplets()">Перемешать триплетами</button></p>
+<p><label>Nucleotide sequence: </label><br/><textarea cols="100" rows="25" id="Sequence" autocorrect="off" style="width:100%" value=""></textarea></p>
+<p><button onclick="ShuffleTriplets()">Shuffle triplets</button></p>
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_3"><label for="spoilerid_3">
-Генерация нуклеотидной последовательности
+Generate a nucleotide sequence
 </label><div class="spoiler_body" id="Generate">
-<p><label>Период </label><input type="text" id="GeneratePeriod" autocorrect="off" cols="100" value="ATG"></p>
-<p><label>Длина </label><input type="number" step="1" id="GenerateLength" autocorrect="off" cols="5" value="1000" min="0" max="10000"></p>
-<p><label>Процент мутаций </label><input type="number" step="1" id="GenerateRandomness" autocorrect="off" cols="3" value="50" min="0" max="100">%</p>
-<p><label>Зерно </label><input type="number" step="1" id="GenerateSeed" autocorrect="off" cols="10" value="785349" min="-3000000000" max="5000000000"></p>
-<p><button id="Generate" style="height:48px;width:256px;font-size: 18px" onclick="Generate()">Сгенерировать</button></p>
+<p><label>Period </label><input type="text" id="GeneratePeriod" autocorrect="off" cols="100" value="ATG"></p>
+<p><label>Length </label><input type="number" step="1" id="GenerateLength" autocorrect="off" cols="5" value="1000" min="0" max="10000"></p>
+<p><label>Mutation percentage </label><input type="number" step="1" id="GenerateRandomness" autocorrect="off" cols="3" value="50" min="0" max="100">%</p>
+<p><label>Seed </label><input type="number" step="1" id="GenerateSeed" autocorrect="off" cols="10" value="785349" min="-3000000000" max="5000000000"></p>
+<p><button id="Generate" style="height:48px;width:256px;font-size: 18px" onclick="Generate()">Generate</button></p>
 </div></div>
 
 <br/>
 
-<h2>Параметры алгоритма</h2>
-<p><label>d = </label><input type="number" step="1" id="GapPenalty" autocorrect="off" cols="5" value="0" min="0" max="1000"> (0 - авто)</p>
-<p><label>Количество матриц </label><input type="number" step="1" id="MatrixCount" autocorrect="off" cols="5" value="1" min="1" max="1000"></p>
-<p><label>Мин. расстояние между матрицами D<sub>0</sub> = </label><input type="number" step="0.1" id="MinDist" autocorrect="off" cols="5" value="0.5" min="0" max="3"></p>
-<p><label>Макс. итераций </label><input type="number" step="1" id="MaxIterations" autocorrect="off" cols="5" value="50" min="1" max="1000"></p>
+<h2>Algorithm parameters</h2>
+<p><label>d = </label><input type="number" step="1" id="GapPenalty" autocorrect="off" cols="5" value="0" min="0" max="1000"> (0 - auto)</p>
+<p><label>Matrix count </label><input type="number" step="1" id="MatrixCount" autocorrect="off" cols="5" value="1" min="1" max="1000"></p>
+<p><label>Min. distance between matrices D<sub>0</sub> = </label><input type="number" step="0.1" id="MinDist" autocorrect="off" cols="5" value="0.5" min="0" max="3"></p>
+<p><label>Iteration number limit </label><input type="number" step="1" id="MaxIterations" autocorrect="off" cols="5" value="50" min="1" max="1000"></p>
 
-<p><button id="start" onclick="Start()">Старт</button></p>
+<p><button id="start" onclick="Start()">Start</button></p>
 
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_1" checked><label for="spoilerid_1">
-Результат
+Result
 </label><div class="spoiler_body" id="Result">
 </div></div>
 
@@ -111,7 +111,7 @@ input, textarea {
 
 <div class="spoiler">
 <input type="checkbox" id="spoilerid_2" checked><label for="spoilerid_2">
-Выравнивание
+Alignment
 </label><div class="spoiler_body">
 <pre id="Alignment">
 </pre>
@@ -268,10 +268,10 @@ input, textarea {
 				d = detectedD;
 			}
 
-			resultHtml += "<h2>Параметры последовательности</h2>" +
+			resultHtml += "<h2>Sequence parameters</h2>" +
 				"<p><b>I</b> = " + info.toFixed(1) + "</p>" +
-				"<p>Оценка процента мутаций: " + estimatedRandomness.toFixed(1) + "%</p>" +
-				"<p>Рекомендуемое d = " + detectedD.toFixed(1) + "</p>";
+				"<p>Estimated mutation percentage: " + estimatedRandomness.toFixed(1) + "%</p>" +
+				"<p>Recommended d = " + detectedD.toFixed(1) + "</p>";
 		}
 		else console.log("error: CBinding_PeriodicityMeasureChooseShiftPenalty not found!");
 
@@ -289,8 +289,8 @@ input, textarea {
 		Module._free(Module.HEAPU32[stringPointersArrPtr/4+2]);
 		Module._free(stringPointersArrPtr);
 
-		resultHtml += "<h2>Матрица</h2>" + matrixStr + "<br/>" +
-			"<h2>Веса</h2>" + coloredPhasesStr;
+		resultHtml += "<h2>Matrix</h2>" + matrixStr + "<br/>" +
+			"<h2>Weights</h2>" + coloredPhasesStr;
 
 		Result.innerHTML = resultHtml;
 		Alignment.innerHTML = alignmentStr;

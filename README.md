@@ -1,2 +1,2 @@
-# Мой сайт
- Этот репозиторий содержит исходники моего сайта, генерируемого с помощью Jekyll.
+# My website
+ The repository contains Jekyll sources for [my website](https://devoln.github.io).
