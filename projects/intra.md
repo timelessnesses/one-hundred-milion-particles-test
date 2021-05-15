@@ -16,7 +16,7 @@ By default, Intra doesn't depend on any libraries. It doesn't use STL, it is fas
 
 - Containers: `Array`, `BList`, `HashMap`, `LinearMap`, `String`, etc. Nothing special, just cleaner syntax and they have some utility methods like `Contains`, `FindAndRemove`, `RemoveUnordered`, etc. Performance is close to STL: in some tests it is faster, in some slower. However, the containers doesn't depend on exceptions and STL, so they can be used even without full C Runtime. This is useful to develop 64k or even 4k intros for demoscene
 - Ranges in the style of D Phobos library: `Iota`, `Sequence`, `Recurrence`, `Retro`, etc. Custom ranges are way easier to create than in C++20 ranges (or Range v3). `Intra` ranges replace C++ iterators, most C++20 ranges and IO streams
- See examples [here](https://github.com/devoln/Intra/tree/master/Demos/Tests/src/Ranges)
+ See examples [here](https://github.com/devoln/Intra/tree/master/Demos/UnitTests/src/Range)
 - Automatic recursive binary and text serialization
  See examples [here](https://github.com/devoln/Intra/tree/master/Demos/Tests/src/PerfTestSerialization.cpp)
 - 2D/3D Math: fixed point, vectors 2D-4D, matrices, quaternions, geometry primitives
@@ -24,7 +24,7 @@ By default, Intra doesn't depend on any libraries. It doesn't use STL, it is fas
 - Audio (WAV, OGG Vorbis, streaming, custom audio data sources)
 - Platform-specific: Timer, file/console/socket IO streams, threading
 
-You can see more usage examples in [UnitTests](https://github.com/devoln/Intra/tree/Demos/UnitTests)
+You can see more usage examples in [UnitTests](https://github.com/devoln/Intra/tree/master/Demos/UnitTests)
  
 ### Supported compilers:
 - MSVC 2015+;

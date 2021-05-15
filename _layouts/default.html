@@ -41,9 +41,10 @@
 	{% capture title %}{% if page.title %}{{ page.title }}{% endif %}{% endcapture %}
 	
   <p>
-	  <a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Share in VKontakte" target="_blank">ВКонтакте</a>
-    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Share in Facebook" target="_blank">Facebook</a>
-    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Share in Twitter" target="_blank">Twitter</a>
+    Share on: 
+	  <a class="soc-share vkontakte" href="http://vk.com/share.php?url={{url}}&&description={{description}}" title="Share on VKontakte" target="_blank">ВКонтакте</a>
+    <a class="soc-share facebook" href="http://www.facebook.com/sharer.php?url={{url}}" title="Share on Facebook" target="_blank">Facebook</a>
+    <a class="soc-share twitter" href="https://twitter.com/share?url={{url}}&text={{title}}&via=&hashtags=" title="Share on Twitter" target="_blank">Twitter</a>
 	</p>
 	{% include svg-icons.html %}
 </div></footer></div></div>
