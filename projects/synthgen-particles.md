@@ -5,7 +5,7 @@ redirect_from:
   - /projects/flying-particles
 ---
 
-- Windows Demo: [Review by The Cherno](https://youtu.be/kdJhCv7lCD4?t=55) [GitHub](https://github.com/devoln/synthgen-particles-win/) [4K Intro](https://github.com/devoln/synthgen-particles-win/blob/master/bin/SynthgenParticles-4kintro.exe?raw=true)
+- Windows Demo: [Review by The Cherno](https://youtu.be/kdJhCv7lCD4?t=55) | [GitHub](https://github.com/devoln/synthgen-particles-win/) | [4K Intro](https://github.com/devoln/synthgen-particles-win/blob/master/bin/SynthgenParticles-4kintro.exe?raw=true)
 - [Web-version](../particles/) - almost the same as the Windows version, no music
 
 Android-version is the most advanced version (better optimization, camera control, live wallpaper, no music).
