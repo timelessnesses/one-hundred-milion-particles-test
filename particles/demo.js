@@ -138,11 +138,11 @@ Demo =
 		window.onkeydown = function(e)
 		{
 			if(e.keyCode==73) Demo.time = 0.0;
-			if(e.keyCode>=49 && e.keyCode<=57)
+			if(e.keyCode>=49 && e.keyCode<=58)
 			{
-				var rates = [2000, 2000, 10000, 10000, 100000, 100000, 200000, 500000, 1000000];
-				var lifeTimes = [2, 4, 2, 4, 2, 4, 5, 5, 10];
-				var minSizeOrders = [1.0, 1.0, 0.0, 0.0, -1.0, -1.0, -1.5, -2.0, -2.0];
+				var rates = [2000, 2000, 10000, 10000, 100000, 100000, 200000, 500000, 1000000, 100000000];
+				var lifeTimes = [2, 4, 2, 4, 2, 4, 5, 5, 10, 20];
+				var minSizeOrders = [1.0, 1.0, 0.0, 0.0, -1.0, -1.0, -1.5, -2.0, -2.0, -3.0];
 				
 				var i = parseInt(e.keyCode)-49;
 				Demo.rate = rates[i];
